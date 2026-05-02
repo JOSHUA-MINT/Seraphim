@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Seraphim — Encrypt Message</title>
+  <meta name="description" content="Encrypt a message with PGP public key encryption. End-to-end, zero-knowledge.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="page-container">
+
+    <!-- Header -->
+    <header class="site-header">
+      <a href="index.html" class="site-logo">
+        <span class="site-logo-icon">🔐</span>
+        <span class="site-logo-text">Seraphim</span>
+      </a>
+      <nav class="site-nav">
+        <a href="encrypt.html" class="nav-link active">Encrypt</a>
+        <a href="decrypt.html" class="nav-link">Decrypt</a>
+        <a href="keys.html" class="nav-link">Keys</a>
+        <a href="chat.html" class="nav-link">Chat</a>
+      </nav>
+    </header>
+
+    <!-- Title -->
+    <div class="page-title fade-in">
+      <h1>🔒 Encrypt Message</h1>
+      <p>Encrypt a message with the recipient's public key. Only they can decrypt it.</p>
+    </div>
+
+    <!-- Encrypt Card -->
+    <div class="card fade-in">
+      <div class="card-header">
+        <div class="card-icon">📝</div>
+        <div>
+          <div class="card-title">Compose</div>
+          <div class="card-subtitle">Enter your message and the recipient's public key</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="plaintext-input">Message</label>
+        <textarea class="form-textarea tall" id="plaintext-input" placeholder="Type your secret message here..."></textarea>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="pubkey-input">Recipient's Public Key</label>
+        <textarea class="form-textarea" id="pubkey-input" placeholder="-----BEGIN PGP PUBLIC KEY BLOCK-----&#10;...paste the recipient's public key here...&#10;-----END PGP PUBLIC KEY BLOCK-----"></textarea>
+        <div class="mt-1">
+          <button class="btn btn-ghost btn-sm" id="load-contact-btn" onclick="showContactPicker()">📇 Load from contacts</button>
+        </div>
+      </div>
+
+      <div class="btn-group">
+        <button class="btn btn-primary" id="encrypt-btn" onclick="handleEncrypt()">
+          🔒 Encrypt Message
+        </button>
+      </div>
+
+      <div class="status" id="encrypt-status"></div>
+    </div>
+
+    <!-- Output Card -->
+    <div class="card fade-in mt-2" id="output-card" style="display: none;">
+      <div class="card-header">
+        <div class="card-icon">📤</div>
+        <div>
+          <div class="card-title">Encrypted Output</div>
+          <div class="card-subtitle">Copy this and send it to the recipient</div>
+        </div>
+      </div>
+
+      <div class="output-box" id="encrypted-output"></div>
+
+      <div class="btn-group mt-2">
+        <button class="btn btn-secondary btn-sm" onclick="copyOutput()">📋 Copy to Clipboard</button>
+        <button class="btn btn-ghost btn-sm" onclick="downloadOutput()">💾 Download .pgp</button>
+      </div>
+    </div>
+
+    <!-- Contact Picker Modal -->
+    <div id="contact-modal" class="hidden">
+      <div style="position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:100;display:flex;align-items:center;justify-content:center;padding:1rem;" onclick="if(event.target===this)hideContactPicker()">
+        <div class="card" style="max-width:480px;width:100%;max-height:60vh;overflow-y:auto;">
+          <div class="card-header">
+            <div class="card-icon">📇</div>
+            <div>
+              <div class="card-title">Select Contact</div>
+              <div class="card-subtitle">Choose a saved contact's public key</div>
+            </div>
+          </div>
+          <div id="contact-list" class="key-list"></div>
+          <div class="mt-2">
+            <button class="btn btn-ghost btn-sm btn-block" onclick="hideContactPicker()">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="lib/openpgp.min.js"></script>
+  <script src="crypto.js"></script>
+  <script>
+    function showStatus(id, type, msg) {
+      const el = document.getElementById(id);
+      el.className = `status show ${type}`;
+      el.textContent = msg;
+    }
+
+    async function handleEncrypt() {
+      const plaintext = document.getElementById('plaintext-input').value.trim();
+      const pubkey = document.getElementById('pubkey-input').value.trim();
+      const btn = document.getElementById('encrypt-btn');
+
+      if (!plaintext) return showStatus('encrypt-status', 'error', '⚠ Please enter a message.');
+      if (!pubkey) return showStatus('encrypt-status', 'error', '⚠ Please provide the recipient\'s public key.');
+
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span> Encrypting...';
+
+      try {
+        const encrypted = await SeraphimCrypto.encryptMessage(plaintext, pubkey);
+        document.getElementById('encrypted-output').textContent = encrypted;
+        document.getElementById('output-card').style.display = 'block';
+        showStatus('encrypt-status', 'success', '✓ Message encrypted successfully!');
+      } catch (e) {
+        showStatus('encrypt-status', 'error', '✗ Encryption failed: ' + e.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '🔒 Encrypt Message';
+      }
+    }
+
+    function copyOutput() {
+      const text = document.getElementById('encrypted-output').textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        const btns = document.querySelectorAll('#output-card .btn-secondary');
+        btns[0].textContent = '✓ Copied!';
+        setTimeout(() => btns[0].textContent = '📋 Copy to Clipboard', 2000);
+      });
+    }
+
+    function downloadOutput() {
+      const text = document.getElementById('encrypted-output').textContent;
+      const blob = new Blob([text], { type: 'application/pgp-encrypted' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'message.pgp';
+      a.click();
+    }
+
+    function showContactPicker() {
+      const contacts = JSON.parse(localStorage.getItem('seraphim_contacts') || '[]');
+      const keys = JSON.parse(localStorage.getItem('seraphim_keys') || '[]');
+      const all = [...contacts, ...keys.map(k => ({ name: k.name, email: k.email, publicKey: k.publicKey }))];
+
+      const list = document.getElementById('contact-list');
+      if (all.length === 0) {
+        list.innerHTML = '<p class="text-muted text-sm text-center">No saved contacts or keys. Go to Key Manager to add some.</p>';
+      } else {
+        list.innerHTML = all.map((c, i) => `
+          <div class="key-card" onclick="selectContact(${i})" style="cursor:pointer;">
+            <div class="key-info">
+              <div class="key-name">${c.name || 'Unknown'}</div>
+              <div class="key-email">${c.email || ''}</div>
+            </div>
+            <div class="key-actions">
+              <button class="btn btn-secondary btn-sm">Select</button>
+            </div>
+          </div>
+        `).join('');
+      }
+      document.getElementById('contact-modal').classList.remove('hidden');
+      window._contactList = all;
+    }
+
+    function selectContact(index) {
+      const contact = window._contactList[index];
+      document.getElementById('pubkey-input').value = contact.publicKey;
+      hideContactPicker();
+    }
+
+    function hideContactPicker() {
+      document.getElementById('contact-modal').classList.add('hidden');
+    }
+  </script>
+</body>
+</html>

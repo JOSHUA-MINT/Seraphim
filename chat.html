@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Seraphim — Secure Chat</title>
+  <meta name="description" content="End-to-end encrypted real-time chat with kill switch.">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* ── Chat-specific styles ─────────────────────────────── */
+    .chat-layout { display: flex; gap: 1rem; height: calc(100vh - 200px); min-height: 500px; }
+    .chat-main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+    .chat-sidebar { width: 240px; flex-shrink: 0; display: flex; flex-direction: column; gap: 0.75rem; }
+
+    .chat-messages {
+      flex: 1; overflow-y: auto; padding: 1rem;
+      background: var(--bg-input); border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md); display: flex; flex-direction: column; gap: 0.5rem;
+    }
+
+    .msg { max-width: 80%; padding: 0.6rem 0.9rem; border-radius: var(--radius-md); font-size: 0.88rem; line-height: 1.5; animation: fadeIn 0.3s var(--ease-out); }
+    .msg.sent { align-self: flex-end; background: linear-gradient(135deg, rgba(168,85,247,0.2), rgba(6,182,212,0.15)); border: 1px solid rgba(168,85,247,0.2); }
+    .msg.received { align-self: flex-start; background: rgba(255,255,255,0.04); border: 1px solid var(--border-subtle); }
+    .msg-sender { font-size: 0.72rem; font-weight: 600; color: var(--accent-purple); margin-bottom: 0.2rem; }
+    .msg-time { font-size: 0.65rem; color: var(--text-muted); margin-top: 0.3rem; }
+    .msg.system { align-self: center; background: rgba(6,182,212,0.08); border: 1px solid rgba(6,182,212,0.15); color: var(--accent-cyan); font-size: 0.78rem; text-align: center; max-width: 90%; }
+    .msg.kill { background: rgba(239,68,68,0.12); border-color: rgba(239,68,68,0.25); color: var(--accent-red); }
+
+    .chat-input-bar {
+      display: flex; gap: 0.5rem; margin-top: 0.75rem;
+    }
+    .chat-input-bar input { flex: 1; }
+
+    .user-item { display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 0.75rem; border-radius: var(--radius-sm); font-size: 0.85rem; background: rgba(255,255,255,0.02); border: 1px solid var(--border-subtle); }
+    .user-item .user-name { font-weight: 600; }
+    .user-fp { font-family: var(--font-mono); font-size: 0.6rem; color: var(--text-muted); word-break: break-all; }
+    .typing-indicator { font-size: 0.75rem; color: var(--text-muted); min-height: 1.2em; margin-top: 0.25rem; font-style: italic; }
+
+    @media (max-width: 768px) {
+      .chat-layout { flex-direction: column; height: auto; }
+      .chat-sidebar { width: 100%; flex-direction: row; flex-wrap: wrap; }
+      .chat-messages { min-height: 400px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-container wide">
+    <header class="site-header">
+      <a href="index.html" class="site-logo">
+        <span class="site-logo-icon">🔐</span>
+        <span class="site-logo-text">Seraphim</span>
+      </a>
+      <nav class="site-nav">
+        <a href="encrypt.html" class="nav-link">Encrypt</a>
+        <a href="decrypt.html" class="nav-link">Decrypt</a>
+        <a href="keys.html" class="nav-link">Keys</a>
+        <a href="chat.html" class="nav-link active">Chat</a>
+      </nav>
+    </header>
+
+    <!-- Join Panel -->
+    <div id="join-panel">
+      <div class="page-title fade-in">
+        <h1>💬 Secure Chat</h1>
+        <p>E2EE chat rooms with kill switch. Messages never touch the server in plaintext.</p>
+      </div>
+
+      <div class="card fade-in" style="max-width:500px;margin:0 auto;">
+        <div class="card-header">
+          <div class="card-icon">🚀</div>
+          <div>
+            <div class="card-title">Join or Create Room</div>
+            <div class="card-subtitle">Select your key and enter a room code</div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="join-name">Display Name</label>
+          <input class="form-input" id="join-name" placeholder="Your name">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="join-key">Your Keypair</label>
+          <select class="form-input" id="join-key" style="cursor:pointer;">
+            <option value="">-- Select a saved key --</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="join-pass">Key Passphrase</label>
+          <input class="form-input" type="password" id="join-pass" placeholder="Passphrase for your key">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="join-room">Room Code</label>
+          <div style="display:flex;gap:0.5rem;">
+            <input class="form-input" id="join-room" placeholder="e.g. ABC123">
+            <button class="btn btn-ghost btn-sm" onclick="generateRoom()" style="white-space:nowrap;">🎲 New</button>
+          </div>
+        </div>
+
+        <button class="btn btn-primary btn-block" id="join-btn" onclick="joinRoom()">🚀 Join Room</button>
+        <div class="status" id="join-status"></div>
+      </div>
+    </div>
+
+    <!-- Chat Panel -->
+    <div id="chat-panel" class="hidden">
+      <div class="card" style="padding:1rem 1rem 0.5rem;">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.5rem;">
+          <div>
+            <span style="font-weight:700;">Room:</span>
+            <span id="room-code-display" style="font-family:var(--font-mono);color:var(--accent-cyan);"></span>
+            <button class="copy-btn" onclick="copyRoomCode()" style="margin-left:0.5rem;">Copy</button>
+          </div>
+          <div class="btn-group">
+            <button class="btn btn-danger btn-sm" onclick="triggerKillSwitch()">☠️ Kill Switch</button>
+            <button class="btn btn-ghost btn-sm" onclick="leaveRoom()">🚪 Leave</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="chat-layout mt-1">
+        <div class="chat-main">
+          <div class="chat-messages" id="chat-messages"></div>
+          <div class="typing-indicator" id="typing-indicator"></div>
+          <div class="chat-input-bar">
+            <input class="form-input" id="msg-input" placeholder="Type a message..." onkeydown="if(event.key==='Enter')sendMessage()" oninput="emitTyping()">
+            <button class="btn btn-primary" onclick="sendMessage()">Send</button>
+          </div>
+        </div>
+
+        <div class="chat-sidebar">
+          <div class="card" style="padding:1rem;">
+            <div class="card-title mb-1" style="font-size:0.85rem;">Online Users</div>
+            <div id="user-list"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="lib/openpgp.min.js"></script>
+  <script src="crypto.js"></script>
+  <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
+  <script>
+    // ── State ──────────────────────────────────────────
+    let socket = null;
+    let myName = '';
+    let myPublicKey = '';
+    let myPrivateKey = '';
+    let myPassphrase = '';
+    let currentRoom = '';
+    let roomUsers = new Map(); // id -> { name, publicKey }
+    let typingTimeout = null;
+
+    // ── Init: populate key selector ───────────────────
+    (function loadKeys() {
+      const keys = JSON.parse(localStorage.getItem('seraphim_keys') || '[]');
+      const sel = document.getElementById('join-key');
+      keys.forEach((k, i) => {
+        const opt = document.createElement('option');
+        opt.value = i;
+        opt.textContent = `${k.name} (${k.email})`;
+        sel.appendChild(opt);
+      });
+    })();
+
+    function generateRoom() {
+      document.getElementById('join-room').value = SeraphimCrypto.generateRoomCode();
+    }
+
+    function showStatus(id, type, msg) {
+      const el = document.getElementById(id);
+      el.className = `status show ${type}`;
+      el.textContent = msg;
+    }
+
+    // ── Join Room ─────────────────────────────────────
+    function joinRoom() {
+      myName = document.getElementById('join-name').value.trim();
+      const keyIdx = document.getElementById('join-key').value;
+      myPassphrase = document.getElementById('join-pass').value;
+      currentRoom = document.getElementById('join-room').value.trim().toUpperCase();
+
+      if (!myName) return showStatus('join-status', 'error', '⚠ Enter your name.');
+      if (keyIdx === '') return showStatus('join-status', 'error', '⚠ Select a keypair.');
+      if (!myPassphrase) return showStatus('join-status', 'error', '⚠ Enter passphrase.');
+      if (!currentRoom) return showStatus('join-status', 'error', '⚠ Enter a room code.');
+
+      const keys = JSON.parse(localStorage.getItem('seraphim_keys') || '[]');
+      const key = keys[parseInt(keyIdx)];
+      myPublicKey = key.publicKey;
+      myPrivateKey = key.privateKey;
+
+      // Connect to server
+      const serverUrl = location.hostname === 'localhost' || location.hostname === '127.0.0.1'
+        ? `http://localhost:3000`
+        : window.location.origin;
+
+      socket = io(serverUrl);
+
+      socket.on('connect', () => {
+        socket.emit('join-room', {
+          roomCode: currentRoom,
+          name: myName,
+          publicKey: myPublicKey
+        });
+      });
+
+      socket.on('room-joined', ({ roomCode, users }) => {
+        roomUsers.clear();
+        users.forEach(u => roomUsers.set(u.id, { name: u.name, publicKey: u.publicKey }));
+        document.getElementById('room-code-display').textContent = roomCode;
+        document.getElementById('join-panel').classList.add('hidden');
+        document.getElementById('chat-panel').classList.remove('hidden');
+        renderUsers();
+        addSystemMessage('You joined the room. 🔐 All messages are end-to-end encrypted.');
+      });
+
+      socket.on('user-joined', ({ id, name, publicKey }) => {
+        roomUsers.set(id, { name, publicKey });
+        renderUsers();
+        addSystemMessage(`${name} joined the room.`);
+      });
+
+      socket.on('user-left', ({ id, name }) => {
+        roomUsers.delete(id);
+        renderUsers();
+        addSystemMessage(`${name} left the room.`);
+      });
+
+      socket.on('message', async ({ senderId, senderName, ciphertext, timestamp }) => {
+        try {
+          const plaintext = await SeraphimCrypto.decryptMessage(ciphertext, myPrivateKey, myPassphrase);
+          addMessage(senderName, plaintext, timestamp, false);
+        } catch (e) {
+          addMessage(senderName, '[Could not decrypt message]', timestamp, false);
+        }
+      });
+
+      socket.on('kill-switch', ({ triggeredBy, timestamp }) => {
+        document.getElementById('chat-messages').innerHTML = '';
+        addKillMessage(`☠️ Kill switch activated by ${triggeredBy}. All messages wiped.`);
+      });
+
+      socket.on('typing', ({ name }) => {
+        const el = document.getElementById('typing-indicator');
+        el.textContent = `${name} is typing...`;
+        clearTimeout(typingTimeout);
+        typingTimeout = setTimeout(() => { el.textContent = ''; }, 2000);
+      });
+
+      socket.on('disconnect', () => {
+        addSystemMessage('Disconnected from server.');
+      });
+
+      socket.on('connect_error', () => {
+        showStatus('join-status', 'error', '✗ Cannot connect. Is the server running on port 3000?');
+      });
+    }
+
+    // ── Send Message ──────────────────────────────────
+    async function sendMessage() {
+      const input = document.getElementById('msg-input');
+      const text = input.value.trim();
+      if (!text || !socket) return;
+      input.value = '';
+
+      // Encrypt for each recipient
+      const encryptedMessages = [];
+      for (const [id, user] of roomUsers) {
+        if (id === socket.id) continue; // don't send to self
+        try {
+          const ciphertext = await SeraphimCrypto.encryptMessage(text, user.publicKey);
+          encryptedMessages.push({ recipientId: id, ciphertext });
+        } catch (e) {
+          console.error(`Failed to encrypt for ${user.name}:`, e);
+        }
+      }
+
+      socket.emit('message', { roomCode: currentRoom, encryptedMessages });
+      addMessage('You', text, Date.now(), true);
+    }
+
+    function emitTyping() {
+      if (socket && currentRoom) {
+        socket.emit('typing', { roomCode: currentRoom });
+      }
+    }
+
+    // ── Kill Switch ───────────────────────────────────
+    function triggerKillSwitch() {
+      if (!confirm('⚠️ This will wipe ALL messages for EVERYONE in this room. Continue?')) return;
+      if (socket && currentRoom) {
+        socket.emit('kill-switch', { roomCode: currentRoom });
+      }
+    }
+
+    // ── Leave Room ────────────────────────────────────
+    function leaveRoom() {
+      if (socket) { socket.disconnect(); socket = null; }
+      roomUsers.clear();
+      document.getElementById('chat-messages').innerHTML = '';
+      document.getElementById('chat-panel').classList.add('hidden');
+      document.getElementById('join-panel').classList.remove('hidden');
+    }
+
+    // ── UI Helpers ────────────────────────────────────
+    function addMessage(sender, text, timestamp, isSent) {
+      const el = document.getElementById('chat-messages');
+      const div = document.createElement('div');
+      div.className = `msg ${isSent ? 'sent' : 'received'}`;
+      const time = new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      div.innerHTML = `${isSent ? '' : `<div class="msg-sender">${esc(sender)}</div>`}<div>${esc(text)}</div><div class="msg-time">${time}</div>`;
+      el.appendChild(div);
+      el.scrollTop = el.scrollHeight;
+    }
+
+    function addSystemMessage(text) {
+      const el = document.getElementById('chat-messages');
+      const div = document.createElement('div');
+      div.className = 'msg system';
+      div.textContent = text;
+      el.appendChild(div);
+      el.scrollTop = el.scrollHeight;
+    }
+
+    function addKillMessage(text) {
+      const el = document.getElementById('chat-messages');
+      const div = document.createElement('div');
+      div.className = 'msg system kill';
+      div.textContent = text;
+      el.appendChild(div);
+      el.scrollTop = el.scrollHeight;
+    }
+
+    function renderUsers() {
+      const el = document.getElementById('user-list');
+      const items = [];
+      roomUsers.forEach((u, id) => {
+        const isMe = socket && id === socket.id;
+        items.push(`<div class="user-item"><span class="pulse-dot"></span><div><div class="user-name">${esc(u.name)}${isMe ? ' (you)' : ''}</div></div></div>`);
+      });
+      el.innerHTML = items.join('') || '<p class="text-muted text-sm">No users</p>';
+    }
+
+    function copyRoomCode() {
+      navigator.clipboard.writeText(currentRoom);
+    }
+
+    function esc(s) {
+      const d = document.createElement('div');
+      d.textContent = s;
+      return d.innerHTML;
+    }
+  </script>
+</body>
+</html>

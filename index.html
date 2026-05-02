@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Seraphim — End-to-End Encrypted Messaging</title>
+  <meta name="description" content="Seraphim is a zero-knowledge, end-to-end encrypted messaging platform. Encrypt, decrypt, and chat securely.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="page-container">
+
+    <!-- Header -->
+    <header class="site-header">
+      <a href="index.html" class="site-logo">
+        <span class="site-logo-icon">🔐</span>
+        <span class="site-logo-text">Seraphim</span>
+      </a>
+    </header>
+
+    <!-- Hero -->
+    <div class="page-title fade-in">
+      <h1>End-to-End Encrypted Messaging</h1>
+      <p>Zero-knowledge encryption powered by OpenPGP. Your messages. Your keys. No middleman.</p>
+    </div>
+
+    <!-- Tools Grid -->
+    <div class="tools-grid">
+
+      <a href="encrypt.html" class="tool-card fade-in" id="tool-encrypt">
+        <div class="tool-card-icon">🔒</div>
+        <div class="tool-card-title">Encrypt</div>
+        <div class="tool-card-desc">Encrypt a message with someone's public key. Only they can read it.</div>
+      </a>
+
+      <a href="decrypt.html" class="tool-card fade-in" id="tool-decrypt">
+        <div class="tool-card-icon">🔓</div>
+        <div class="tool-card-title">Decrypt</div>
+        <div class="tool-card-desc">Decrypt a PGP message using your private key and passphrase.</div>
+      </a>
+
+      <a href="keys.html" class="tool-card fade-in" id="tool-keys">
+        <div class="tool-card-icon">🔑</div>
+        <div class="tool-card-title">Key Manager</div>
+        <div class="tool-card-desc">Generate, import, export, and manage your PGP keypairs securely.</div>
+      </a>
+
+      <a href="chat.html" class="tool-card fade-in" id="tool-chat">
+        <div class="tool-card-icon">💬</div>
+        <div class="tool-card-title">Secure Chat</div>
+        <div class="tool-card-desc">Real-time encrypted chat rooms with kill switch. Messages never touch a server.</div>
+      </a>
+
+    </div>
+
+    <!-- Footer info -->
+    <div class="text-center mt-3 fade-in" style="animation-delay: 0.25s;">
+      <p class="text-sm text-muted">
+        Powered by OpenPGP.js v5 · Curve25519 ECC · Zero-knowledge relay
+      </p>
+    </div>
+
+  </div>
+</body>
+</html>

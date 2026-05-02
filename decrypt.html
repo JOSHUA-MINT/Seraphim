@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Seraphim — Decrypt Message</title>
+  <meta name="description" content="Decrypt PGP messages with your private key.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="page-container">
+    <header class="site-header">
+      <a href="index.html" class="site-logo">
+        <span class="site-logo-icon">🔐</span>
+        <span class="site-logo-text">Seraphim</span>
+      </a>
+      <nav class="site-nav">
+        <a href="encrypt.html" class="nav-link">Encrypt</a>
+        <a href="decrypt.html" class="nav-link active">Decrypt</a>
+        <a href="keys.html" class="nav-link">Keys</a>
+        <a href="chat.html" class="nav-link">Chat</a>
+      </nav>
+    </header>
+
+    <div class="page-title fade-in">
+      <h1>🔓 Decrypt Message</h1>
+      <p>Decrypt a PGP message using your private key. Everything stays in your browser.</p>
+    </div>
+
+    <div class="card fade-in">
+      <div class="card-header">
+        <div class="card-icon">📩</div>
+        <div>
+          <div class="card-title">Encrypted Message</div>
+          <div class="card-subtitle">Paste the PGP encrypted message</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="ciphertext-input">Encrypted Message</label>
+        <textarea class="form-textarea tall" id="ciphertext-input" placeholder="-----BEGIN PGP MESSAGE-----&#10;...&#10;-----END PGP MESSAGE-----"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="privkey-input">Your Private Key</label>
+        <textarea class="form-textarea" id="privkey-input" placeholder="-----BEGIN PGP PRIVATE KEY BLOCK-----&#10;...&#10;-----END PGP PRIVATE KEY BLOCK-----"></textarea>
+        <div class="mt-1">
+          <button class="btn btn-ghost btn-sm" onclick="showKeyPicker()">🔑 Load saved key</button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="passphrase-input">Passphrase</label>
+        <input class="form-input" type="password" id="passphrase-input" placeholder="Enter your private key passphrase">
+      </div>
+
+      <button class="btn btn-primary" id="decrypt-btn" onclick="handleDecrypt()">🔓 Decrypt Message</button>
+      <div class="status" id="decrypt-status"></div>
+    </div>
+
+    <div class="card fade-in mt-2" id="output-card" style="display:none;">
+      <div class="card-header">
+        <div class="card-icon">💌</div>
+        <div>
+          <div class="card-title">Decrypted Message</div>
+          <div class="card-subtitle">The original plaintext</div>
+        </div>
+      </div>
+      <div class="output-box" id="decrypted-output" style="color:var(--accent-green);"></div>
+      <div class="btn-group mt-2">
+        <button class="btn btn-secondary btn-sm" onclick="copyOutput()">📋 Copy</button>
+      </div>
+    </div>
+
+    <!-- Key Picker -->
+    <div id="key-modal" class="hidden">
+      <div style="position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:100;display:flex;align-items:center;justify-content:center;padding:1rem;" onclick="if(event.target===this)hideKeyPicker()">
+        <div class="card" style="max-width:480px;width:100%;max-height:60vh;overflow-y:auto;">
+          <div class="card-header">
+            <div class="card-icon">🔑</div>
+            <div><div class="card-title">Select Key</div></div>
+          </div>
+          <div id="key-list" class="key-list"></div>
+          <button class="btn btn-ghost btn-sm btn-block mt-2" onclick="hideKeyPicker()">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="lib/openpgp.min.js"></script>
+  <script src="crypto.js"></script>
+  <script>
+    function showStatus(id, type, msg) {
+      const el = document.getElementById(id);
+      el.className = `status show ${type}`;
+      el.textContent = msg;
+    }
+
+    async function handleDecrypt() {
+      const ct = document.getElementById('ciphertext-input').value.trim();
+      const pk = document.getElementById('privkey-input').value.trim();
+      const pp = document.getElementById('passphrase-input').value;
+      const btn = document.getElementById('decrypt-btn');
+
+      if (!ct) return showStatus('decrypt-status', 'error', '⚠ Paste the encrypted message.');
+      if (!pk) return showStatus('decrypt-status', 'error', '⚠ Provide your private key.');
+      if (!pp) return showStatus('decrypt-status', 'error', '⚠ Enter your passphrase.');
+
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span> Decrypting...';
+      try {
+        const decrypted = await SeraphimCrypto.decryptMessage(ct, pk, pp);
+        document.getElementById('decrypted-output').textContent = decrypted;
+        document.getElementById('output-card').style.display = 'block';
+        showStatus('decrypt-status', 'success', '✓ Decrypted successfully!');
+      } catch (e) {
+        showStatus('decrypt-status', 'error', '✗ Failed: ' + e.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '🔓 Decrypt Message';
+      }
+    }
+
+    function copyOutput() {
+      navigator.clipboard.writeText(document.getElementById('decrypted-output').textContent);
+    }
+
+    function showKeyPicker() {
+      const keys = JSON.parse(localStorage.getItem('seraphim_keys') || '[]');
+      const list = document.getElementById('key-list');
+      list.innerHTML = keys.length === 0
+        ? '<p class="text-muted text-sm text-center">No saved keys.</p>'
+        : keys.map((k, i) => `<div class="key-card" onclick="selectKey(${i})" style="cursor:pointer"><div class="key-info"><div class="key-name">${k.name}</div><div class="key-email">${k.email||''}</div></div><button class="btn btn-secondary btn-sm">Select</button></div>`).join('');
+      document.getElementById('key-modal').classList.remove('hidden');
+      window._kl = keys;
+    }
+
+    function selectKey(i) {
+      document.getElementById('privkey-input').value = window._kl[i].privateKey;
+      hideKeyPicker();
+    }
+
+    function hideKeyPicker() {
+      document.getElementById('key-modal').classList.add('hidden');
+    }
+  </script>
+</body>
+</html>
