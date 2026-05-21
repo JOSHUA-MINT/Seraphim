@@ -37,8 +37,57 @@ app.use(cors({ origin: ALLOWED_ORIGIN }));
 // Serve static files from the parent directory (the client HTML files)
 app.use(express.static(path.join(__dirname, '..')));
 
-// ── In-memory room state (no persistence) ──────────────────────
-const rooms = new Map(); // roomCode -> { users: Map<socketId, {name, publicKey}> }
+// ── In-memory room state & Persistence ──────────────────────
+const fs = require('fs');
+const PERSISTENT_ROOMS_FILE = path.join(__dirname, 'persistent_rooms.json');
+const rooms = new Map(); // roomCode -> { users: Map<socketId, {name, publicKey}>, type, createdAt }
+
+// Load persistent rooms from file on startup
+try {
+  if (fs.existsSync(PERSISTENT_ROOMS_FILE)) {
+    const data = JSON.parse(fs.readFileSync(PERSISTENT_ROOMS_FILE, 'utf8'));
+    for (const [roomCode, info] of Object.entries(data)) {
+      rooms.set(roomCode, {
+        users: new Map(),
+        type: info.type || 'persistent',
+        createdAt: info.createdAt || Date.now()
+      });
+    }
+    console.log(`[+] Loaded ${Object.keys(data).length} persistent rooms from disk.`);
+  }
+} catch (e) {
+  console.error('[Error] Failed to load persistent rooms:', e);
+}
+
+function savePersistentRooms() {
+  try {
+    const data = {};
+    for (const [roomCode, room] of rooms.entries()) {
+      if (room.type === 'persistent') {
+        data[roomCode] = {
+          type: room.type,
+          createdAt: room.createdAt
+        };
+      }
+    }
+    fs.writeFileSync(PERSISTENT_ROOMS_FILE, JSON.stringify(data, null, 2), 'utf8');
+  } catch (e) {
+    console.error('[Error] Failed to save persistent rooms:', e);
+  }
+}
+
+// Cleanup interval for temporary rooms (expires after 24 hours)
+setInterval(() => {
+  const now = Date.now();
+  for (const [roomCode, room] of rooms.entries()) {
+    if (room.type === 'temporary' && now - room.createdAt >= 24 * 60 * 60 * 1000) {
+      io.in(roomCode).emit('room-expired', { roomCode });
+      rooms.delete(roomCode);
+      console.log(`[room] ${roomCode} expired and deleted (24h limit)`);
+    }
+  }
+}, 30 * 1000); // Check every 30 seconds
+
 
 // ── Socket.IO Events ───────────────────────────────────────────
 io.on('connection', (socket) => {
@@ -46,8 +95,8 @@ io.on('connection', (socket) => {
 
   let currentRoom = null;
 
-  // ── Join Room ──────────────────────────────────────────────
-  socket.on('join-room', ({ roomCode, name, publicKey }) => {
+  // ── Join/Create Room ────────────────────────────────────────
+  socket.on('join-room', ({ roomCode, name, publicKey, roomType }) => {
     if (!roomCode || !name) return;
 
     // Leave previous room if any
@@ -60,7 +109,15 @@ io.on('connection', (socket) => {
 
     // Create room if it doesn't exist
     if (!rooms.has(roomCode)) {
-      rooms.set(roomCode, { users: new Map() });
+      rooms.set(roomCode, {
+        users: new Map(),
+        type: roomType || 'standard',
+        createdAt: Date.now()
+      });
+      console.log(`[room] Created room ${roomCode} (${roomType || 'standard'})`);
+      if (roomType === 'persistent') {
+        savePersistentRooms();
+      }
     }
 
     const room = rooms.get(roomCode);
@@ -71,7 +128,12 @@ io.on('connection', (socket) => {
     room.users.forEach((user, id) => {
       userList.push({ id, name: user.name, publicKey: user.publicKey });
     });
-    socket.emit('room-joined', { roomCode, users: userList });
+    socket.emit('room-joined', {
+      roomCode,
+      roomType: room.type,
+      createdAt: room.createdAt,
+      users: userList
+    });
 
     // Notify others
     socket.to(roomCode).emit('user-joined', {
@@ -140,6 +202,13 @@ io.on('connection', (socket) => {
       triggeredBy: senderName,
       timestamp: Date.now()
     });
+
+    // Wipe room from memory and persistence immediately
+    const wasPersistent = room.type === 'persistent';
+    rooms.delete(roomCode);
+    if (wasPersistent) {
+      savePersistentRooms();
+    }
   });
 
   // ── Typing indicator ──────────────────────────────────────
@@ -177,8 +246,8 @@ function leaveRoom(socket, roomCode) {
     name: userName
   });
 
-  // Clean up empty rooms
-  if (room.users.size === 0) {
+  // Clean up empty rooms (only if they are standard/default)
+  if (room.users.size === 0 && room.type !== 'persistent' && room.type !== 'temporary') {
     rooms.delete(roomCode);
     console.log(`[room] ${roomCode} deleted (empty)`);
   }

@@ -26,47 +26,90 @@
   <main class="page-content">
 
       <!-- Join Panel -->
-      <div id="join-panel" class="page-container" style="max-width:640px; margin:0 auto; width: 100%;">
-        <div class="page-title">
-          <h1>Secure Chat</h1>
-          <p>E2EE chat rooms with kill switch. Messages never touch the server in plaintext.</p>
+      <div id="join-panel" class="page-container wide" style="width: 100%; margin-top: 1.5rem;">
+        <div class="grid-2col">
+          <!-- Column 1: Join Existing Room -->
+          <div class="card">
+            <div class="card-header" style="margin-bottom: 1.5rem;">
+              <div>
+                <div class="card-title" style="font-family: var(--font-serif); font-size: 1.25rem; letter-spacing: 0.05em; text-transform: uppercase;">Join Existing Room</div>
+                <div class="card-subtitle">Connect to an active secure session</div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="join-name-existing">Screen Name</label>
+              <input class="form-input" id="join-name-existing" placeholder="Enter screen name">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="join-key-existing">Select Keypair</label>
+              <select class="form-input" id="join-key-existing" style="cursor:pointer;">
+                <option value="">-- Select your key --</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="join-pass-existing">Key Passphrase</label>
+              <input class="form-input" type="password" id="join-pass-existing" placeholder="Passphrase for selected key">
+            </div>
+
+            <div class="form-group" style="margin-bottom: 2rem;">
+              <label class="form-label" for="join-room-existing">Room Code</label>
+              <input class="form-input" id="join-room-existing" placeholder="e.g. ABC123">
+            </div>
+
+            <button class="btn btn-primary btn-block" style="background: var(--accent-blue); border-color: var(--accent-blue);" onclick="joinRoom(false)">Join Room</button>
+            <div class="status" id="join-status"></div>
+          </div>
+
+          <!-- Column 2: Create New Room -->
+          <div class="card">
+            <div class="card-header" style="margin-bottom: 1.5rem;">
+              <div>
+                <div class="card-title" style="font-family: var(--font-serif); font-size: 1.25rem; letter-spacing: 0.05em; text-transform: uppercase;">Create New Room</div>
+                <div class="card-subtitle">Initialize a zero-knowledge room</div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="join-name-create">Screen Name</label>
+              <input class="form-input" id="join-name-create" placeholder="Enter screen name">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="join-key-create">Select Keypair</label>
+              <select class="form-input" id="join-key-create" style="cursor:pointer;">
+                <option value="">-- Select your key --</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="join-pass-create">Key Passphrase</label>
+              <input class="form-input" type="password" id="join-pass-create" placeholder="Passphrase for selected key">
+            </div>
+
+            <div class="form-group" style="margin-bottom: 2rem;">
+              <label class="form-label">Room Duration</label>
+              <div class="room-type-group">
+                <button type="button" class="room-type-btn active" id="btn-type-temp" onclick="setRoomType('temporary')">
+                  <span class="room-type-title">Temporary</span>
+                  <span class="room-type-desc">Expires in 24 hours</span>
+                </button>
+                <button type="button" class="room-type-btn" id="btn-type-persist" onclick="setRoomType('persistent')">
+                  <span class="room-type-title">Persistent</span>
+                  <span class="room-type-desc">Stays active indefinitely</span>
+                </button>
+              </div>
+            </div>
+
+            <button class="btn btn-primary btn-block" style="background: var(--accent-blue); border-color: var(--accent-blue);" onclick="joinRoom(true)">Create & Join Room</button>
+            <div class="status" id="create-status"></div>
+          </div>
         </div>
 
-        <div class="card" style="max-width:500px;margin:0 auto;">
-          <div class="card-header">
-            <div>
-              <div class="card-title">Join or Create Room</div>
-              <div class="card-subtitle">Select your key and enter a room code</div>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" for="join-name">Display Name</label>
-            <input class="form-input" id="join-name" placeholder="Your name">
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" for="join-key">Your Keypair</label>
-            <select class="form-input" id="join-key" style="cursor:pointer;">
-              <option value="">-- Select a saved key --</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" for="join-pass">Key Passphrase</label>
-            <input class="form-input" type="password" id="join-pass" placeholder="Passphrase for your key">
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" for="join-room">Room Code</label>
-            <div style="display:flex;gap:0.5rem;">
-              <input class="form-input" id="join-room" placeholder="e.g. ABC123">
-              <button class="btn btn-ghost btn-sm" onclick="generateRoom()" style="white-space:nowrap;">New Code</button>
-            </div>
-          </div>
-
-          <button class="btn btn-primary btn-block" id="join-btn" onclick="joinRoom()">Join Room</button>
-          <div class="status" id="join-status"></div>
+        <div class="chat-footer-brand">
+          ZERO TRUST DATA PROTECTION BY SERAPHIM SECURITY
         </div>
       </div>
 
@@ -81,7 +124,11 @@
           <div class="chat-sidebar">
             <div class="card" style="padding:1.5rem 1rem; text-align:center;">
               <div class="label" style="margin-bottom:0.25rem;">Room Code</div>
-              <div id="room-code-display" style="font-family:var(--font-mono);font-size:1.1rem;color:var(--text-primary);letter-spacing:0.1em;margin-bottom:1rem;"></div>
+              <div id="room-code-display" style="font-family:var(--font-mono);font-size:1.1rem;color:var(--text-primary);letter-spacing:0.1em;margin-bottom:0.75rem;"></div>
+
+              <div class="label" style="margin-bottom:0.15rem;">Room Type</div>
+              <div id="room-type-display" style="font-size:0.85rem;color:var(--accent-gold);margin-bottom:0.5rem;font-weight:600;">Standard</div>
+              <div id="room-timer-display" style="font-family:var(--font-mono);font-size:0.75rem;color:var(--accent-fire);margin-bottom:1rem;display:none;"></div>
               
               <div class="btn-group" style="justify-content:center;flex-direction:column;gap:0.5rem;">
                 <button class="btn btn-secondary btn-sm btn-block" onclick="copyRoomCode()">Copy Code</button>
@@ -142,21 +189,51 @@
     let roomUsers = new Map(); // id -> { name, publicKey }
     let typingTimeout = null;
     let fingerprintVerified = false;
+    let selectedRoomType = 'temporary';
+    let expirationInterval = null;
 
-    // ── Init: populate key selector ───────────────────
+    // Sync input fields across the side-by-side forms
+    function syncInputs() {
+      const name1 = document.getElementById('join-name-existing');
+      const name2 = document.getElementById('join-name-create');
+      const key1 = document.getElementById('join-key-existing');
+      const key2 = document.getElementById('join-key-create');
+      const pass1 = document.getElementById('join-pass-existing');
+      const pass2 = document.getElementById('join-pass-create');
+
+      name1.addEventListener('input', (e) => { name2.value = e.target.value; });
+      name2.addEventListener('input', (e) => { name1.value = e.target.value; });
+
+      key1.addEventListener('change', (e) => { key2.value = e.target.value; });
+      key2.addEventListener('change', (e) => { key1.value = e.target.value; });
+
+      pass1.addEventListener('input', (e) => { pass2.value = e.target.value; });
+      pass2.addEventListener('input', (e) => { pass1.value = e.target.value; });
+    }
+
+    // ── Init: populate key selectors ───────────────────
     (function loadKeys() {
       const keys = JSON.parse(localStorage.getItem('seraphim_keys') || '[]');
-      const sel = document.getElementById('join-key');
+      const sel1 = document.getElementById('join-key-existing');
+      const sel2 = document.getElementById('join-key-create');
+      
       keys.forEach((k, i) => {
-        const opt = document.createElement('option');
-        opt.value = i;
-        opt.textContent = `${k.name} (${k.email})`;
-        sel.appendChild(opt);
+        const opt1 = document.createElement('option');
+        opt1.value = i;
+        opt1.textContent = `${k.name} (${k.email})`;
+        sel1.appendChild(opt1);
+
+        const opt2 = opt1.cloneNode(true);
+        sel2.appendChild(opt2);
       });
+
+      syncInputs();
     })();
 
-    function generateRoom() {
-      document.getElementById('join-room').value = SeraphimCrypto.generateRoomCode();
+    function setRoomType(type) {
+      selectedRoomType = type;
+      document.getElementById('btn-type-temp').classList.toggle('active', type === 'temporary');
+      document.getElementById('btn-type-persist').classList.toggle('active', type === 'persistent');
     }
 
     function showStatus(id, type, msg) {
@@ -165,14 +242,12 @@
       el.textContent = msg;
     }
 
-    // ── FIX 1: Fingerprint Verification ───────────────
+    // ── Fingerprint Verification ───────────────
     function formatFingerprint(fp) {
-      // Break hex fingerprint into groups of 4 characters
       return fp.replace(/(.{4})/g, '$1 ').trim();
     }
 
     async function showFingerprintOverlay() {
-      // Find the first OTHER user's public key
       let otherUser = null;
       for (const [id, user] of roomUsers) {
         if (socket && id !== socket.id) {
@@ -181,7 +256,6 @@
         }
       }
       if (!otherUser || !otherUser.publicKey) {
-        // No other user yet — show overlay but keep button disabled
         document.getElementById('fp-display-value').textContent = 'Waiting for another user to join...';
         document.getElementById('fp-verify-btn').disabled = true;
         document.getElementById('fp-overlay').classList.remove('hidden');
@@ -205,7 +279,6 @@
       fingerprintVerified = true;
       document.getElementById('fp-overlay').classList.add('hidden');
       document.getElementById('fp-warning-banner').style.display = 'none';
-      // Unlock chat input
       const msgInput = document.getElementById('msg-input');
       msgInput.disabled = false;
       msgInput.placeholder = 'Type a message...';
@@ -213,17 +286,13 @@
       addSystemMessage('✓ Fingerprint verified. Chat unlocked.');
     }
 
-    // ── FIX 2: Kill Switch — total wipe ───────────────
+    // ── Kill Switch — total wipe ───────────────
     function executeKillWipe() {
-      // Wipe all localStorage data
       localStorage.removeItem('seraphim_keys');
       localStorage.removeItem('seraphim_contacts');
-      // Wipe session storage
       sessionStorage.clear();
-      // Clear messages DOM
       const chatEl = document.getElementById('chat-messages');
       if (chatEl) chatEl.innerHTML = '';
-      // Null out all key material in memory
       myPrivateKey = null;
       myPublicKey = null;
       myPassphrase = null;
@@ -231,30 +300,70 @@
       currentRoom = null;
       roomUsers.clear();
       fingerprintVerified = false;
-      // Disconnect socket
+      stopExpirationTimer();
       if (socket) { socket.disconnect(); socket = null; }
-      // Redirect to index after 1 second — app looks fresh, no trace
       setTimeout(() => { window.location.href = 'index.html'; }, 1000);
     }
 
-    // ── Join Room ─────────────────────────────────────
-    function joinRoom() {
-      myName = document.getElementById('join-name').value.trim();
-      const keyIdx = document.getElementById('join-key').value;
-      myPassphrase = document.getElementById('join-pass').value;
-      currentRoom = document.getElementById('join-room').value.trim().toUpperCase();
+    // ── Expiration countdown timer ─────────────
+    function startExpirationTimer(createdAt) {
+      clearInterval(expirationInterval);
+      const timerEl = document.getElementById('room-timer-display');
+      if (!timerEl) return;
+      timerEl.style.display = 'block';
 
-      if (!myName) return showStatus('join-status', 'error', '⚠ Enter your name.');
-      if (keyIdx === '') return showStatus('join-status', 'error', '⚠ Select a keypair.');
-      if (!myPassphrase) return showStatus('join-status', 'error', '⚠ Enter passphrase.');
-      if (!currentRoom) return showStatus('join-status', 'error', '⚠ Enter a room code.');
+      function updateTimer() {
+        const remaining = (24 * 60 * 60 * 1000) - (Date.now() - createdAt);
+        if (remaining <= 0) {
+          timerEl.textContent = 'Room Expired';
+          clearInterval(expirationInterval);
+          return;
+        }
+        const hours = Math.floor(remaining / (1000 * 60 * 60));
+        const minutes = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((remaining % (1000 * 60)) / 1000);
+        timerEl.textContent = `Expires in: ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+      }
+
+      updateTimer();
+      expirationInterval = setInterval(updateTimer, 1000);
+    }
+
+    function stopExpirationTimer() {
+      clearInterval(expirationInterval);
+      const timerEl = document.getElementById('room-timer-display');
+      if (timerEl) {
+        timerEl.style.display = 'none';
+      }
+    }
+
+    // ── Join/Create Room ───────────────────────
+    function joinRoom(isCreate) {
+      const fieldSuffix = isCreate ? 'create' : 'existing';
+      myName = document.getElementById(`join-name-${fieldSuffix}`).value.trim();
+      const keyIdx = document.getElementById(`join-key-${fieldSuffix}`).value;
+      myPassphrase = document.getElementById(`join-pass-${fieldSuffix}`).value;
+
+      let roomCode = '';
+      if (isCreate) {
+        roomCode = SeraphimCrypto.generateRoomCode();
+      } else {
+        roomCode = document.getElementById('join-room-existing').value.trim().toUpperCase();
+      }
+      currentRoom = roomCode;
+
+      const statusId = isCreate ? 'create-status' : 'join-status';
+
+      if (!myName) return showStatus(statusId, 'error', '⚠ Enter your name.');
+      if (keyIdx === '') return showStatus(statusId, 'error', '⚠ Select a keypair.');
+      if (!myPassphrase) return showStatus(statusId, 'error', '⚠ Enter passphrase.');
+      if (!currentRoom) return showStatus(statusId, 'error', '⚠ Enter a room code.');
 
       const keys = JSON.parse(localStorage.getItem('seraphim_keys') || '[]');
       const key = keys[parseInt(keyIdx)];
       myPublicKey = key.publicKey;
       myPrivateKey = key.privateKey;
 
-      // Connect to server
       const serverUrl = location.hostname === 'localhost' || location.hostname === '127.0.0.1'
         ? 'http://localhost:3000'
         : window.location.origin;
@@ -265,17 +374,33 @@
         socket.emit('join-room', {
           roomCode: currentRoom,
           name: myName,
-          publicKey: myPublicKey
+          publicKey: myPublicKey,
+          roomType: isCreate ? selectedRoomType : 'standard'
         });
       });
 
-      socket.on('room-joined', ({ roomCode, users }) => {
+      socket.on('room-joined', ({ roomCode, roomType, createdAt, users }) => {
         roomUsers.clear();
         users.forEach(u => roomUsers.set(u.id, { name: u.name, publicKey: u.publicKey }));
         document.getElementById('room-code-display').textContent = roomCode;
+
+        // Display room type
+        const typeDisplay = document.getElementById('room-type-display');
+        if (typeDisplay) {
+          if (roomType === 'temporary') {
+            typeDisplay.textContent = 'Temporary (24h)';
+            startExpirationTimer(createdAt);
+          } else if (roomType === 'persistent') {
+            typeDisplay.textContent = 'Persistent';
+            stopExpirationTimer();
+          } else {
+            typeDisplay.textContent = 'Standard';
+            stopExpirationTimer();
+          }
+        }
+
         document.getElementById('join-panel').classList.add('hidden');
         document.getElementById('chat-panel').classList.remove('hidden');
-        // Reset verification state
         fingerprintVerified = false;
         document.getElementById('fp-warning-banner').style.display = 'block';
         document.getElementById('msg-input').disabled = true;
@@ -283,7 +408,6 @@
         document.getElementById('send-btn').disabled = true;
         renderUsers();
         addSystemMessage('You joined the room. All messages are end-to-end encrypted.');
-        // Show fingerprint verification overlay
         showFingerprintOverlay();
       });
 
@@ -291,7 +415,6 @@
         roomUsers.set(id, { name, publicKey });
         renderUsers();
         addSystemMessage(`${name} joined the room.`);
-        // If fingerprint not yet verified and overlay is showing, update it with new user's key
         if (!fingerprintVerified) {
           showFingerprintOverlay();
         }
@@ -304,7 +427,7 @@
       });
 
       socket.on('message', async ({ senderId, senderName, ciphertext, timestamp }) => {
-        if (!myPrivateKey || !myPassphrase) return; // killed
+        if (!myPrivateKey || !myPassphrase) return;
         try {
           const plaintext = await SeraphimCrypto.decryptMessage(ciphertext, myPrivateKey, myPassphrase);
           addMessage(senderName, plaintext, timestamp, false);
@@ -313,9 +436,7 @@
         }
       });
 
-      // FIX 2: Kill switch handler — full wipe for EVERYONE
       socket.on('kill-switch', ({ triggeredBy, timestamp }) => {
-        // Show kill message briefly before wipe
         const chatEl = document.getElementById('chat-messages');
         if (chatEl) {
           chatEl.innerHTML = '';
@@ -324,8 +445,12 @@
           div.textContent = `KILL SWITCH ACTIVATED BY ${triggeredBy.toUpperCase()}. ALL DATA DESTROYED.`;
           chatEl.appendChild(div);
         }
-        // Execute full wipe (localStorage, sessionStorage, memory, disconnect, redirect)
         executeKillWipe();
+      });
+
+      socket.on('room-expired', ({ roomCode }) => {
+        alert('This temporary chat room has expired (24h limit) and has been deleted.');
+        leaveRoom();
       });
 
       socket.on('typing', ({ name }) => {
@@ -340,19 +465,18 @@
       });
 
       socket.on('connect_error', () => {
-        showStatus('join-status', 'error', '✗ Cannot connect. Is the server running on port 3000?');
+        showStatus(statusId, 'error', '✗ Cannot connect. Is the server running?');
       });
     }
 
     // ── Send Message ──────────────────────────────────
     async function sendMessage() {
-      if (!fingerprintVerified) return; // locked until verified
+      if (!fingerprintVerified) return;
       const input = document.getElementById('msg-input');
       const text = input.value.trim();
       if (!text || !socket) return;
       input.value = '';
 
-      // Encrypt for each recipient
       const encryptedMessages = [];
       for (const [id, user] of roomUsers) {
         if (id === socket.id) continue;
@@ -374,12 +498,11 @@
       }
     }
 
-    // ── Kill Switch — NO confirmation, instant ────────
+    // ── Kill Switch ────────
     function triggerKillSwitch() {
       if (socket && currentRoom) {
         socket.emit('kill-switch', { roomCode: currentRoom });
       }
-      // Also execute locally immediately (don't wait for server echo)
       executeKillWipe();
     }
 
@@ -388,6 +511,7 @@
       if (socket) { socket.disconnect(); socket = null; }
       roomUsers.clear();
       fingerprintVerified = false;
+      stopExpirationTimer();
       document.getElementById('chat-messages').innerHTML = '';
       document.getElementById('chat-panel').classList.add('hidden');
       document.getElementById('join-panel').classList.remove('hidden');

@@ -42,12 +42,20 @@
 
         <div class="form-group">
           <label class="form-label" for="plaintext-input">Message</label>
-          <textarea class="form-textarea tall" id="plaintext-input" placeholder="Type your secret message here..."></textarea>
+          <div class="drag-drop-zone" id="msg-drop-zone">
+            Drag &amp; drop a text file (.txt) here, or click to load message
+            <input type="file" id="msg-file-input" style="display:none;" accept=".txt">
+          </div>
+          <textarea class="form-textarea tall mt-1" id="plaintext-input" placeholder="Type your secret message here..."></textarea>
         </div>
 
         <div class="form-group">
           <label class="form-label" for="pubkey-input">Recipient's Public Key</label>
-          <textarea class="form-textarea" id="pubkey-input" placeholder="-----BEGIN PGP PUBLIC KEY BLOCK-----&#10;...paste the recipient's public key here...&#10;-----END PGP PUBLIC KEY BLOCK-----"></textarea>
+          <div class="drag-drop-zone" id="key-drop-zone">
+            Drag &amp; drop a public key file (.asc, .pub, .txt) here, or click to load
+            <input type="file" id="key-file-input" style="display:none;" accept=".asc,.pub,.txt">
+          </div>
+          <textarea class="form-textarea mt-1" id="pubkey-input" placeholder="-----BEGIN PGP PUBLIC KEY BLOCK-----&#10;...paste the recipient's public key here...&#10;-----END PGP PUBLIC KEY BLOCK-----" style="height:120px;"></textarea>
           <div class="mt-1">
             <button class="btn btn-ghost btn-sm" id="load-contact-btn" onclick="showContactPicker()">Load from contacts</button>
           </div>
@@ -108,6 +116,52 @@
       el.className = `status show ${type}`;
       el.textContent = msg;
     }
+
+    function initDragDrop(zoneId, inputId, textareaId) {
+      const zone = document.getElementById(zoneId);
+      const input = document.getElementById(inputId);
+      const textarea = document.getElementById(textareaId);
+
+      if (!zone || !input || !textarea) return;
+
+      zone.addEventListener('click', () => input.click());
+
+      zone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        zone.classList.add('dragover');
+      });
+
+      zone.addEventListener('dragleave', () => {
+        zone.classList.remove('dragover');
+      });
+
+      zone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        zone.classList.remove('dragover');
+        if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+          handleFile(e.dataTransfer.files[0]);
+        }
+      });
+
+      input.addEventListener('change', (e) => {
+        if (e.target.files && e.target.files[0]) {
+          handleFile(e.target.files[0]);
+        }
+      });
+
+      function handleFile(file) {
+        const reader = new FileReader();
+        reader.onload = (evt) => {
+          textarea.value = evt.target.result;
+          showStatus('encrypt-status', 'success', `✓ Loaded content from "${file.name}"`);
+        };
+        reader.readAsText(file);
+      }
+    }
+
+    // Initialize drag and drop areas
+    initDragDrop('key-drop-zone', 'key-file-input', 'pubkey-input');
+    initDragDrop('msg-drop-zone', 'msg-file-input', 'plaintext-input');
 
     async function handleEncrypt() {
       const plaintext = document.getElementById('plaintext-input').value.trim();

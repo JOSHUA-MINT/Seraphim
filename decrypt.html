@@ -54,14 +54,19 @@
 
         <div class="form-group">
           <label class="form-label" for="ciphertext-input">Encrypted Message</label>
-          <textarea class="form-textarea tall" id="ciphertext-input" placeholder="-----BEGIN PGP MESSAGE-----&#10;...&#10;-----END PGP MESSAGE-----"></textarea>
+          <div class="drag-drop-zone" id="ct-drop-zone">
+            Drag &amp; drop PGP encrypted file (.pgp, .asc, .txt) here, or click to load
+            <input type="file" id="ct-file-input" style="display:none;" accept=".pgp,.asc,.txt">
+          </div>
+          <textarea class="form-textarea tall mt-1" id="ciphertext-input" placeholder="-----BEGIN PGP MESSAGE-----&#10;...&#10;-----END PGP MESSAGE-----"></textarea>
         </div>
 
         <div class="form-group">
           <label class="form-label">Your Private Key</label>
           <!-- Key is stored in JS memory only — never visible in the DOM -->
-          <div class="key-loaded-indicator empty" id="key-indicator">
-            No key loaded — click below to load one
+          <div class="key-loaded-indicator empty" id="key-indicator" style="display:flex; align-items:center; justify-content:between; padding: 0.9rem 1.2rem; border-radius: 8px; border: 1px solid var(--border-subtle); transition: border-color 0.25s;">
+            <span>No key loaded — secure vault locked</span>
+            <span style="font-size: 1.1rem; margin-left: auto;">🔒</span>
           </div>
           <div class="btn-group mt-1">
             <button class="btn btn-ghost btn-sm" onclick="showKeyPicker()">Load saved key</button>
@@ -83,8 +88,11 @@
         <div class="card-header">
           <div>
             <div class="card-title">Decrypted Message</div>
-            <div class="card-subtitle">Auto-clears after 60 seconds of inactivity</div>
+            <div class="card-subtitle" id="decrypt-timer-desc">Auto-clears after 60 seconds</div>
           </div>
+        </div>
+        <div id="countdown-bar-wrap" style="width: 100%; height: 3px; background: rgba(255,255,255,0.05); margin-bottom: 1rem; border-radius: 2px; overflow: hidden;">
+          <div id="countdown-bar" style="width: 100%; height: 100%; background: var(--accent-gold); transition: width 1s linear;"></div>
         </div>
         <div class="output-box output-secure" id="decrypted-output" style="color:var(--text-primary);"></div>
         <div class="btn-group mt-2">
@@ -136,6 +144,13 @@
     let loadedPrivateKey = null;
     let loadedKeyName = null;
     let outputClearTimer = null;
+    let countdownInterval = null;
+
+    function esc(s) {
+      const d = document.createElement('div');
+      d.textContent = s;
+      return d.innerHTML;
+    }
 
     function showStatus(id, type, msg) {
       const el = document.getElementById(id);
@@ -143,16 +158,62 @@
       el.textContent = msg;
     }
 
+    function initDragDrop(zoneId, inputId, textareaId) {
+      const zone = document.getElementById(zoneId);
+      const input = document.getElementById(inputId);
+      const textarea = document.getElementById(textareaId);
+
+      if (!zone || !input || !textarea) return;
+
+      zone.addEventListener('click', () => input.click());
+
+      zone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        zone.classList.add('dragover');
+      });
+
+      zone.addEventListener('dragleave', () => {
+        zone.classList.remove('dragover');
+      });
+
+      zone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        zone.classList.remove('dragover');
+        if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+          handleFile(e.dataTransfer.files[0]);
+        }
+      });
+
+      input.addEventListener('change', (e) => {
+        if (e.target.files && e.target.files[0]) {
+          handleFile(e.target.files[0]);
+        }
+      });
+
+      function handleFile(file) {
+        const reader = new FileReader();
+        reader.onload = (evt) => {
+          textarea.value = evt.target.result;
+          showStatus('decrypt-status', 'success', `✓ Loaded content from "${file.name}"`);
+        };
+        reader.readAsText(file);
+      }
+    }
+
+    initDragDrop('ct-drop-zone', 'ct-file-input', 'ciphertext-input');
+
     function updateKeyIndicator() {
       const indicator = document.getElementById('key-indicator');
       const clearBtn = document.getElementById('clear-key-btn');
       if (loadedPrivateKey) {
         indicator.className = 'key-loaded-indicator';
-        indicator.textContent = 'Key loaded: ' + (loadedKeyName || 'Manual key');
+        indicator.style.borderColor = 'var(--accent-gold)';
+        indicator.innerHTML = `<span>Key loaded: <strong>${esc(loadedKeyName || 'Manual key')}</strong></span> <span style="font-size: 1.1rem; margin-left: auto;">🔓</span>`;
         clearBtn.style.display = 'inline-flex';
       } else {
         indicator.className = 'key-loaded-indicator empty';
-        indicator.textContent = 'No key loaded — click below to load one';
+        indicator.style.borderColor = 'var(--border-subtle)';
+        indicator.innerHTML = `<span>No key loaded — secure vault locked</span> <span style="font-size: 1.1rem; margin-left: auto;">🔒</span>`;
         clearBtn.style.display = 'none';
       }
     }
@@ -161,6 +222,28 @@
       loadedPrivateKey = null;
       loadedKeyName = null;
       updateKeyIndicator();
+    }
+
+    function startOutputCountdown() {
+      clearInterval(countdownInterval);
+      clearTimeout(outputClearTimer);
+      const bar = document.getElementById('countdown-bar');
+      const desc = document.getElementById('decrypt-timer-desc');
+      if (!bar) return;
+
+      let remaining = 60;
+      bar.style.width = '100%';
+      desc.textContent = `Auto-clears in ${remaining}s`;
+
+      countdownInterval = setInterval(() => {
+        remaining--;
+        bar.style.width = `${(remaining / 60) * 100}%`;
+        desc.textContent = `Auto-clears in ${remaining}s`;
+        if (remaining <= 0) {
+          clearInterval(countdownInterval);
+          clearOutput();
+        }
+      }, 1000);
     }
 
     async function handleDecrypt() {
@@ -176,7 +259,9 @@
       btn.innerHTML = 'Decrypting...';
       try {
         const decrypted = await SeraphimCrypto.decryptMessage(ct, loadedPrivateKey, pp);
-        document.getElementById('decrypted-output').textContent = decrypted;
+        const outputEl = document.getElementById('decrypted-output');
+        outputEl.textContent = decrypted;
+        outputEl.style.color = 'var(--text-primary)';
         document.getElementById('output-card').style.display = 'block';
         showStatus('decrypt-status', 'success', '✓ Decrypted successfully!');
 
@@ -186,9 +271,8 @@
         loadedKeyName = null;
         updateKeyIndicator();
 
-        // Auto-clear decrypted output after 60 seconds
-        clearTimeout(outputClearTimer);
-        outputClearTimer = setTimeout(() => { clearOutput(); }, 60000);
+        // Start countdown timer
+        startOutputCountdown();
       } catch (e) {
         showStatus('decrypt-status', 'error', '✗ Failed: ' + e.message);
       } finally {
@@ -199,15 +283,20 @@
 
     function copyOutput() {
       navigator.clipboard.writeText(document.getElementById('decrypted-output').textContent);
-      // Reset auto-clear timer on interaction
-      clearTimeout(outputClearTimer);
-      outputClearTimer = setTimeout(() => { clearOutput(); }, 60000);
+      // Reset countdown on interaction
+      startOutputCountdown();
     }
 
     function clearOutput() {
+      clearInterval(countdownInterval);
       clearTimeout(outputClearTimer);
-      document.getElementById('decrypted-output').textContent = 'Output cleared for security';
-      document.getElementById('decrypted-output').style.color = 'var(--text-muted)';
+      const outputEl = document.getElementById('decrypted-output');
+      outputEl.textContent = 'Output cleared for security';
+      outputEl.style.color = 'var(--text-muted)';
+      const desc = document.getElementById('decrypt-timer-desc');
+      if (desc) desc.textContent = 'Cleared';
+      const bar = document.getElementById('countdown-bar');
+      if (bar) bar.style.width = '0%';
     }
 
     // ── Key Picker (from localStorage) ────────────────

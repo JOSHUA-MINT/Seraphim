@@ -24,112 +24,118 @@
   </header>
 
   <main class="page-content reveal">
-    <div class="page-container">
+    <div class="page-container wide">
       <div class="page-title">
         <h1>Key Manager</h1>
         <p>Generate, store, and manage your PGP keypairs. Keys are saved in your browser only.</p>
       </div>
 
-      <!-- Generate Key Card -->
-      <div class="card" style="margin-bottom:1.5rem;">
-        <div class="card-header">
-          <div>
-            <div class="card-title">Generate New Keypair</div>
-            <div class="card-subtitle">ECC Curve25519 — fast, modern, secure</div>
-          </div>
-        </div>
-
-        <div class="form-row" style="display:flex;gap:1rem;margin-bottom:1.25rem;">
-          <div class="form-group" style="flex:1;margin-bottom:0;">
-            <label class="form-label" for="gen-name">Name</label>
-            <input class="form-input" id="gen-name" placeholder="Your name">
-          </div>
-          <div class="form-group" style="flex:1;margin-bottom:0;">
-            <label class="form-label" for="gen-email">Email</label>
-            <input class="form-input" id="gen-email" type="email" placeholder="you@example.com">
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label" for="gen-pass">Passphrase</label>
-          <input class="form-input" id="gen-pass" type="password" placeholder="Strong passphrase to protect your key">
-        </div>
-
-        <button class="btn btn-primary" id="gen-btn" onclick="handleGenerate()">Generate Keys</button>
-        <div class="status" id="gen-status"></div>
-      </div>
-
-      <!-- Generated Keys Output -->
-      <div class="card mt-2" id="gen-output" style="display:none; margin-bottom:1.5rem;">
-        <div class="card-header">
-          <div>
-            <div class="card-title">Generated Keypair</div>
-            <div class="card-subtitle" id="gen-fingerprint" style="font-family:var(--font-mono);color:var(--text-silver);"></div>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">Public Key</label>
-          <div class="output-box" id="gen-pubkey" style="max-height:150px;overflow-y:auto;"></div>
-          <button class="btn btn-ghost btn-sm mt-1" onclick="copyEl('gen-pubkey')">Copy Public Key</button>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">Private Key</label>
-          <div class="output-box" id="gen-privkey" style="max-height:150px;overflow-y:auto;color:var(--text-silver);"></div>
-          <button class="btn btn-ghost btn-sm mt-1" onclick="copyEl('gen-privkey')">Copy Private Key</button>
-        </div>
-
-        <div class="btn-group">
-          <button class="btn btn-primary" onclick="saveGenerated()">Save to Browser</button>
-        </div>
-        <div class="status" id="save-status"></div>
-      </div>
-
-      <!-- Saved Keys -->
-      <div class="card mt-2" style="margin-bottom:1.5rem;">
-        <div class="card-header">
-          <div>
-            <div class="card-title">My Saved Keys</div>
-            <div class="card-subtitle" id="key-count">Loading...</div>
-          </div>
-        </div>
-        <div id="saved-keys" class="key-list"></div>
-      </div>
-
-      <!-- Contacts -->
-      <div class="card mt-2" style="margin-bottom:1.5rem;">
-        <div class="card-header">
-          <div>
-            <div class="card-title">Contacts</div>
-            <div class="card-subtitle">Saved public keys of people you message</div>
-          </div>
-        </div>
-        <div id="contacts-list" class="key-list"></div>
-        <div class="mt-2">
-          <button class="btn btn-secondary btn-sm" onclick="showAddContact()">Add Contact</button>
-        </div>
-      </div>
-
-      <!-- Add Contact Modal -->
-      <div id="add-contact-modal" class="hidden">
-        <div class="modal-overlay" onclick="if(event.target===this)hideAddContact()">
-          <div class="card modal-content">
+      <div class="grid-2col">
+        <!-- Left Column: Actions -->
+        <div>
+          <!-- Generate Key Card -->
+          <div class="card" style="margin-bottom:1.5rem;">
             <div class="card-header">
-              <div><div class="card-title">Add Contact</div></div>
+              <div>
+                <div class="card-title">Generate New Keypair</div>
+                <div class="card-subtitle">ECC Curve25519 — fast, modern, secure</div>
+              </div>
+            </div>
+
+            <div class="form-row" style="display:flex;gap:1rem;margin-bottom:1.25rem;">
+              <div class="form-group" style="flex:1;margin-bottom:0;">
+                <label class="form-label" for="gen-name">Name</label>
+                <input class="form-input" id="gen-name" placeholder="Your name">
+              </div>
+              <div class="form-group" style="flex:1;margin-bottom:0;">
+                <label class="form-label" for="gen-email">Email</label>
+                <input class="form-input" id="gen-email" type="email" placeholder="you@example.com">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="gen-pass">Passphrase</label>
+              <input class="form-input" id="gen-pass" type="password" placeholder="Strong passphrase to protect your key">
+            </div>
+
+            <button class="btn btn-primary" id="gen-btn" onclick="handleGenerate()">Generate Keys</button>
+            <div class="status" id="gen-status"></div>
+          </div>
+
+          <!-- Generated Keys Output -->
+          <div class="card mt-2" id="gen-output" style="display:none; margin-bottom:1.5rem;">
+            <div class="card-header">
+              <div>
+                <div class="card-title">Generated Keypair</div>
+                <div class="card-subtitle" id="gen-fingerprint" style="font-family:var(--font-mono);color:var(--text-silver);"></div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Public Key</label>
+              <div class="output-box" id="gen-pubkey" style="max-height:150px;overflow-y:auto;"></div>
+              <button class="btn btn-ghost btn-sm mt-1" onclick="copyEl('gen-pubkey', this)">Copy Public Key</button>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Private Key</label>
+              <div class="output-box" id="gen-privkey" style="max-height:150px;overflow-y:auto;color:var(--text-silver);"></div>
+              <button class="btn btn-ghost btn-sm mt-1" onclick="copyEl('gen-privkey', this)">Copy Private Key</button>
+            </div>
+
+            <div class="btn-group">
+              <button class="btn btn-primary" onclick="saveGenerated()">Save to Browser</button>
+            </div>
+            <div class="status" id="save-status"></div>
+          </div>
+
+          <!-- Add Contact Card -->
+          <div class="card" style="margin-bottom:1.5rem;">
+            <div class="card-header">
+              <div>
+                <div class="card-title">Add Contact</div>
+                <div class="card-subtitle">Import public key of a contact</div>
+              </div>
             </div>
             <div class="form-group">
-              <label class="form-label" for="contact-name">Name</label>
+              <label class="form-label" for="contact-name">Contact Name</label>
               <input class="form-input" id="contact-name" placeholder="Contact name">
             </div>
             <div class="form-group">
-              <label class="form-label" for="contact-pubkey">Public Key</label>
-              <textarea class="form-textarea" id="contact-pubkey" placeholder="Paste their public key"></textarea>
+              <label class="form-label" for="contact-pubkey">Public Key Block</label>
+              <div class="drag-drop-zone" id="contact-key-drop-zone">
+                Drag &amp; drop contact's public key file (.asc, .pub, .txt) here, or click to load
+                <input type="file" id="contact-key-file-input" style="display:none;" accept=".asc,.pub,.txt">
+              </div>
+              <textarea class="form-textarea mt-1" id="contact-pubkey" placeholder="Paste their public key here..." style="height:100px;"></textarea>
             </div>
-            <div class="btn-group">
-              <button class="btn btn-primary" onclick="addContact()">Save Contact</button>
-              <button class="btn btn-ghost" onclick="hideAddContact()">Cancel</button>
+            <button class="btn btn-secondary btn-block" onclick="addContact()">Save Contact</button>
+            <div class="status" id="contact-status"></div>
+          </div>
+        </div>
+
+        <!-- Right Column: Lists -->
+        <div>
+          <!-- Saved Keys -->
+          <div class="card" style="margin-bottom:1.5rem;">
+            <div class="card-header">
+              <div>
+                <div class="card-title">My Saved Keys</div>
+                <div class="card-subtitle" id="key-count">Loading...</div>
+              </div>
             </div>
+            <div id="saved-keys" class="key-list"></div>
+          </div>
+
+          <!-- Contacts -->
+          <div class="card" style="margin-bottom:1.5rem;">
+            <div class="card-header">
+              <div>
+                <div class="card-title">Contacts</div>
+                <div class="card-subtitle">People you communicate with</div>
+              </div>
+            </div>
+            <div id="contacts-list" class="key-list"></div>
           </div>
         </div>
       </div>
@@ -141,15 +147,71 @@
   <script>
     let lastGenerated = null;
 
+    function esc(s) {
+      const d = document.createElement('div');
+      d.textContent = s;
+      return d.innerHTML;
+    }
+
     function showStatus(id, type, msg) {
       const el = document.getElementById(id);
+      if (!el) return;
       el.className = `status show ${type}`;
       el.textContent = msg;
     }
 
-    function copyEl(id) {
-      navigator.clipboard.writeText(document.getElementById(id).textContent);
+    function copyEl(id, btn) {
+      navigator.clipboard.writeText(document.getElementById(id).textContent).then(() => {
+        const oldText = btn.textContent;
+        btn.textContent = '✓ Copied!';
+        setTimeout(() => { btn.textContent = oldText; }, 1500);
+      });
     }
+
+    function initDragDrop(zoneId, inputId, textareaId) {
+      const zone = document.getElementById(zoneId);
+      const input = document.getElementById(inputId);
+      const textarea = document.getElementById(textareaId);
+
+      if (!zone || !input || !textarea) return;
+
+      zone.addEventListener('click', () => input.click());
+
+      zone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        zone.classList.add('dragover');
+      });
+
+      zone.addEventListener('dragleave', () => {
+        zone.classList.remove('dragover');
+      });
+
+      zone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        zone.classList.remove('dragover');
+        if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+          handleFile(e.dataTransfer.files[0]);
+        }
+      });
+
+      input.addEventListener('change', (e) => {
+        if (e.target.files && e.target.files[0]) {
+          handleFile(e.target.files[0]);
+        }
+      });
+
+      function handleFile(file) {
+        const reader = new FileReader();
+        reader.onload = (evt) => {
+          textarea.value = evt.target.result;
+          showStatus('contact-status', 'success', `✓ Loaded content from "${file.name}"`);
+        };
+        reader.readAsText(file);
+      }
+    }
+
+    // Initialize drag & drop for contact public key import
+    initDragDrop('contact-key-drop-zone', 'contact-key-file-input', 'contact-pubkey');
 
     // Generate
     async function handleGenerate() {
@@ -206,7 +268,7 @@
       document.getElementById('key-count').textContent = keys.length + ' keypair(s)';
 
       if (keys.length === 0) {
-        el.innerHTML = '<p class="text-muted text-sm text-center">No saved keys yet. Generate one above.</p>';
+        el.innerHTML = '<p class="text-muted text-sm text-center">No saved keys yet. Generate one.</p>';
         return;
       }
 
@@ -214,24 +276,28 @@
         <div class="list-item">
           <div class="list-item-header">
             <div>
-              <div class="list-item-title">${k.name}</div>
-              <div class="list-item-subtitle">${k.email || ''}</div>
+              <div class="list-item-title">${esc(k.name)}</div>
+              <div class="list-item-subtitle">${esc(k.email || '')}</div>
             </div>
             <div class="btn-group">
-              <button class="btn btn-ghost btn-sm" onclick="exportKey(${i},'pub')" title="Copy public key">Pub Key</button>
-              <button class="btn btn-ghost btn-sm" onclick="exportKey(${i},'priv')" title="Copy private key">Priv Key</button>
+              <button class="btn btn-ghost btn-sm" onclick="exportKey(${i},'pub', this)" title="Copy public key">Pub Key</button>
+              <button class="btn btn-ghost btn-sm" onclick="exportKey(${i},'priv', this)" title="Copy private key">Priv Key</button>
               <button class="btn btn-killswitch" style="padding:4px 8px;font-size:11px;" onclick="deleteKey(${i})">Delete</button>
             </div>
           </div>
-          <div class="list-item-meta">${k.fingerprint || 'N/A'}</div>
+          <div class="list-item-meta">${esc(k.fingerprint || 'N/A')}</div>
         </div>
       `).join('');
     }
 
-    function exportKey(idx, type) {
+    function exportKey(idx, type, btn) {
       const keys = JSON.parse(localStorage.getItem('seraphim_keys') || '[]');
       const text = type === 'pub' ? keys[idx].publicKey : keys[idx].privateKey;
-      navigator.clipboard.writeText(text);
+      navigator.clipboard.writeText(text).then(() => {
+        const oldText = btn.textContent;
+        btn.textContent = '✓ Copied';
+        setTimeout(() => { btn.textContent = oldText; }, 1500);
+      });
     }
 
     function deleteKey(idx) {
@@ -253,9 +319,9 @@
       el.innerHTML = contacts.map((c, i) => `
         <div class="list-item">
           <div class="list-item-header">
-            <div class="list-item-title">${c.name}</div>
+            <div class="list-item-title">${esc(c.name)}</div>
             <div class="btn-group">
-              <button class="btn btn-ghost btn-sm" onclick="copyContactKey(${i})">Copy Key</button>
+              <button class="btn btn-ghost btn-sm" onclick="copyContactKey(${i}, this)">Copy Key</button>
               <button class="btn btn-killswitch" style="padding:4px 8px;font-size:11px;" onclick="deleteContact(${i})">Delete</button>
             </div>
           </div>
@@ -263,9 +329,13 @@
       `).join('');
     }
 
-    function copyContactKey(idx) {
+    function copyContactKey(idx, btn) {
       const contacts = JSON.parse(localStorage.getItem('seraphim_contacts') || '[]');
-      navigator.clipboard.writeText(contacts[idx].publicKey);
+      navigator.clipboard.writeText(contacts[idx].publicKey).then(() => {
+        const oldText = btn.textContent;
+        btn.textContent = '✓ Copied';
+        setTimeout(() => { btn.textContent = oldText; }, 1500);
+      });
     }
 
     function deleteContact(idx) {
@@ -276,20 +346,17 @@
       renderContacts();
     }
 
-    function showAddContact() { document.getElementById('add-contact-modal').classList.remove('hidden'); }
-    function hideAddContact() { document.getElementById('add-contact-modal').classList.add('hidden'); }
-
     function addContact() {
       const name = document.getElementById('contact-name').value.trim();
       const pk = document.getElementById('contact-pubkey').value.trim();
-      if (!name || !pk) return alert('Name and public key required.');
+      if (!name || !pk) return showStatus('contact-status', 'error', '⚠ Name and public key required.');
       const contacts = JSON.parse(localStorage.getItem('seraphim_contacts') || '[]');
       contacts.push({ id: crypto.randomUUID(), name, publicKey: pk });
       localStorage.setItem('seraphim_contacts', JSON.stringify(contacts));
-      hideAddContact();
       renderContacts();
       document.getElementById('contact-name').value = '';
       document.getElementById('contact-pubkey').value = '';
+      showStatus('contact-status', 'success', '✓ Contact added successfully.');
     }
 
     // Init
