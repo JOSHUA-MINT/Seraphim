@@ -3,103 +3,102 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self' ws://localhost:3000 wss://localhost:3000; img-src 'self' data:; font-src 'self';">
   <title>Seraphim — Encrypt Message</title>
   <meta name="description" content="Encrypt a message with PGP public key encryption. End-to-end, zero-knowledge.">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="page-container">
+  <header class="global-header">
+    <a href="index.html" class="global-logo">
+      <img src="lib/seraphim-logo.png" class="header-svg" alt="Seraphim" onerror="this.style.display='none'">
+    </a>
+    <nav class="header-nav">
+      <a href="index.html">Home</a>
+      <a href="encrypt.html">Encrypt</a>
+      <a href="decrypt.html">Decrypt</a>
+      <a href="keys.html">Keys</a>
+      <a href="chat.html">Chat</a>
+    </nav>
+  </header>
 
-    <!-- Header -->
-    <header class="site-header">
-      <a href="index.html" class="site-logo">
-        <span class="site-logo-icon">🔐</span>
-        <span class="site-logo-text">Seraphim</span>
-      </a>
-      <nav class="site-nav">
-        <a href="encrypt.html" class="nav-link active">Encrypt</a>
-        <a href="decrypt.html" class="nav-link">Decrypt</a>
-        <a href="keys.html" class="nav-link">Keys</a>
-        <a href="chat.html" class="nav-link">Chat</a>
-      </nav>
-    </header>
+  <main class="page-content reveal">
+    <div class="page-container">
+      <!-- Title -->
+      <div class="page-title">
+        <h1>Encrypt Message</h1>
+        <p>Encrypt a message with the recipient's public key. Only they can decrypt it.</p>
+      </div>
 
-    <!-- Title -->
-    <div class="page-title fade-in">
-      <h1>🔒 Encrypt Message</h1>
-      <p>Encrypt a message with the recipient's public key. Only they can decrypt it.</p>
-    </div>
+      <!-- Encrypt Card -->
+      <div class="card" style="margin-bottom:1.5rem;">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Compose</div>
+            <div class="card-subtitle">Enter your message and the recipient's public key</div>
+          </div>
+        </div>
 
-    <!-- Encrypt Card -->
-    <div class="card fade-in">
-      <div class="card-header">
-        <div class="card-icon">📝</div>
-        <div>
-          <div class="card-title">Compose</div>
-          <div class="card-subtitle">Enter your message and the recipient's public key</div>
+        <div class="form-group">
+          <label class="form-label" for="plaintext-input">Message</label>
+          <textarea class="form-textarea tall" id="plaintext-input" placeholder="Type your secret message here..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="pubkey-input">Recipient's Public Key</label>
+          <textarea class="form-textarea" id="pubkey-input" placeholder="-----BEGIN PGP PUBLIC KEY BLOCK-----&#10;...paste the recipient's public key here...&#10;-----END PGP PUBLIC KEY BLOCK-----"></textarea>
+          <div class="mt-1">
+            <button class="btn btn-ghost btn-sm" id="load-contact-btn" onclick="showContactPicker()">Load from contacts</button>
+          </div>
+        </div>
+
+        <div class="btn-group">
+          <button class="btn btn-primary" id="encrypt-btn" onclick="handleEncrypt()">
+            Encrypt Message
+          </button>
+        </div>
+
+        <div class="status" id="encrypt-status"></div>
+      </div>
+
+      <!-- Output Card -->
+      <div class="card mt-2" id="output-card" style="display: none; margin-bottom:1.5rem;">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Encrypted Output</div>
+            <div class="card-subtitle">Copy this and send it to the recipient</div>
+          </div>
+        </div>
+
+        <div class="output-box" id="encrypted-output"></div>
+
+        <div class="btn-group mt-2">
+          <button class="btn btn-secondary btn-sm" onclick="copyOutput()">Copy to Clipboard</button>
+          <button class="btn btn-ghost btn-sm" onclick="downloadOutput()">Download .pgp</button>
         </div>
       </div>
 
-      <div class="form-group">
-        <label class="form-label" for="plaintext-input">Message</label>
-        <textarea class="form-textarea tall" id="plaintext-input" placeholder="Type your secret message here..."></textarea>
-      </div>
-
-      <div class="form-group">
-        <label class="form-label" for="pubkey-input">Recipient's Public Key</label>
-        <textarea class="form-textarea" id="pubkey-input" placeholder="-----BEGIN PGP PUBLIC KEY BLOCK-----&#10;...paste the recipient's public key here...&#10;-----END PGP PUBLIC KEY BLOCK-----"></textarea>
-        <div class="mt-1">
-          <button class="btn btn-ghost btn-sm" id="load-contact-btn" onclick="showContactPicker()">📇 Load from contacts</button>
-        </div>
-      </div>
-
-      <div class="btn-group">
-        <button class="btn btn-primary" id="encrypt-btn" onclick="handleEncrypt()">
-          🔒 Encrypt Message
-        </button>
-      </div>
-
-      <div class="status" id="encrypt-status"></div>
-    </div>
-
-    <!-- Output Card -->
-    <div class="card fade-in mt-2" id="output-card" style="display: none;">
-      <div class="card-header">
-        <div class="card-icon">📤</div>
-        <div>
-          <div class="card-title">Encrypted Output</div>
-          <div class="card-subtitle">Copy this and send it to the recipient</div>
-        </div>
-      </div>
-
-      <div class="output-box" id="encrypted-output"></div>
-
-      <div class="btn-group mt-2">
-        <button class="btn btn-secondary btn-sm" onclick="copyOutput()">📋 Copy to Clipboard</button>
-        <button class="btn btn-ghost btn-sm" onclick="downloadOutput()">💾 Download .pgp</button>
-      </div>
-    </div>
-
-    <!-- Contact Picker Modal -->
-    <div id="contact-modal" class="hidden">
-      <div style="position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:100;display:flex;align-items:center;justify-content:center;padding:1rem;" onclick="if(event.target===this)hideContactPicker()">
-        <div class="card" style="max-width:480px;width:100%;max-height:60vh;overflow-y:auto;">
-          <div class="card-header">
-            <div class="card-icon">📇</div>
-            <div>
-              <div class="card-title">Select Contact</div>
-              <div class="card-subtitle">Choose a saved contact's public key</div>
+      <!-- Contact Picker Modal -->
+      <div id="contact-modal" class="hidden">
+        <div class="modal-overlay" onclick="if(event.target===this)hideContactPicker()">
+          <div class="card modal-content">
+            <div class="card-header">
+              <div>
+                <div class="card-title">Select Contact</div>
+                <div class="card-subtitle">Choose a saved contact's public key</div>
+              </div>
+            </div>
+            <div id="contact-list" class="key-list"></div>
+            <div class="mt-2">
+              <button class="btn btn-ghost btn-sm btn-block" onclick="hideContactPicker()">Cancel</button>
             </div>
           </div>
-          <div id="contact-list" class="key-list"></div>
-          <div class="mt-2">
-            <button class="btn btn-ghost btn-sm btn-block" onclick="hideContactPicker()">Cancel</button>
-          </div>
         </div>
       </div>
-    </div>
 
-  </div>
+    </div>
+  </main>
 
   <script src="lib/openpgp.min.js"></script>
   <script src="crypto.js"></script>
@@ -119,7 +118,7 @@
       if (!pubkey) return showStatus('encrypt-status', 'error', '⚠ Please provide the recipient\'s public key.');
 
       btn.disabled = true;
-      btn.innerHTML = '<span class="spinner"></span> Encrypting...';
+      btn.innerHTML = 'Encrypting...';
 
       try {
         const encrypted = await SeraphimCrypto.encryptMessage(plaintext, pubkey);
@@ -130,7 +129,7 @@
         showStatus('encrypt-status', 'error', '✗ Encryption failed: ' + e.message);
       } finally {
         btn.disabled = false;
-        btn.innerHTML = '🔒 Encrypt Message';
+        btn.innerHTML = 'Encrypt Message';
       }
     }
 
@@ -139,7 +138,7 @@
       navigator.clipboard.writeText(text).then(() => {
         const btns = document.querySelectorAll('#output-card .btn-secondary');
         btns[0].textContent = '✓ Copied!';
-        setTimeout(() => btns[0].textContent = '📋 Copy to Clipboard', 2000);
+        setTimeout(() => btns[0].textContent = 'Copy to Clipboard', 2000);
       });
     }
 
@@ -187,5 +186,6 @@
       document.getElementById('contact-modal').classList.add('hidden');
     }
   </script>
+  <script src="animations.js"></script>
 </body>
 </html>

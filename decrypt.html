@@ -3,146 +3,259 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self' ws://localhost:3000 wss://localhost:3000; img-src 'self' data:; font-src 'self';">
   <title>Seraphim — Decrypt Message</title>
   <meta name="description" content="Decrypt PGP messages with your private key.">
   <link rel="stylesheet" href="style.css">
+  <style>
+    /* Private key is stored in JS memory, never visible in the DOM */
+    .key-loaded-indicator {
+      display: flex; align-items: center; gap: 0.5rem;
+      padding: 0.75rem 1rem; border-radius: 6px;
+      background: var(--bg-surface); border: 1px solid var(--border-bright);
+      color: var(--text-primary); font-size: 0.85rem; font-weight: 500;
+    }
+    .key-loaded-indicator.empty {
+      background: var(--bg-raised); border-color: var(--border-default);
+      color: var(--text-muted);
+    }
+    .output-secure { user-select: none; }
+  </style>
 </head>
 <body>
-  <div class="page-container">
-    <header class="site-header">
-      <a href="index.html" class="site-logo">
-        <span class="site-logo-icon">🔐</span>
-        <span class="site-logo-text">Seraphim</span>
-      </a>
-      <nav class="site-nav">
-        <a href="encrypt.html" class="nav-link">Encrypt</a>
-        <a href="decrypt.html" class="nav-link active">Decrypt</a>
-        <a href="keys.html" class="nav-link">Keys</a>
-        <a href="chat.html" class="nav-link">Chat</a>
-      </nav>
-    </header>
+  <header class="global-header">
+    <a href="index.html" class="global-logo">
+      <img src="lib/seraphim-logo.png" class="header-svg" alt="Seraphim" onerror="this.style.display='none'">
+    </a>
+    <nav class="header-nav">
+      <a href="index.html">Home</a>
+      <a href="encrypt.html">Encrypt</a>
+      <a href="decrypt.html">Decrypt</a>
+      <a href="keys.html">Keys</a>
+      <a href="chat.html">Chat</a>
+    </nav>
+  </header>
 
-    <div class="page-title fade-in">
-      <h1>🔓 Decrypt Message</h1>
-      <p>Decrypt a PGP message using your private key. Everything stays in your browser.</p>
-    </div>
-
-    <div class="card fade-in">
-      <div class="card-header">
-        <div class="card-icon">📩</div>
-        <div>
-          <div class="card-title">Encrypted Message</div>
-          <div class="card-subtitle">Paste the PGP encrypted message</div>
-        </div>
+  <main class="page-content reveal">
+    <div class="page-container">
+      <div class="page-title">
+        <h1>Decrypt Message</h1>
+        <p>Decrypt a PGP message using your private key. Everything stays in your browser.</p>
       </div>
 
-      <div class="form-group">
-        <label class="form-label" for="ciphertext-input">Encrypted Message</label>
-        <textarea class="form-textarea tall" id="ciphertext-input" placeholder="-----BEGIN PGP MESSAGE-----&#10;...&#10;-----END PGP MESSAGE-----"></textarea>
-      </div>
-
-      <div class="form-group">
-        <label class="form-label" for="privkey-input">Your Private Key</label>
-        <textarea class="form-textarea" id="privkey-input" placeholder="-----BEGIN PGP PRIVATE KEY BLOCK-----&#10;...&#10;-----END PGP PRIVATE KEY BLOCK-----"></textarea>
-        <div class="mt-1">
-          <button class="btn btn-ghost btn-sm" onclick="showKeyPicker()">🔑 Load saved key</button>
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label class="form-label" for="passphrase-input">Passphrase</label>
-        <input class="form-input" type="password" id="passphrase-input" placeholder="Enter your private key passphrase">
-      </div>
-
-      <button class="btn btn-primary" id="decrypt-btn" onclick="handleDecrypt()">🔓 Decrypt Message</button>
-      <div class="status" id="decrypt-status"></div>
-    </div>
-
-    <div class="card fade-in mt-2" id="output-card" style="display:none;">
-      <div class="card-header">
-        <div class="card-icon">💌</div>
-        <div>
-          <div class="card-title">Decrypted Message</div>
-          <div class="card-subtitle">The original plaintext</div>
-        </div>
-      </div>
-      <div class="output-box" id="decrypted-output" style="color:var(--accent-green);"></div>
-      <div class="btn-group mt-2">
-        <button class="btn btn-secondary btn-sm" onclick="copyOutput()">📋 Copy</button>
-      </div>
-    </div>
-
-    <!-- Key Picker -->
-    <div id="key-modal" class="hidden">
-      <div style="position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:100;display:flex;align-items:center;justify-content:center;padding:1rem;" onclick="if(event.target===this)hideKeyPicker()">
-        <div class="card" style="max-width:480px;width:100%;max-height:60vh;overflow-y:auto;">
-          <div class="card-header">
-            <div class="card-icon">🔑</div>
-            <div><div class="card-title">Select Key</div></div>
+      <div class="card" style="margin-bottom:1.5rem;">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Encrypted Message</div>
+            <div class="card-subtitle">Paste the PGP encrypted message</div>
           </div>
-          <div id="key-list" class="key-list"></div>
-          <button class="btn btn-ghost btn-sm btn-block mt-2" onclick="hideKeyPicker()">Cancel</button>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="ciphertext-input">Encrypted Message</label>
+          <textarea class="form-textarea tall" id="ciphertext-input" placeholder="-----BEGIN PGP MESSAGE-----&#10;...&#10;-----END PGP MESSAGE-----"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Your Private Key</label>
+          <!-- Key is stored in JS memory only — never visible in the DOM -->
+          <div class="key-loaded-indicator empty" id="key-indicator">
+            No key loaded — click below to load one
+          </div>
+          <div class="btn-group mt-1">
+            <button class="btn btn-ghost btn-sm" onclick="showKeyPicker()">Load saved key</button>
+            <button class="btn btn-ghost btn-sm" onclick="showPasteKey()">Paste key manually</button>
+            <button class="btn btn-ghost btn-sm" id="clear-key-btn" onclick="clearLoadedKey()" style="display:none;">Clear key</button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="passphrase-input">Passphrase</label>
+          <input class="form-input" type="password" id="passphrase-input" placeholder="Enter your private key passphrase" autocomplete="off">
+        </div>
+
+        <button class="btn btn-primary" id="decrypt-btn" onclick="handleDecrypt()">Decrypt Message</button>
+        <div class="status" id="decrypt-status"></div>
+      </div>
+
+      <div class="card mt-2" id="output-card" style="display:none; margin-bottom:1.5rem;">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Decrypted Message</div>
+            <div class="card-subtitle">Auto-clears after 60 seconds of inactivity</div>
+          </div>
+        </div>
+        <div class="output-box output-secure" id="decrypted-output" style="color:var(--text-primary);"></div>
+        <div class="btn-group mt-2">
+          <button class="btn btn-secondary btn-sm" onclick="copyOutput()">Copy</button>
+          <button class="btn btn-ghost btn-sm" onclick="clearOutput()">Clear now</button>
+        </div>
+      </div>
+
+      <!-- Key Picker Modal -->
+      <div id="key-modal" class="hidden">
+        <div class="modal-overlay" onclick="if(event.target===this)hideKeyPicker()">
+          <div class="card modal-content">
+            <div class="card-header">
+              <div><div class="card-title">Select Key</div></div>
+            </div>
+            <div id="key-list" class="key-list"></div>
+            <button class="btn btn-ghost btn-sm btn-block mt-2" onclick="hideKeyPicker()">Cancel</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Paste Key Modal -->
+      <div id="paste-modal" class="hidden">
+        <div class="modal-overlay" onclick="if(event.target===this)hidePasteKey()">
+          <div class="card modal-content">
+            <div class="card-header">
+              <div>
+                <div class="card-title">Paste Private Key</div>
+                <div class="card-subtitle">Key is stored in memory only, never in the DOM</div>
+              </div>
+            </div>
+            <div class="form-group">
+              <textarea class="form-textarea tall" id="paste-key-textarea" placeholder="-----BEGIN PGP PRIVATE KEY BLOCK-----&#10;...&#10;-----END PGP PRIVATE KEY BLOCK-----"></textarea>
+            </div>
+            <div class="btn-group">
+              <button class="btn btn-primary" onclick="loadPastedKey()">Load Key</button>
+              <button class="btn btn-ghost" onclick="hidePasteKey()">Cancel</button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-  </div>
+  </main>
 
   <script src="lib/openpgp.min.js"></script>
   <script src="crypto.js"></script>
   <script>
+    // Private key stored in JS memory — NEVER in the DOM
+    let loadedPrivateKey = null;
+    let loadedKeyName = null;
+    let outputClearTimer = null;
+
     function showStatus(id, type, msg) {
       const el = document.getElementById(id);
       el.className = `status show ${type}`;
       el.textContent = msg;
     }
 
+    function updateKeyIndicator() {
+      const indicator = document.getElementById('key-indicator');
+      const clearBtn = document.getElementById('clear-key-btn');
+      if (loadedPrivateKey) {
+        indicator.className = 'key-loaded-indicator';
+        indicator.textContent = 'Key loaded: ' + (loadedKeyName || 'Manual key');
+        clearBtn.style.display = 'inline-flex';
+      } else {
+        indicator.className = 'key-loaded-indicator empty';
+        indicator.textContent = 'No key loaded — click below to load one';
+        clearBtn.style.display = 'none';
+      }
+    }
+
+    function clearLoadedKey() {
+      loadedPrivateKey = null;
+      loadedKeyName = null;
+      updateKeyIndicator();
+    }
+
     async function handleDecrypt() {
       const ct = document.getElementById('ciphertext-input').value.trim();
-      const pk = document.getElementById('privkey-input').value.trim();
       const pp = document.getElementById('passphrase-input').value;
       const btn = document.getElementById('decrypt-btn');
 
       if (!ct) return showStatus('decrypt-status', 'error', '⚠ Paste the encrypted message.');
-      if (!pk) return showStatus('decrypt-status', 'error', '⚠ Provide your private key.');
+      if (!loadedPrivateKey) return showStatus('decrypt-status', 'error', '⚠ Load your private key first.');
       if (!pp) return showStatus('decrypt-status', 'error', '⚠ Enter your passphrase.');
 
       btn.disabled = true;
-      btn.innerHTML = '<span class="spinner"></span> Decrypting...';
+      btn.innerHTML = 'Decrypting...';
       try {
-        const decrypted = await SeraphimCrypto.decryptMessage(ct, pk, pp);
+        const decrypted = await SeraphimCrypto.decryptMessage(ct, loadedPrivateKey, pp);
         document.getElementById('decrypted-output').textContent = decrypted;
         document.getElementById('output-card').style.display = 'block';
         showStatus('decrypt-status', 'success', '✓ Decrypted successfully!');
+
+        // Clear sensitive data from memory immediately after decryption
+        document.getElementById('passphrase-input').value = '';
+        loadedPrivateKey = null;
+        loadedKeyName = null;
+        updateKeyIndicator();
+
+        // Auto-clear decrypted output after 60 seconds
+        clearTimeout(outputClearTimer);
+        outputClearTimer = setTimeout(() => { clearOutput(); }, 60000);
       } catch (e) {
         showStatus('decrypt-status', 'error', '✗ Failed: ' + e.message);
       } finally {
         btn.disabled = false;
-        btn.innerHTML = '🔓 Decrypt Message';
+        btn.innerHTML = 'Decrypt Message';
       }
     }
 
     function copyOutput() {
       navigator.clipboard.writeText(document.getElementById('decrypted-output').textContent);
+      // Reset auto-clear timer on interaction
+      clearTimeout(outputClearTimer);
+      outputClearTimer = setTimeout(() => { clearOutput(); }, 60000);
     }
 
+    function clearOutput() {
+      clearTimeout(outputClearTimer);
+      document.getElementById('decrypted-output').textContent = 'Output cleared for security';
+      document.getElementById('decrypted-output').style.color = 'var(--text-muted)';
+    }
+
+    // ── Key Picker (from localStorage) ────────────────
     function showKeyPicker() {
       const keys = JSON.parse(localStorage.getItem('seraphim_keys') || '[]');
       const list = document.getElementById('key-list');
       list.innerHTML = keys.length === 0
-        ? '<p class="text-muted text-sm text-center">No saved keys.</p>'
+        ? '<p class="text-muted text-sm text-center">No saved keys. Go to Key Manager to generate one.</p>'
         : keys.map((k, i) => `<div class="key-card" onclick="selectKey(${i})" style="cursor:pointer"><div class="key-info"><div class="key-name">${k.name}</div><div class="key-email">${k.email||''}</div></div><button class="btn btn-secondary btn-sm">Select</button></div>`).join('');
       document.getElementById('key-modal').classList.remove('hidden');
       window._kl = keys;
     }
 
     function selectKey(i) {
-      document.getElementById('privkey-input').value = window._kl[i].privateKey;
+      // Store key in JS memory, NOT in the DOM
+      loadedPrivateKey = window._kl[i].privateKey;
+      loadedKeyName = window._kl[i].name;
+      updateKeyIndicator();
       hideKeyPicker();
+      window._kl = null; // clear reference
     }
 
     function hideKeyPicker() {
       document.getElementById('key-modal').classList.add('hidden');
     }
+
+    // ── Paste Key Modal ───────────────────────────────
+    function showPasteKey() {
+      document.getElementById('paste-key-textarea').value = '';
+      document.getElementById('paste-modal').classList.remove('hidden');
+    }
+
+    function loadPastedKey() {
+      const key = document.getElementById('paste-key-textarea').value.trim();
+      if (!key) return;
+      // Store in memory, then immediately clear the textarea
+      loadedPrivateKey = key;
+      loadedKeyName = 'Manual key';
+      document.getElementById('paste-key-textarea').value = '';
+      updateKeyIndicator();
+      hidePasteKey();
+    }
+
+    function hidePasteKey() {
+      document.getElementById('paste-key-textarea').value = '';
+      document.getElementById('paste-modal').classList.add('hidden');
+    }
   </script>
+  <script src="animations.js"></script>
 </body>
 </html>

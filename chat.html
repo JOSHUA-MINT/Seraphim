@@ -3,146 +3,134 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self' ws://localhost:3000 wss://localhost:3000; img-src 'self' data:; font-src 'self';">
   <title>Seraphim — Secure Chat</title>
   <meta name="description" content="End-to-end encrypted real-time chat with kill switch.">
   <link rel="stylesheet" href="style.css">
-  <style>
-    /* ── Chat-specific styles ─────────────────────────────── */
-    .chat-layout { display: flex; gap: 1rem; height: calc(100vh - 200px); min-height: 500px; }
-    .chat-main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
-    .chat-sidebar { width: 240px; flex-shrink: 0; display: flex; flex-direction: column; gap: 0.75rem; }
-
-    .chat-messages {
-      flex: 1; overflow-y: auto; padding: 1rem;
-      background: var(--bg-input); border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-md); display: flex; flex-direction: column; gap: 0.5rem;
-    }
-
-    .msg { max-width: 80%; padding: 0.6rem 0.9rem; border-radius: var(--radius-md); font-size: 0.88rem; line-height: 1.5; animation: fadeIn 0.3s var(--ease-out); }
-    .msg.sent { align-self: flex-end; background: linear-gradient(135deg, rgba(168,85,247,0.2), rgba(6,182,212,0.15)); border: 1px solid rgba(168,85,247,0.2); }
-    .msg.received { align-self: flex-start; background: rgba(255,255,255,0.04); border: 1px solid var(--border-subtle); }
-    .msg-sender { font-size: 0.72rem; font-weight: 600; color: var(--accent-purple); margin-bottom: 0.2rem; }
-    .msg-time { font-size: 0.65rem; color: var(--text-muted); margin-top: 0.3rem; }
-    .msg.system { align-self: center; background: rgba(6,182,212,0.08); border: 1px solid rgba(6,182,212,0.15); color: var(--accent-cyan); font-size: 0.78rem; text-align: center; max-width: 90%; }
-    .msg.kill { background: rgba(239,68,68,0.12); border-color: rgba(239,68,68,0.25); color: var(--accent-red); }
-
-    .chat-input-bar {
-      display: flex; gap: 0.5rem; margin-top: 0.75rem;
-    }
-    .chat-input-bar input { flex: 1; }
-
-    .user-item { display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 0.75rem; border-radius: var(--radius-sm); font-size: 0.85rem; background: rgba(255,255,255,0.02); border: 1px solid var(--border-subtle); }
-    .user-item .user-name { font-weight: 600; }
-    .user-fp { font-family: var(--font-mono); font-size: 0.6rem; color: var(--text-muted); word-break: break-all; }
-    .typing-indicator { font-size: 0.75rem; color: var(--text-muted); min-height: 1.2em; margin-top: 0.25rem; font-style: italic; }
-
-    @media (max-width: 768px) {
-      .chat-layout { flex-direction: column; height: auto; }
-      .chat-sidebar { width: 100%; flex-direction: row; flex-wrap: wrap; }
-      .chat-messages { min-height: 400px; }
-    }
-  </style>
 </head>
 <body>
-  <div class="page-container wide">
-    <header class="site-header">
-      <a href="index.html" class="site-logo">
-        <span class="site-logo-icon">🔐</span>
-        <span class="site-logo-text">Seraphim</span>
-      </a>
-      <nav class="site-nav">
-        <a href="encrypt.html" class="nav-link">Encrypt</a>
-        <a href="decrypt.html" class="nav-link">Decrypt</a>
-        <a href="keys.html" class="nav-link">Keys</a>
-        <a href="chat.html" class="nav-link active">Chat</a>
-      </nav>
-    </header>
+  <header class="global-header">
+    <a href="index.html" class="global-logo">
+      <img src="lib/seraphim-logo.png" class="header-svg" alt="Seraphim" onerror="this.style.display='none'">
+    </a>
+    <nav class="header-nav">
+      <a href="index.html">Home</a>
+      <a href="encrypt.html">Encrypt</a>
+      <a href="decrypt.html">Decrypt</a>
+      <a href="keys.html">Keys</a>
+      <a href="chat.html">Chat</a>
+    </nav>
+  </header>
 
-    <!-- Join Panel -->
-    <div id="join-panel">
-      <div class="page-title fade-in">
-        <h1>💬 Secure Chat</h1>
-        <p>E2EE chat rooms with kill switch. Messages never touch the server in plaintext.</p>
-      </div>
+  <main class="page-content">
 
-      <div class="card fade-in" style="max-width:500px;margin:0 auto;">
-        <div class="card-header">
-          <div class="card-icon">🚀</div>
-          <div>
-            <div class="card-title">Join or Create Room</div>
-            <div class="card-subtitle">Select your key and enter a room code</div>
+      <!-- Join Panel -->
+      <div id="join-panel" class="page-container" style="max-width:640px; margin:0 auto; width: 100%;">
+        <div class="page-title">
+          <h1>Secure Chat</h1>
+          <p>E2EE chat rooms with kill switch. Messages never touch the server in plaintext.</p>
+        </div>
+
+        <div class="card" style="max-width:500px;margin:0 auto;">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Join or Create Room</div>
+              <div class="card-subtitle">Select your key and enter a room code</div>
+            </div>
           </div>
-        </div>
 
-        <div class="form-group">
-          <label class="form-label" for="join-name">Display Name</label>
-          <input class="form-input" id="join-name" placeholder="Your name">
-        </div>
-
-        <div class="form-group">
-          <label class="form-label" for="join-key">Your Keypair</label>
-          <select class="form-input" id="join-key" style="cursor:pointer;">
-            <option value="">-- Select a saved key --</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label" for="join-pass">Key Passphrase</label>
-          <input class="form-input" type="password" id="join-pass" placeholder="Passphrase for your key">
-        </div>
-
-        <div class="form-group">
-          <label class="form-label" for="join-room">Room Code</label>
-          <div style="display:flex;gap:0.5rem;">
-            <input class="form-input" id="join-room" placeholder="e.g. ABC123">
-            <button class="btn btn-ghost btn-sm" onclick="generateRoom()" style="white-space:nowrap;">🎲 New</button>
+          <div class="form-group">
+            <label class="form-label" for="join-name">Display Name</label>
+            <input class="form-input" id="join-name" placeholder="Your name">
           </div>
-        </div>
 
-        <button class="btn btn-primary btn-block" id="join-btn" onclick="joinRoom()">🚀 Join Room</button>
-        <div class="status" id="join-status"></div>
-      </div>
-    </div>
+          <div class="form-group">
+            <label class="form-label" for="join-key">Your Keypair</label>
+            <select class="form-input" id="join-key" style="cursor:pointer;">
+              <option value="">-- Select a saved key --</option>
+            </select>
+          </div>
 
-    <!-- Chat Panel -->
-    <div id="chat-panel" class="hidden">
-      <div class="card" style="padding:1rem 1rem 0.5rem;">
-        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.5rem;">
-          <div>
-            <span style="font-weight:700;">Room:</span>
-            <span id="room-code-display" style="font-family:var(--font-mono);color:var(--accent-cyan);"></span>
-            <button class="copy-btn" onclick="copyRoomCode()" style="margin-left:0.5rem;">Copy</button>
+          <div class="form-group">
+            <label class="form-label" for="join-pass">Key Passphrase</label>
+            <input class="form-input" type="password" id="join-pass" placeholder="Passphrase for your key">
           </div>
-          <div class="btn-group">
-            <button class="btn btn-danger btn-sm" onclick="triggerKillSwitch()">☠️ Kill Switch</button>
-            <button class="btn btn-ghost btn-sm" onclick="leaveRoom()">🚪 Leave</button>
+
+          <div class="form-group">
+            <label class="form-label" for="join-room">Room Code</label>
+            <div style="display:flex;gap:0.5rem;">
+              <input class="form-input" id="join-room" placeholder="e.g. ABC123">
+              <button class="btn btn-ghost btn-sm" onclick="generateRoom()" style="white-space:nowrap;">New Code</button>
+            </div>
           </div>
+
+          <button class="btn btn-primary btn-block" id="join-btn" onclick="joinRoom()">Join Room</button>
+          <div class="status" id="join-status"></div>
         </div>
       </div>
 
-      <div class="chat-layout mt-1">
-        <div class="chat-main">
-          <div class="chat-messages" id="chat-messages"></div>
-          <div class="typing-indicator" id="typing-indicator"></div>
-          <div class="chat-input-bar">
-            <input class="form-input" id="msg-input" placeholder="Type a message..." onkeydown="if(event.key==='Enter')sendMessage()" oninput="emitTyping()">
-            <button class="btn btn-primary" onclick="sendMessage()">Send</button>
-          </div>
-        </div>
+      <!-- Chat Panel -->
+      <div id="chat-panel" class="hidden">
+        <!-- Fingerprint warning banner (shown until verified) -->
+        <div class="fp-warning-banner" id="fp-warning-banner">WARNING: Fingerprint not verified — messages may be intercepted</div>
 
-        <div class="chat-sidebar">
-          <div class="card" style="padding:1rem;">
-            <div class="card-title mb-1" style="font-size:0.85rem;">Online Users</div>
-            <div id="user-list"></div>
+        <div class="chat-layout mt-1">
+          
+          <!-- Sidebar -->
+          <div class="chat-sidebar">
+            <div class="card" style="padding:1.5rem 1rem; text-align:center;">
+              <div class="label" style="margin-bottom:0.25rem;">Room Code</div>
+              <div id="room-code-display" style="font-family:var(--font-mono);font-size:1.1rem;color:var(--text-primary);letter-spacing:0.1em;margin-bottom:1rem;"></div>
+              
+              <div class="btn-group" style="justify-content:center;flex-direction:column;gap:0.5rem;">
+                <button class="btn btn-secondary btn-sm btn-block" onclick="copyRoomCode()">Copy Code</button>
+                <button class="btn btn-ghost btn-sm btn-block" onclick="leaveRoom()">Leave Room</button>
+                <button class="btn btn-danger btn-killswitch btn-block mt-1" onclick="triggerKillSwitch()">Kill Switch</button>
+              </div>
+            </div>
+
+            <div class="card" style="padding:1rem;">
+              <div class="label mb-1">Online Users</div>
+              <div id="user-list" style="display:flex;flex-direction:column;gap:0.5rem;"></div>
+            </div>
           </div>
+
+          <!-- Main Chat Area -->
+          <div class="chat-main">
+            <div class="chat-messages" id="chat-messages"></div>
+            <div class="typing-indicator" id="typing-indicator"></div>
+            <div class="chat-input-bar">
+              <input class="form-input" id="msg-input" placeholder="Verify fingerprint to unlock chat" disabled onkeydown="if(event.key==='Enter')sendMessage()" oninput="emitTyping()">
+              <button class="btn btn-primary" id="send-btn" onclick="sendMessage()" disabled>Send</button>
+            </div>
+          </div>
+
         </div>
       </div>
-    </div>
-  </div>
+
+      <!-- Fingerprint Verification Overlay -->
+      <div id="fp-overlay" class="fingerprint-overlay hidden">
+        <div class="card fingerprint-card">
+          <div class="card-header" style="justify-content:center;margin-bottom:1rem;">
+            <div>
+              <div class="card-title">Verify Fingerprint</div>
+            </div>
+          </div>
+          <p class="fp-instructions">
+            Verify your contact's fingerprint before chatting.<br>
+            Read this fingerprint to your contact over a phone call.<br>
+            If it matches what they see on their screen, click <strong>Verified</strong>.
+          </p>
+          <div class="fingerprint-text" id="fp-display-value">Waiting for another user to join...</div>
+          <button class="btn btn-primary btn-block" id="fp-verify-btn" onclick="confirmFingerprint()" disabled>Fingerprint Verified</button>
+        </div>
+      </div>
+  </main>
 
   <script src="lib/openpgp.min.js"></script>
   <script src="crypto.js"></script>
-  <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
+  <script src="lib/socket.io.min.js"></script>
   <script>
     // ── State ──────────────────────────────────────────
     let socket = null;
@@ -153,6 +141,7 @@
     let currentRoom = '';
     let roomUsers = new Map(); // id -> { name, publicKey }
     let typingTimeout = null;
+    let fingerprintVerified = false;
 
     // ── Init: populate key selector ───────────────────
     (function loadKeys() {
@@ -176,6 +165,78 @@
       el.textContent = msg;
     }
 
+    // ── FIX 1: Fingerprint Verification ───────────────
+    function formatFingerprint(fp) {
+      // Break hex fingerprint into groups of 4 characters
+      return fp.replace(/(.{4})/g, '$1 ').trim();
+    }
+
+    async function showFingerprintOverlay() {
+      // Find the first OTHER user's public key
+      let otherUser = null;
+      for (const [id, user] of roomUsers) {
+        if (socket && id !== socket.id) {
+          otherUser = user;
+          break;
+        }
+      }
+      if (!otherUser || !otherUser.publicKey) {
+        // No other user yet — show overlay but keep button disabled
+        document.getElementById('fp-display-value').textContent = 'Waiting for another user to join...';
+        document.getElementById('fp-verify-btn').disabled = true;
+        document.getElementById('fp-overlay').classList.remove('hidden');
+        return;
+      }
+
+      try {
+        const fp = await SeraphimCrypto.getFingerprint(otherUser.publicKey);
+        const formatted = formatFingerprint(fp);
+        document.getElementById('fp-display-value').textContent = formatted;
+        document.getElementById('fp-verify-btn').disabled = false;
+      } catch (e) {
+        document.getElementById('fp-display-value').textContent = 'Error reading fingerprint: ' + e.message;
+        document.getElementById('fp-verify-btn').disabled = true;
+      }
+
+      document.getElementById('fp-overlay').classList.remove('hidden');
+    }
+
+    function confirmFingerprint() {
+      fingerprintVerified = true;
+      document.getElementById('fp-overlay').classList.add('hidden');
+      document.getElementById('fp-warning-banner').style.display = 'none';
+      // Unlock chat input
+      const msgInput = document.getElementById('msg-input');
+      msgInput.disabled = false;
+      msgInput.placeholder = 'Type a message...';
+      document.getElementById('send-btn').disabled = false;
+      addSystemMessage('✓ Fingerprint verified. Chat unlocked.');
+    }
+
+    // ── FIX 2: Kill Switch — total wipe ───────────────
+    function executeKillWipe() {
+      // Wipe all localStorage data
+      localStorage.removeItem('seraphim_keys');
+      localStorage.removeItem('seraphim_contacts');
+      // Wipe session storage
+      sessionStorage.clear();
+      // Clear messages DOM
+      const chatEl = document.getElementById('chat-messages');
+      if (chatEl) chatEl.innerHTML = '';
+      // Null out all key material in memory
+      myPrivateKey = null;
+      myPublicKey = null;
+      myPassphrase = null;
+      myName = null;
+      currentRoom = null;
+      roomUsers.clear();
+      fingerprintVerified = false;
+      // Disconnect socket
+      if (socket) { socket.disconnect(); socket = null; }
+      // Redirect to index after 1 second — app looks fresh, no trace
+      setTimeout(() => { window.location.href = 'index.html'; }, 1000);
+    }
+
     // ── Join Room ─────────────────────────────────────
     function joinRoom() {
       myName = document.getElementById('join-name').value.trim();
@@ -195,7 +256,7 @@
 
       // Connect to server
       const serverUrl = location.hostname === 'localhost' || location.hostname === '127.0.0.1'
-        ? `http://localhost:3000`
+        ? 'http://localhost:3000'
         : window.location.origin;
 
       socket = io(serverUrl);
@@ -214,14 +275,26 @@
         document.getElementById('room-code-display').textContent = roomCode;
         document.getElementById('join-panel').classList.add('hidden');
         document.getElementById('chat-panel').classList.remove('hidden');
+        // Reset verification state
+        fingerprintVerified = false;
+        document.getElementById('fp-warning-banner').style.display = 'block';
+        document.getElementById('msg-input').disabled = true;
+        document.getElementById('msg-input').placeholder = 'Verify fingerprint to unlock chat';
+        document.getElementById('send-btn').disabled = true;
         renderUsers();
-        addSystemMessage('You joined the room. 🔐 All messages are end-to-end encrypted.');
+        addSystemMessage('You joined the room. All messages are end-to-end encrypted.');
+        // Show fingerprint verification overlay
+        showFingerprintOverlay();
       });
 
-      socket.on('user-joined', ({ id, name, publicKey }) => {
+      socket.on('user-joined', async ({ id, name, publicKey }) => {
         roomUsers.set(id, { name, publicKey });
         renderUsers();
         addSystemMessage(`${name} joined the room.`);
+        // If fingerprint not yet verified and overlay is showing, update it with new user's key
+        if (!fingerprintVerified) {
+          showFingerprintOverlay();
+        }
       });
 
       socket.on('user-left', ({ id, name }) => {
@@ -231,6 +304,7 @@
       });
 
       socket.on('message', async ({ senderId, senderName, ciphertext, timestamp }) => {
+        if (!myPrivateKey || !myPassphrase) return; // killed
         try {
           const plaintext = await SeraphimCrypto.decryptMessage(ciphertext, myPrivateKey, myPassphrase);
           addMessage(senderName, plaintext, timestamp, false);
@@ -239,9 +313,19 @@
         }
       });
 
+      // FIX 2: Kill switch handler — full wipe for EVERYONE
       socket.on('kill-switch', ({ triggeredBy, timestamp }) => {
-        document.getElementById('chat-messages').innerHTML = '';
-        addKillMessage(`☠️ Kill switch activated by ${triggeredBy}. All messages wiped.`);
+        // Show kill message briefly before wipe
+        const chatEl = document.getElementById('chat-messages');
+        if (chatEl) {
+          chatEl.innerHTML = '';
+          const div = document.createElement('div');
+          div.className = 'message-bubble system kill';
+          div.textContent = `KILL SWITCH ACTIVATED BY ${triggeredBy.toUpperCase()}. ALL DATA DESTROYED.`;
+          chatEl.appendChild(div);
+        }
+        // Execute full wipe (localStorage, sessionStorage, memory, disconnect, redirect)
+        executeKillWipe();
       });
 
       socket.on('typing', ({ name }) => {
@@ -252,7 +336,7 @@
       });
 
       socket.on('disconnect', () => {
-        addSystemMessage('Disconnected from server.');
+        if (myName) addSystemMessage('Disconnected from server.');
       });
 
       socket.on('connect_error', () => {
@@ -262,6 +346,7 @@
 
     // ── Send Message ──────────────────────────────────
     async function sendMessage() {
+      if (!fingerprintVerified) return; // locked until verified
       const input = document.getElementById('msg-input');
       const text = input.value.trim();
       if (!text || !socket) return;
@@ -270,7 +355,7 @@
       // Encrypt for each recipient
       const encryptedMessages = [];
       for (const [id, user] of roomUsers) {
-        if (id === socket.id) continue; // don't send to self
+        if (id === socket.id) continue;
         try {
           const ciphertext = await SeraphimCrypto.encryptMessage(text, user.publicKey);
           encryptedMessages.push({ recipientId: id, ciphertext });
@@ -289,28 +374,32 @@
       }
     }
 
-    // ── Kill Switch ───────────────────────────────────
+    // ── Kill Switch — NO confirmation, instant ────────
     function triggerKillSwitch() {
-      if (!confirm('⚠️ This will wipe ALL messages for EVERYONE in this room. Continue?')) return;
       if (socket && currentRoom) {
         socket.emit('kill-switch', { roomCode: currentRoom });
       }
+      // Also execute locally immediately (don't wait for server echo)
+      executeKillWipe();
     }
 
     // ── Leave Room ────────────────────────────────────
     function leaveRoom() {
       if (socket) { socket.disconnect(); socket = null; }
       roomUsers.clear();
+      fingerprintVerified = false;
       document.getElementById('chat-messages').innerHTML = '';
       document.getElementById('chat-panel').classList.add('hidden');
       document.getElementById('join-panel').classList.remove('hidden');
+      document.getElementById('fp-overlay').classList.add('hidden');
     }
 
     // ── UI Helpers ────────────────────────────────────
     function addMessage(sender, text, timestamp, isSent) {
       const el = document.getElementById('chat-messages');
+      if (!el) return;
       const div = document.createElement('div');
-      div.className = `msg ${isSent ? 'sent' : 'received'}`;
+      div.className = `message-bubble ${isSent ? 'sent' : 'received'}`;
       const time = new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
       div.innerHTML = `${isSent ? '' : `<div class="msg-sender">${esc(sender)}</div>`}<div>${esc(text)}</div><div class="msg-time">${time}</div>`;
       el.appendChild(div);
@@ -319,17 +408,9 @@
 
     function addSystemMessage(text) {
       const el = document.getElementById('chat-messages');
+      if (!el) return;
       const div = document.createElement('div');
-      div.className = 'msg system';
-      div.textContent = text;
-      el.appendChild(div);
-      el.scrollTop = el.scrollHeight;
-    }
-
-    function addKillMessage(text) {
-      const el = document.getElementById('chat-messages');
-      const div = document.createElement('div');
-      div.className = 'msg system kill';
+      div.className = 'message-bubble system';
       div.textContent = text;
       el.appendChild(div);
       el.scrollTop = el.scrollHeight;
@@ -340,7 +421,7 @@
       const items = [];
       roomUsers.forEach((u, id) => {
         const isMe = socket && id === socket.id;
-        items.push(`<div class="user-item"><span class="pulse-dot"></span><div><div class="user-name">${esc(u.name)}${isMe ? ' (you)' : ''}</div></div></div>`);
+        items.push(`<div class="user-item"><span class="online-dot"></span><div class="user-name">${esc(u.name)}${isMe ? ' (you)' : ''}</div></div>`);
       });
       el.innerHTML = items.join('') || '<p class="text-muted text-sm">No users</p>';
     }
@@ -355,5 +436,6 @@
       return d.innerHTML;
     }
   </script>
+  <script src="animations.js"></script>
 </body>
 </html>

@@ -3,20 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self' ws://localhost:3000 wss://localhost:3000; img-src 'self' data:; font-src 'self';">
   <title>Seraphim — Crypto Test</title>
+  <link rel="stylesheet" href="style.css">
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: 'Courier New', monospace;
-      background: #0a0a0f;
-      color: #00ffc8;
-      padding: 2rem;
-      line-height: 1.6;
+    .test-header {
+      display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem;
     }
-    h1 { color: #a855f7; margin-bottom: 1rem; }
     #output {
-      background: #111118;
-      border: 1px solid #222;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-dim);
       border-radius: 8px;
       padding: 1.5rem;
       white-space: pre-wrap;
@@ -24,175 +21,50 @@
       max-height: 80vh;
       overflow-y: auto;
       font-size: 0.85rem;
+      font-family: var(--font-mono);
+      color: var(--text-silver);
     }
-    .pass { color: #22c55e; }
-    .fail { color: #ef4444; }
-    .info { color: #38bdf8; }
-    .dim  { color: #555; }
-    button {
-      margin: 1rem 0;
-      padding: 0.75rem 2rem;
-      background: linear-gradient(135deg, #a855f7, #06b6d4);
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      font-size: 1rem;
-      cursor: pointer;
-      font-weight: 600;
-    }
-    button:hover { opacity: 0.9; }
+    .pass { color: var(--text-primary); }
+    .fail { color: var(--danger); }
+    .info { color: var(--text-secondary); }
+    .dim  { color: var(--text-muted); }
   </style>
 </head>
 <body>
-  <h1>🔐 Seraphim Crypto Test Suite</h1>
-  <button onclick="runTests()">Run All Tests</button>
-  <div id="output">Click "Run All Tests" to begin...</div>
+  <header class="global-header">
+    <a href="index.html" class="global-logo">
+      <img src="lib/seraphim-logo.png" class="header-svg" alt="Seraphim" onerror="this.style.display='none'">
+    </a>
+    <nav class="header-nav">
+      <a href="index.html">Home</a>
+      <a href="encrypt.html">Encrypt</a>
+      <a href="decrypt.html">Decrypt</a>
+      <a href="keys.html">Keys</a>
+      <a href="chat.html">Chat</a>
+    </nav>
+  </header>
+
+  <main class="page-content reveal">
+    <div class="page-container">
+      <div class="test-header">
+        <div class="page-title" style="margin-bottom:0;">
+          <h1>Crypto Test Suite</h1>
+          <p>Run internal cryptographic benchmarks.</p>
+        </div>
+        <button class="btn btn-primary" id="run-btn">Run All Tests</button>
+      </div>
+
+      <div id="output">Click "Run All Tests" to begin...</div>
+    </div>
+  </main>
 
   <script src="lib/openpgp.min.js"></script>
   <script src="crypto.js"></script>
+  <script src="test-runner.js"></script>
   <script>
-    const out = document.getElementById('output');
-
-    function log(msg, cls = '') {
-      const span = document.createElement('span');
-      span.className = cls;
-      span.textContent = msg + '\n';
-      out.appendChild(span);
-      out.scrollTop = out.scrollHeight;
-    }
-
-    async function runTests() {
-      out.innerHTML = '';
-      log('═══════════════════════════════════════════', 'dim');
-      log('  SERAPHIM CRYPTO TEST SUITE', 'info');
-      log('═══════════════════════════════════════════', 'dim');
-      log('');
-
-      let publicKey, privateKey;
-
-      // ── Test 1: Key Generation ──
-      try {
-        log('▸ Test 1: Key Generation (curve25519)...', 'info');
-        const t0 = performance.now();
-        const keys = await SeraphimCrypto.generateKeyPair(
-          'Alice', 'alice@seraphim.test', 'test-passphrase-123'
-        );
-        publicKey = keys.publicKey;
-        privateKey = keys.privateKey;
-        const elapsed = (performance.now() - t0).toFixed(0);
-        log(`  ✓ Key pair generated in ${elapsed}ms`, 'pass');
-        log(`  Public key: ${publicKey.substring(0, 60)}...`, 'dim');
-
-        const fp = await SeraphimCrypto.getFingerprint(publicKey);
-        log(`  Fingerprint: ${fp}`, 'dim');
-        log('');
-      } catch (e) {
-        log(`  ✗ FAILED: ${e.message}`, 'fail');
-        return;
-      }
-
-      // ── Test 2: Encryption ──
-      let encrypted;
-      try {
-        log('▸ Test 2: Encrypt Message...', 'info');
-        const plaintext = 'Hello from Seraphim! 🔐 This is a secret message.';
-        const t0 = performance.now();
-        encrypted = await SeraphimCrypto.encryptMessage(plaintext, publicKey);
-        const elapsed = (performance.now() - t0).toFixed(0);
-        log(`  ✓ Message encrypted in ${elapsed}ms`, 'pass');
-        log(`  Ciphertext: ${encrypted.substring(0, 60)}...`, 'dim');
-        log('');
-      } catch (e) {
-        log(`  ✗ FAILED: ${e.message}`, 'fail');
-        return;
-      }
-
-      // ── Test 3: Decryption ──
-      try {
-        log('▸ Test 3: Decrypt Message...', 'info');
-        const t0 = performance.now();
-        const decrypted = await SeraphimCrypto.decryptMessage(
-          encrypted, privateKey, 'test-passphrase-123'
-        );
-        const elapsed = (performance.now() - t0).toFixed(0);
-        log(`  ✓ Message decrypted in ${elapsed}ms`, 'pass');
-        log(`  Plaintext: "${decrypted}"`, 'pass');
-
-        if (decrypted === 'Hello from Seraphim! 🔐 This is a secret message.') {
-          log('  ✓ Round-trip integrity: PASSED', 'pass');
-        } else {
-          log('  ✗ Round-trip integrity: FAILED (mismatch)', 'fail');
-        }
-        log('');
-      } catch (e) {
-        log(`  ✗ FAILED: ${e.message}`, 'fail');
-        return;
-      }
-
-      // ── Test 4: Signing ──
-      let signed;
-      try {
-        log('▸ Test 4: Sign Message...', 'info');
-        const t0 = performance.now();
-        signed = await SeraphimCrypto.signMessage(
-          'I am Alice, and I approve this message.',
-          privateKey, 'test-passphrase-123'
-        );
-        const elapsed = (performance.now() - t0).toFixed(0);
-        log(`  ✓ Message signed in ${elapsed}ms`, 'pass');
-        log(`  Signed: ${signed.substring(0, 60)}...`, 'dim');
-        log('');
-      } catch (e) {
-        log(`  ✗ FAILED: ${e.message}`, 'fail');
-        return;
-      }
-
-      // ── Test 5: Verification ──
-      try {
-        log('▸ Test 5: Verify Signature...', 'info');
-        const t0 = performance.now();
-        const result = await SeraphimCrypto.verifySignature(signed, publicKey);
-        const elapsed = (performance.now() - t0).toFixed(0);
-        if (result.verified) {
-          log(`  ✓ Signature verified in ${elapsed}ms`, 'pass');
-          log(`  Data: "${result.data}"`, 'pass');
-        } else {
-          log(`  ✗ Signature verification FAILED`, 'fail');
-        }
-        log('');
-      } catch (e) {
-        log(`  ✗ FAILED: ${e.message}`, 'fail');
-        return;
-      }
-
-      // ── Test 6: Wrong passphrase should fail ──
-      try {
-        log('▸ Test 6: Decrypt with wrong passphrase (should fail)...', 'info');
-        await SeraphimCrypto.decryptMessage(encrypted, privateKey, 'wrong-password');
-        log('  ✗ FAILED: Should have thrown an error', 'fail');
-      } catch (e) {
-        log(`  ✓ Correctly rejected wrong passphrase`, 'pass');
-        log(`  Error: ${e.message}`, 'dim');
-        log('');
-      }
-
-      // ── Test 7: Room code generation ──
-      try {
-        log('▸ Test 7: Room Code Generation...', 'info');
-        const codes = new Set();
-        for (let i = 0; i < 10; i++) {
-          codes.add(SeraphimCrypto.generateRoomCode());
-        }
-        log(`  ✓ Generated 10 unique codes: ${[...codes].join(', ')}`, 'pass');
-        log('');
-      } catch (e) {
-        log(`  ✗ FAILED: ${e.message}`, 'fail');
-      }
-
-      log('═══════════════════════════════════════════', 'dim');
-      log('  ALL TESTS COMPLETE ✓', 'pass');
-      log('═══════════════════════════════════════════', 'dim');
-    }
+    // Wire up button — must be in separate script tag after test-runner loads
+    document.getElementById('run-btn').addEventListener('click', runTests);
   </script>
+  <script src="animations.js"></script>
 </body>
 </html>

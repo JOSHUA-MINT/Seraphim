@@ -11,23 +11,28 @@
  *   - No message storage — pure relay
  */
 
+require('dotenv').config();
+
 const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
 const cors = require('cors');
 const path = require('path');
 
+// Set ALLOWED_ORIGIN in .env to your deployed domain in production
+const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN || 'http://localhost:3000';
+
 const app = express();
 const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: '*',
+    origin: ALLOWED_ORIGIN,
     methods: ['GET', 'POST']
   }
 });
 
-app.use(cors());
+app.use(cors({ origin: ALLOWED_ORIGIN }));
 
 // Serve static files from the parent directory (the client HTML files)
 app.use(express.static(path.join(__dirname, '..')));
