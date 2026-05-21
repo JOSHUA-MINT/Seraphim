@@ -242,8 +242,8 @@ label, .form-label {
 }
 
 .logo-hero {
-  width: 280px;
-  height: 280px;
+  width: min(90vw, 500px);
+  height: min(90vw, 500px);
   object-fit: contain;
   mix-blend-mode: screen;
   animation: logo-appear 1.4s cubic-bezier(0.16,1,0.3,1) forwards, logo-breathe 5s ease-in-out 1.4s infinite;
