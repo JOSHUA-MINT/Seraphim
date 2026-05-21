@@ -192,25 +192,6 @@
     let selectedRoomType = 'temporary';
     let expirationInterval = null;
 
-    // Sync input fields across the side-by-side forms
-    function syncInputs() {
-      const name1 = document.getElementById('join-name-existing');
-      const name2 = document.getElementById('join-name-create');
-      const key1 = document.getElementById('join-key-existing');
-      const key2 = document.getElementById('join-key-create');
-      const pass1 = document.getElementById('join-pass-existing');
-      const pass2 = document.getElementById('join-pass-create');
-
-      name1.addEventListener('input', (e) => { name2.value = e.target.value; });
-      name2.addEventListener('input', (e) => { name1.value = e.target.value; });
-
-      key1.addEventListener('change', (e) => { key2.value = e.target.value; });
-      key2.addEventListener('change', (e) => { key1.value = e.target.value; });
-
-      pass1.addEventListener('input', (e) => { pass2.value = e.target.value; });
-      pass2.addEventListener('input', (e) => { pass1.value = e.target.value; });
-    }
-
     // ── Init: populate key selectors ───────────────────
     (function loadKeys() {
       const keys = JSON.parse(localStorage.getItem('seraphim_keys') || '[]');
@@ -226,8 +207,6 @@
         const opt2 = opt1.cloneNode(true);
         sel2.appendChild(opt2);
       });
-
-      syncInputs();
     })();
 
     function setRoomType(type) {
@@ -484,7 +463,7 @@
           const ciphertext = await SeraphimCrypto.encryptMessage(text, user.publicKey);
           encryptedMessages.push({ recipientId: id, ciphertext });
         } catch (e) {
-          console.error(`Failed to encrypt for ${user.name}:`, e);
+          // Encryption failed for a recipient — skip silently
         }
       }
 

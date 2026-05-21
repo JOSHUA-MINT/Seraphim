@@ -117,6 +117,12 @@
       el.textContent = msg;
     }
 
+    function esc(s) {
+      const d = document.createElement('div');
+      d.textContent = s;
+      return d.innerHTML;
+    }
+
     function initDragDrop(zoneId, inputId, textareaId) {
       const zone = document.getElementById(zoneId);
       const input = document.getElementById(inputId);
@@ -205,6 +211,8 @@
       a.click();
     }
 
+    let _contactPickerList = null;
+
     function showContactPicker() {
       const contacts = JSON.parse(localStorage.getItem('seraphim_contacts') || '[]');
       const keys = JSON.parse(localStorage.getItem('seraphim_keys') || '[]');
@@ -217,8 +225,8 @@
         list.innerHTML = all.map((c, i) => `
           <div class="key-card" onclick="selectContact(${i})" style="cursor:pointer;">
             <div class="key-info">
-              <div class="key-name">${c.name || 'Unknown'}</div>
-              <div class="key-email">${c.email || ''}</div>
+              <div class="key-name">${esc(c.name || 'Unknown')}</div>
+              <div class="key-email">${esc(c.email || '')}</div>
             </div>
             <div class="key-actions">
               <button class="btn btn-secondary btn-sm">Select</button>
@@ -227,12 +235,13 @@
         `).join('');
       }
       document.getElementById('contact-modal').classList.remove('hidden');
-      window._contactList = all;
+      _contactPickerList = all;
     }
 
     function selectContact(index) {
-      const contact = window._contactList[index];
-      document.getElementById('pubkey-input').value = contact.publicKey;
+      if (!_contactPickerList || !_contactPickerList[index]) return;
+      document.getElementById('pubkey-input').value = _contactPickerList[index].publicKey;
+      _contactPickerList = null;
       hideContactPicker();
     }
 

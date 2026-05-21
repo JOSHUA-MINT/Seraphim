@@ -300,23 +300,27 @@
     }
 
     // ── Key Picker (from localStorage) ────────────────
+    // Key picker keys stored in closure scope, not on window
+    let _pickerKeys = null;
+
     function showKeyPicker() {
       const keys = JSON.parse(localStorage.getItem('seraphim_keys') || '[]');
       const list = document.getElementById('key-list');
       list.innerHTML = keys.length === 0
         ? '<p class="text-muted text-sm text-center">No saved keys. Go to Key Manager to generate one.</p>'
-        : keys.map((k, i) => `<div class="key-card" onclick="selectKey(${i})" style="cursor:pointer"><div class="key-info"><div class="key-name">${k.name}</div><div class="key-email">${k.email||''}</div></div><button class="btn btn-secondary btn-sm">Select</button></div>`).join('');
+        : keys.map((k, i) => `<div class="key-card" onclick="selectKey(${i})" style="cursor:pointer"><div class="key-info"><div class="key-name">${esc(k.name)}</div><div class="key-email">${esc(k.email||'')}</div></div><button class="btn btn-secondary btn-sm">Select</button></div>`).join('');
       document.getElementById('key-modal').classList.remove('hidden');
-      window._kl = keys;
+      _pickerKeys = keys;
     }
 
     function selectKey(i) {
+      if (!_pickerKeys || !_pickerKeys[i]) return;
       // Store key in JS memory, NOT in the DOM
-      loadedPrivateKey = window._kl[i].privateKey;
-      loadedKeyName = window._kl[i].name;
+      loadedPrivateKey = _pickerKeys[i].privateKey;
+      loadedKeyName = _pickerKeys[i].name;
       updateKeyIndicator();
       hideKeyPicker();
-      window._kl = null; // clear reference
+      _pickerKeys = null; // clear reference immediately
     }
 
     function hideKeyPicker() {

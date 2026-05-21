@@ -97,6 +97,11 @@ io.on('connection', (socket) => {
 
   // ── Join/Create Room ────────────────────────────────────────
   socket.on('join-room', ({ roomCode, name, publicKey, roomType }) => {
+    if (!roomCode || !name || typeof roomCode !== 'string' || typeof name !== 'string') return;
+
+    // Sanitize inputs
+    roomCode = roomCode.trim().toUpperCase().slice(0, 20);
+    name = name.trim().slice(0, 50);
     if (!roomCode || !name) return;
 
     // Leave previous room if any
@@ -109,13 +114,15 @@ io.on('connection', (socket) => {
 
     // Create room if it doesn't exist
     if (!rooms.has(roomCode)) {
+      // Only allow creation if the client requested a valid room type
+      const validTypes = ['temporary', 'persistent', 'standard'];
+      const type = validTypes.includes(roomType) ? roomType : 'standard';
       rooms.set(roomCode, {
         users: new Map(),
-        type: roomType || 'standard',
+        type,
         createdAt: Date.now()
       });
-      console.log(`[room] Created room ${roomCode} (${roomType || 'standard'})`);
-      if (roomType === 'persistent') {
+      if (type === 'persistent') {
         savePersistentRooms();
       }
     }
@@ -141,8 +148,6 @@ io.on('connection', (socket) => {
       name,
       publicKey
     });
-
-    console.log(`[room] ${name} joined ${roomCode} (${room.users.size} users)`);
   });
 
   // ── Send Message (relay encrypted PGP message) ────────────
@@ -246,10 +251,9 @@ function leaveRoom(socket, roomCode) {
     name: userName
   });
 
-  // Clean up empty rooms (only if they are standard/default)
-  if (room.users.size === 0 && room.type !== 'persistent' && room.type !== 'temporary') {
+  // Clean up empty rooms (keep persistent rooms alive even when empty)
+  if (room.users.size === 0 && room.type !== 'persistent') {
     rooms.delete(roomCode);
-    console.log(`[room] ${roomCode} deleted (empty)`);
   }
 }
 
