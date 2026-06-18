@@ -78,8 +78,20 @@
         e.preventDefault();
         document.body.style.opacity = '0';
         document.body.style.transition = 'opacity 0.2s ease';
-        setTimeout(() => { window.location = href; }, 220);
+        setTimeout(() => { window.location.href = href; }, 220);
       }
     });
   });
+
+  function resetOpacity() {
+    document.body.style.opacity = '1';
+    document.body.style.transition = '';
+  }
+
+  window.addEventListener('pageshow', resetOpacity);
+  document.addEventListener('DOMContentLoaded', resetOpacity);
+  resetOpacity();
+  setTimeout(resetOpacity, 50);
+  setTimeout(resetOpacity, 150);
 })();
+
