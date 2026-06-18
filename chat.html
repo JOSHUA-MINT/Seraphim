@@ -5,14 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Content-Security-Policy"
     content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self' ws://localhost:3000 wss://localhost:3000; img-src 'self' data:; font-src 'self';">
-  <title>Seraphim — Secure Chat</title>
+  <title>Ophanim — Secure Chat</title>
   <meta name="description" content="End-to-end encrypted real-time chat with kill switch.">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <header class="global-header">
     <a href="index.html" class="global-logo">
-      <img src="lib/seraphim-logo.png" class="header-svg" alt="Seraphim" onerror="this.style.display='none'">
+      <img src="lib/ophanim-logo.png" class="header-svg" alt="Ophanim" onerror="this.style.display='none'">
     </a>
     <nav class="header-nav">
       <a href="index.html">Home</a>
@@ -109,7 +109,7 @@
         </div>
 
         <div class="chat-footer-brand">
-          ZERO TRUST DATA PROTECTION BY SERAPHIM SECURITY
+          ZERO TRUST DATA PROTECTION BY OPHANIM SECURITY
         </div>
       </div>
 
@@ -194,7 +194,7 @@
 
     // ── Init: populate key selectors ───────────────────
     (function loadKeys() {
-      const keys = JSON.parse(localStorage.getItem('seraphim_keys') || '[]');
+      const keys = JSON.parse(localStorage.getItem('ophanim_keys') || '[]');
       const sel1 = document.getElementById('join-key-existing');
       const sel2 = document.getElementById('join-key-create');
       
@@ -242,7 +242,7 @@
       }
 
       try {
-        const fp = await SeraphimCrypto.getFingerprint(otherUser.publicKey);
+        const fp = await OphanimCrypto.getFingerprint(otherUser.publicKey);
         const formatted = formatFingerprint(fp);
         document.getElementById('fp-display-value').textContent = formatted;
         document.getElementById('fp-verify-btn').disabled = false;
@@ -267,8 +267,8 @@
 
     // ── Kill Switch — total wipe ───────────────
     function executeKillWipe() {
-      localStorage.removeItem('seraphim_keys');
-      localStorage.removeItem('seraphim_contacts');
+      localStorage.removeItem('ophanim_keys');
+      localStorage.removeItem('ophanim_contacts');
       sessionStorage.clear();
       const chatEl = document.getElementById('chat-messages');
       if (chatEl) chatEl.innerHTML = '';
@@ -325,7 +325,7 @@
 
       let roomCode = '';
       if (isCreate) {
-        roomCode = SeraphimCrypto.generateRoomCode();
+        roomCode = OphanimCrypto.generateRoomCode();
       } else {
         roomCode = document.getElementById('join-room-existing').value.trim().toUpperCase();
       }
@@ -338,7 +338,7 @@
       if (!myPassphrase) return showStatus(statusId, 'error', '⚠ Enter passphrase.');
       if (!currentRoom) return showStatus(statusId, 'error', '⚠ Enter a room code.');
 
-      const keys = JSON.parse(localStorage.getItem('seraphim_keys') || '[]');
+      const keys = JSON.parse(localStorage.getItem('ophanim_keys') || '[]');
       const key = keys[parseInt(keyIdx)];
       myPublicKey = key.publicKey;
       myPrivateKey = key.privateKey;
@@ -408,7 +408,7 @@
       socket.on('message', async ({ senderId, senderName, ciphertext, timestamp }) => {
         if (!myPrivateKey || !myPassphrase) return;
         try {
-          const plaintext = await SeraphimCrypto.decryptMessage(ciphertext, myPrivateKey, myPassphrase);
+          const plaintext = await OphanimCrypto.decryptMessage(ciphertext, myPrivateKey, myPassphrase);
           addMessage(senderName, plaintext, timestamp, false);
         } catch (e) {
           addMessage(senderName, '[Could not decrypt message]', timestamp, false);
@@ -460,7 +460,7 @@
       for (const [id, user] of roomUsers) {
         if (id === socket.id) continue;
         try {
-          const ciphertext = await SeraphimCrypto.encryptMessage(text, user.publicKey);
+          const ciphertext = await OphanimCrypto.encryptMessage(text, user.publicKey);
           encryptedMessages.push({ recipientId: id, ciphertext });
         } catch (e) {
           // Encryption failed for a recipient — skip silently

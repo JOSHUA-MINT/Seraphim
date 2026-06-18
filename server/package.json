@@ -1,7 +1,7 @@
 {
-  "name": "seraphim-relay",
+  "name": "ophanim-relay",
   "version": "1.0.0",
-  "description": "Seraphim — Zero-knowledge encrypted message relay server",
+  "description": "Ophanim — Zero-knowledge encrypted message relay server",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",

@@ -5,14 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Content-Security-Policy"
     content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self' ws://localhost:3000 wss://localhost:3000; img-src 'self' data:; font-src 'self';">
-  <title>Seraphim — Encrypt Message</title>
+  <title>Ophanim — Encrypt Message</title>
   <meta name="description" content="Encrypt a message with PGP public key encryption. End-to-end, zero-knowledge.">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <header class="global-header">
     <a href="index.html" class="global-logo">
-      <img src="lib/seraphim-logo.png" class="header-svg" alt="Seraphim" onerror="this.style.display='none'">
+      <img src="lib/ophanim-logo.png" class="header-svg" alt="Ophanim" onerror="this.style.display='none'">
     </a>
     <nav class="header-nav">
       <a href="index.html">Home</a>
@@ -181,7 +181,7 @@
       btn.innerHTML = 'Encrypting...';
 
       try {
-        const encrypted = await SeraphimCrypto.encryptMessage(plaintext, pubkey);
+        const encrypted = await OphanimCrypto.encryptMessage(plaintext, pubkey);
         document.getElementById('encrypted-output').textContent = encrypted;
         document.getElementById('output-card').style.display = 'block';
         showStatus('encrypt-status', 'success', '✓ Message encrypted successfully!');
@@ -214,8 +214,8 @@
     let _contactPickerList = null;
 
     function showContactPicker() {
-      const contacts = JSON.parse(localStorage.getItem('seraphim_contacts') || '[]');
-      const keys = JSON.parse(localStorage.getItem('seraphim_keys') || '[]');
+      const contacts = JSON.parse(localStorage.getItem('ophanim_contacts') || '[]');
+      const keys = JSON.parse(localStorage.getItem('ophanim_keys') || '[]');
       const all = [...contacts, ...keys.map(k => ({ name: k.name, email: k.email, publicKey: k.publicKey }))];
 
       const list = document.getElementById('contact-list');

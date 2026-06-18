@@ -1,4 +1,4 @@
-# Seraphim — Product Requirements Document & Technical Report
+# Ophanim — Product Requirements Document & Technical Report
 
 > **Version:** 1.0 · **Date:** May 4, 2026 · **Author:** Joshua · **Status:** Active Development
 
@@ -6,7 +6,7 @@
 
 ## 1. Executive Summary
 
-**Seraphim** is a zero-knowledge, end-to-end encrypted (E2EE) messaging platform built entirely in the browser. It uses **OpenPGP.js v5** with **Curve25519 ECC** cryptography to provide users with military-grade encryption for messages, real-time chat, and key management — all without ever exposing plaintext to the server.
+**Ophanim** is a zero-knowledge, end-to-end encrypted (E2EE) messaging platform built entirely in the browser. It uses **OpenPGP.js v5** with **Curve25519 ECC** cryptography to provide users with military-grade encryption for messages, real-time chat, and key management — all without ever exposing plaintext to the server.
 
 The platform operates as a **static web client** + **Node.js relay server**. The server is a dumb pipe — it relays PGP ciphertext between clients and never stores or decrypts any messages.
 
@@ -33,7 +33,7 @@ graph TB
         C["decrypt.html<br/>Decrypt Tool"]
         D["keys.html<br/>Key Manager"]
         E["chat.html<br/>Secure Chat"]
-        F["crypto.js<br/>SeraphimCrypto API"]
+        F["crypto.js<br/>OphanimCrypto API"]
         G["lib/openpgp.min.js<br/>OpenPGP.js v5"]
         H["style.css<br/>Design System"]
     end
@@ -103,7 +103,7 @@ pie title Feature Priority Distribution
 sequenceDiagram
     participant Alice as 👩 Alice (Sender)
     participant UI as 🖥️ Encrypt Page
-    participant Crypto as 🔐 SeraphimCrypto
+    participant Crypto as 🔐 OphanimCrypto
     participant Bob as 👨 Bob (Receiver)
 
     Alice->>UI: Types plaintext message
@@ -246,7 +246,7 @@ graph TD
 ## 8. File Structure & Codebase Analysis
 
 ```
-Seraphim-morefeatures/
+Ophanim-morefeatures/
 ├── index.html          (2.3 KB)  — Landing page with 4 tool cards
 ├── encrypt.html        (7.5 KB)  — Message encryption interface
 ├── decrypt.html        (6.2 KB)  — Message decryption interface  
@@ -254,7 +254,7 @@ Seraphim-morefeatures/
 ├── chat.html           (15.4 KB) — Real-time E2EE chat
 ├── test.html           (6.9 KB)  — Crypto test suite
 ├── style.css           (16.7 KB) — Global design system
-├── crypto.js           (6.1 KB)  — SeraphimCrypto wrapper API
+├── crypto.js           (6.1 KB)  — OphanimCrypto wrapper API
 ├── lib/
 │   └── openpgp.min.js  (552 KB)  — OpenPGP.js v5 library
 ├── server/
@@ -299,7 +299,7 @@ pie title Codebase Size Distribution (excluding node_modules)
 
 ---
 
-## 10. API Reference — SeraphimCrypto
+## 10. API Reference — OphanimCrypto
 
 | Method | Parameters | Returns | Description |
 |--------|-----------|---------|-------------|
@@ -360,7 +360,7 @@ pie title Codebase Size Distribution (excluding node_modules)
 
 # PART 2: Google Stitch Prompts — Per Layout
 
-Below are specific prompts to use in **Google Stitch** for generating layout designs for each page of Seraphim.
+Below are specific prompts to use in **Google Stitch** for generating layout designs for each page of Ophanim.
 
 ---
 
@@ -370,7 +370,7 @@ Below are specific prompts to use in **Google Stitch** for generating layout des
 
 **Google Stitch Prompt:**
 
-> Design a dark-themed landing page for an encrypted messaging app called "Seraphim". Background is near-black (#07070d) with subtle purple and cyan radial gradient glows. At the top is a logo with a lock emoji and gradient text "Seraphim" (purple to cyan). Below it, a hero section with the heading "End-to-End Encrypted Messaging" in gradient text and a tagline: "Zero-knowledge encryption powered by OpenPGP. Your messages. Your keys. No middleman." Below that, a 2x2 grid of glassmorphism cards with dark semi-transparent backgrounds, subtle borders, and hover glow effects. Each card has a gradient icon box (lock, unlock, key, chat bubble), a bold title, and a short description in muted text. Cards: "Encrypt", "Decrypt", "Key Manager", "Secure Chat". Footer text: "Powered by OpenPGP.js v5 · Curve25519 ECC · Zero-knowledge relay". Typography uses Inter font. Overall aesthetic is cyberpunk, premium, dark, with purple/cyan neon accents.
+> Design a dark-themed landing page for an encrypted messaging app called "Ophanim". Background is near-black (#07070d) with subtle purple and cyan radial gradient glows. At the top is a logo with a lock emoji and gradient text "Ophanim" (purple to cyan). Below it, a hero section with the heading "End-to-End Encrypted Messaging" in gradient text and a tagline: "Zero-knowledge encryption powered by OpenPGP. Your messages. Your keys. No middleman." Below that, a 2x2 grid of glassmorphism cards with dark semi-transparent backgrounds, subtle borders, and hover glow effects. Each card has a gradient icon box (lock, unlock, key, chat bubble), a bold title, and a short description in muted text. Cards: "Encrypt", "Decrypt", "Key Manager", "Secure Chat". Footer text: "Powered by OpenPGP.js v5 · Curve25519 ECC · Zero-knowledge relay". Typography uses Inter font. Overall aesthetic is cyberpunk, premium, dark, with purple/cyan neon accents.
 
 ---
 
@@ -380,7 +380,7 @@ Below are specific prompts to use in **Google Stitch** for generating layout des
 
 **Google Stitch Prompt:**
 
-> Design a dark-themed encryption tool page for "Seraphim". Top has a header with logo (left) and a pill-shaped navigation bar (right) with tabs: Encrypt (active/highlighted with purple-cyan gradient), Decrypt, Keys, Chat. Below is a centered heading "🔒 Encrypt Message" in gradient text with subtitle. Main content is a glassmorphism card with: a "Message" textarea (tall, dark input background), a "Recipient's Public Key" textarea with a ghost button "📇 Load from contacts", and a large gradient "🔒 Encrypt Message" button with purple glow shadow. Below that card, an output card labeled "Encrypted Output" shows PGP ciphertext in cyan monospace text on a dark background, with "📋 Copy to Clipboard" and "💾 Download .pgp" buttons. Background is near-black with subtle purple/cyan ambient glows. All inputs have focus states with purple border glow.
+> Design a dark-themed encryption tool page for "Ophanim". Top has a header with logo (left) and a pill-shaped navigation bar (right) with tabs: Encrypt (active/highlighted with purple-cyan gradient), Decrypt, Keys, Chat. Below is a centered heading "🔒 Encrypt Message" in gradient text with subtitle. Main content is a glassmorphism card with: a "Message" textarea (tall, dark input background), a "Recipient's Public Key" textarea with a ghost button "📇 Load from contacts", and a large gradient "🔒 Encrypt Message" button with purple glow shadow. Below that card, an output card labeled "Encrypted Output" shows PGP ciphertext in cyan monospace text on a dark background, with "📋 Copy to Clipboard" and "💾 Download .pgp" buttons. Background is near-black with subtle purple/cyan ambient glows. All inputs have focus states with purple border glow.
 
 ---
 
@@ -390,7 +390,7 @@ Below are specific prompts to use in **Google Stitch** for generating layout des
 
 **Google Stitch Prompt:**
 
-> Design a dark-themed decryption tool page for "Seraphim". Same header/nav structure as encrypt page but "Decrypt" tab is active. Heading: "🔓 Decrypt Message" in gradient text. Main card contains: an "Encrypted Message" textarea (tall, monospace placeholder showing PGP message header), a "Your Private Key" textarea with a "🔑 Load saved key" ghost button below it, a "Passphrase" password input, and a gradient "🔓 Decrypt Message" action button. Below, a second card shows the decrypted output in green (#22c55e) monospace text with a copy button. Dark cyberpunk aesthetic with glassmorphism cards, near-black background (#07070d), purple/cyan accents, Inter font for labels, JetBrains Mono for code blocks.
+> Design a dark-themed decryption tool page for "Ophanim". Same header/nav structure as encrypt page but "Decrypt" tab is active. Heading: "🔓 Decrypt Message" in gradient text. Main card contains: an "Encrypted Message" textarea (tall, monospace placeholder showing PGP message header), a "Your Private Key" textarea with a "🔑 Load saved key" ghost button below it, a "Passphrase" password input, and a gradient "🔓 Decrypt Message" action button. Below, a second card shows the decrypted output in green (#22c55e) monospace text with a copy button. Dark cyberpunk aesthetic with glassmorphism cards, near-black background (#07070d), purple/cyan accents, Inter font for labels, JetBrains Mono for code blocks.
 
 ---
 
@@ -400,7 +400,7 @@ Below are specific prompts to use in **Google Stitch** for generating layout des
 
 **Google Stitch Prompt:**
 
-> Design a dark-themed PGP key management page for "Seraphim". Header with logo + nav bar (Keys tab active). Heading: "🔑 Key Manager" in gradient text. Page has 4 stacked glassmorphism cards: (1) "Generate New Keypair" card — subtitle "ECC Curve25519", two-column row for Name and Email inputs, a Passphrase input below, and a gradient "⚡ Generate Keys" button. (2) "Generated Keypair" output card — shows public key in cyan monospace and private key in pink monospace within dark boxes, with copy buttons and a "💾 Save to Browser" button. (3) "My Saved Keys" card — shows a vertical list of key items with name, email, fingerprint (cyan monospace), and action buttons (export public, export private, delete). (4) "Contacts" card — a list of saved contacts with name and action buttons, plus an "➕ Add Contact" button. All on near-black background with glassmorphism, purple/cyan glow accents, and smooth hover states.
+> Design a dark-themed PGP key management page for "Ophanim". Header with logo + nav bar (Keys tab active). Heading: "🔑 Key Manager" in gradient text. Page has 4 stacked glassmorphism cards: (1) "Generate New Keypair" card — subtitle "ECC Curve25519", two-column row for Name and Email inputs, a Passphrase input below, and a gradient "⚡ Generate Keys" button. (2) "Generated Keypair" output card — shows public key in cyan monospace and private key in pink monospace within dark boxes, with copy buttons and a "💾 Save to Browser" button. (3) "My Saved Keys" card — shows a vertical list of key items with name, email, fingerprint (cyan monospace), and action buttons (export public, export private, delete). (4) "Contacts" card — a list of saved contacts with name and action buttons, plus an "➕ Add Contact" button. All on near-black background with glassmorphism, purple/cyan glow accents, and smooth hover states.
 
 ---
 
@@ -410,7 +410,7 @@ Below are specific prompts to use in **Google Stitch** for generating layout des
 
 **Google Stitch Prompt:**
 
-> Design a dark-themed encrypted chat room for "Seraphim". Two states: (1) JOIN STATE — centered card with heading "💬 Secure Chat", subtitle about E2EE. Card has fields: Display Name input, Keypair dropdown selector, Passphrase input, Room Code input with a "🎲 New" button beside it, and a large gradient "🚀 Join Room" button. (2) CHAT STATE — full-width layout with a top bar showing room code in cyan monospace + "Copy" button + "☠️ Kill Switch" red button + "🚪 Leave" ghost button. Below is a two-column layout: left (75%) has a messages area with sent messages (right-aligned, purple/cyan gradient background) and received messages (left-aligned, dark background) plus system messages (centered, cyan tint), a typing indicator line, and a message input bar with text input + "Send" gradient button. Right sidebar (25%) shows "Online Users" with green pulse dots next to names. Near-black background, glassmorphism, cyberpunk aesthetic.
+> Design a dark-themed encrypted chat room for "Ophanim". Two states: (1) JOIN STATE — centered card with heading "💬 Secure Chat", subtitle about E2EE. Card has fields: Display Name input, Keypair dropdown selector, Passphrase input, Room Code input with a "🎲 New" button beside it, and a large gradient "🚀 Join Room" button. (2) CHAT STATE — full-width layout with a top bar showing room code in cyan monospace + "Copy" button + "☠️ Kill Switch" red button + "🚪 Leave" ghost button. Below is a two-column layout: left (75%) has a messages area with sent messages (right-aligned, purple/cyan gradient background) and received messages (left-aligned, dark background) plus system messages (centered, cyan tint), a typing indicator line, and a message input bar with text input + "Send" gradient button. Right sidebar (25%) shows "Online Users" with green pulse dots next to names. Near-black background, glassmorphism, cyberpunk aesthetic.
 
 ---
 
@@ -420,7 +420,7 @@ Below are specific prompts to use in **Google Stitch** for generating layout des
 
 **Google Stitch Prompt:**
 
-> Design a minimal dark developer test page. Background is very dark (#0a0a0f). Title "🔐 Seraphim Crypto Test Suite" in purple. A gradient purple-to-cyan button labeled "Run All Tests". Below, a terminal-style output box with dark background (#111118), thin border, monospace font showing test output lines. Pass results in green (#22c55e), fail in red (#ef4444), info lines in blue (#38bdf8), dim/meta text in gray (#555). Output shows numbered tests: Key Generation, Encryption, Decryption, Signing, Verification, Wrong Passphrase rejection, Room Code Generation — each with timing and status indicators. Clean, developer-focused, no glassmorphism.
+> Design a minimal dark developer test page. Background is very dark (#0a0a0f). Title "🔐 Ophanim Crypto Test Suite" in purple. A gradient purple-to-cyan button labeled "Run All Tests". Below, a terminal-style output box with dark background (#111118), thin border, monospace font showing test output lines. Pass results in green (#22c55e), fail in red (#ef4444), info lines in blue (#38bdf8), dim/meta text in gray (#555). Output shows numbered tests: Key Generation, Encryption, Decryption, Signing, Verification, Wrong Passphrase rejection, Room Code Generation — each with timing and status indicators. Clean, developer-focused, no glassmorphism.
 
 ---
 
@@ -428,7 +428,7 @@ Below are specific prompts to use in **Google Stitch** for generating layout des
 
 # PART 3: UI Design Prompts — Dark Theme with Hero Image
 
-These are prompts for generating UI mockup images for Seraphim with a **black theme and hero image centered in front**.
+These are prompts for generating UI mockup images for Ophanim with a **black theme and hero image centered in front**.
 
 ---
 
@@ -436,7 +436,7 @@ These are prompts for generating UI mockup images for Seraphim with a **black th
 
 > **Prompt for UI generation:**
 >
-> A stunning dark-mode landing page UI for "Seraphim" — an encrypted messaging app. Pure black background (#07070d) with very subtle purple (#a855f7) and cyan (#06b6d4) ambient gradient glows in the corners. In the center of the page, a large, bold, photorealistic hero image of a glowing angelic wing made of circuit board traces and encryption symbols, rendered in purple and cyan neon light against the black background. The wing radiates soft light particles. Above the image, the word "Seraphim" in large bold Inter font with a purple-to-cyan gradient. Below the image, tagline: "Zero-Knowledge Encrypted Messaging" in muted gray text. Below that, four small dark glassmorphism cards in a row: Encrypt (lock icon), Decrypt (unlock icon), Keys (key icon), Chat (chat bubble icon). Each card has a subtle border glow on hover. Ultra-premium, cyberpunk aesthetic. No device frames. 1920x1080.
+> A stunning dark-mode landing page UI for "Ophanim" — an encrypted messaging app. Pure black background (#07070d) with very subtle purple (#a855f7) and cyan (#06b6d4) ambient gradient glows in the corners. In the center of the page, a large, bold, photorealistic hero image of a glowing angelic wing made of circuit board traces and encryption symbols, rendered in purple and cyan neon light against the black background. The wing radiates soft light particles. Above the image, the word "Ophanim" in large bold Inter font with a purple-to-cyan gradient. Below the image, tagline: "Zero-Knowledge Encrypted Messaging" in muted gray text. Below that, four small dark glassmorphism cards in a row: Encrypt (lock icon), Decrypt (unlock icon), Keys (key icon), Chat (chat bubble icon). Each card has a subtle border glow on hover. Ultra-premium, cyberpunk aesthetic. No device frames. 1920x1080.
 
 ---
 
@@ -444,7 +444,7 @@ These are prompts for generating UI mockup images for Seraphim with a **black th
 
 > **Prompt for UI generation:**
 >
-> Dark-mode UI for an encryption tool page. Black background (#07070d) with subtle purple ambient glow in top-left corner. Top navigation bar with "Seraphim" logo (gradient text) on left and a frosted glass pill-shaped nav with tabs. Main content area has a large glassmorphism card with dark semi-transparent background and thin glowing border. Inside: a "Message" text area with dark input styling, a "Public Key" text area, and a prominent gradient purple-to-cyan "Encrypt" button with glow shadow. Below, a second card shows encrypted PGP output in cyan monospace font. Clean, spacious layout with Inter typography. Professional, premium encryption tool aesthetic. No device frames. 1920x1080.
+> Dark-mode UI for an encryption tool page. Black background (#07070d) with subtle purple ambient glow in top-left corner. Top navigation bar with "Ophanim" logo (gradient text) on left and a frosted glass pill-shaped nav with tabs. Main content area has a large glassmorphism card with dark semi-transparent background and thin glowing border. Inside: a "Message" text area with dark input styling, a "Public Key" text area, and a prominent gradient purple-to-cyan "Encrypt" button with glow shadow. Below, a second card shows encrypted PGP output in cyan monospace font. Clean, spacious layout with Inter typography. Professional, premium encryption tool aesthetic. No device frames. 1920x1080.
 
 ---
 
@@ -468,7 +468,7 @@ These are prompts for generating UI mockup images for Seraphim with a **black th
 
 > **Prompt for UI generation:**
 >
-> Dark-mode UI for a message decryption tool. Black background (#07070d) with subtle green ambient glow hint. Glassmorphism card containing: a large "Encrypted Message" textarea with PGP message placeholder, a "Private Key" textarea, a passphrase input field, and a gradient "Decrypt" action button. Below, a second card shows the decrypted plaintext in bright green (#22c55e) monospace text on a dark background, with a copy button. Navigation bar at top matching the overall Seraphim design. Clean, focused, single-purpose tool interface. No device frames. 1920x1080.
+> Dark-mode UI for a message decryption tool. Black background (#07070d) with subtle green ambient glow hint. Glassmorphism card containing: a large "Encrypted Message" textarea with PGP message placeholder, a "Private Key" textarea, a passphrase input field, and a gradient "Decrypt" action button. Below, a second card shows the decrypted plaintext in bright green (#22c55e) monospace text on a dark background, with a copy button. Navigation bar at top matching the overall Ophanim design. Clean, focused, single-purpose tool interface. No device frames. 1920x1080.
 
 ---
 
@@ -476,4 +476,4 @@ These are prompts for generating UI mockup images for Seraphim with a **black th
 
 > **Prompt for UI generation:**
 >
-> Mobile-responsive dark UI for "Seraphim" encrypted messaging app shown on a phone viewport (390px wide). Black background. Landing page state: Seraphim logo at top with gradient text, hero tagline centered, and 4 feature cards stacked vertically in a single column. Each card has an icon, title, and description with glassmorphism styling. Navigation collapses to a compact pill bar. Chat view: full-screen message area with sent/received bubbles, bottom input bar with send button, hamburger menu for sidebar. Touch-friendly button sizes. Purple/cyan accent colors on pure black. Premium mobile-first design. No device frames. 390x844.
+> Mobile-responsive dark UI for "Ophanim" encrypted messaging app shown on a phone viewport (390px wide). Black background. Landing page state: Ophanim logo at top with gradient text, hero tagline centered, and 4 feature cards stacked vertically in a single column. Each card has an icon, title, and description with glassmorphism styling. Navigation collapses to a compact pill bar. Chat view: full-screen message area with sent/received bubbles, bottom input bar with send button, hamburger menu for sidebar. Touch-friendly button sizes. Purple/cyan accent colors on pure black. Premium mobile-first design. No device frames. 390x844.

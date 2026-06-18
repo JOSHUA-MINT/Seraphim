@@ -1,5 +1,5 @@
 /**
- * Seraphim — Relay Server
+ * Ophanim — Relay Server
  * 
  * A zero-knowledge message relay. The server NEVER sees plaintext.
  * All messages are E2EE PGP ciphertext relayed between clients.
@@ -262,7 +262,7 @@ const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
   console.log('');
   console.log('  ╔══════════════════════════════════════════╗');
-  console.log('  ║     🔐 Seraphim Relay Server Running     ║');
+  console.log('  ║      🔐 Ophanim Relay Server Running     ║');
   console.log(`  ║     http://localhost:${PORT}                ║`);
   console.log('  ║     Zero-knowledge · E2EE · No logs      ║');
   console.log('  ╚══════════════════════════════════════════╝');

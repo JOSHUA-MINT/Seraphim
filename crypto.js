@@ -1,14 +1,14 @@
 /**
- * Seraphim — crypto.js
+ * Ophanim — crypto.js
  * Core cryptographic wrapper around OpenPGP.js v5
  * 
  * All functions are async. Requires openpgp.min.js to be loaded first
  * via <script src="lib/openpgp.min.js"></script>
  * 
- * Exposes: SeraphimCrypto global object
+ * Exposes: OphanimCrypto global object
  */
 
-const SeraphimCrypto = (() => {
+const OphanimCrypto = (() => {
 
   // ── Key Generation ─────────────────────────────────────────────
   /**

@@ -5,14 +5,213 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Content-Security-Policy"
     content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self' ws://localhost:3000 wss://localhost:3000; img-src 'self' data:; font-src 'self';">
-  <title>Seraphim — Key Manager</title>
+  <title>Ophanim — Key Manager</title>
   <meta name="description" content="Generate, import, and manage PGP keypairs securely in your browser.">
   <link rel="stylesheet" href="style.css">
+  <style>
+    /* Dashboard-inspired grid layout */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+      margin-top: 1.5rem;
+    }
+    @media (min-width: 1024px) {
+      .dashboard-grid {
+        grid-template-columns: 2.2fr 1fr;
+      }
+    }
+
+    .dashboard-main {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .dashboard-sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    /* 2-column subgrid for main */
+    .main-row-1 {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+    @media (min-width: 768px) {
+      .main-row-1 {
+        grid-template-columns: 1fr 1.3fr;
+      }
+    }
+
+    /* Active Identity Node Card */
+    .identity-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      justify-content: space-between;
+      min-height: 330px;
+    }
+
+    .identity-avatar-container {
+      position: relative;
+      width: 110px;
+      height: 110px;
+      margin: 0.5rem 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .avatar-ring-outer {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border: 2px dashed var(--accent-gold);
+      border-radius: 50%;
+      animation: rotate-clockwise 15s linear infinite;
+      opacity: 0.5;
+    }
+
+    .avatar-ring-inner {
+      position: absolute;
+      width: 85%;
+      height: 85%;
+      border: 2px dotted var(--accent-gold-soft);
+      border-radius: 50%;
+      animation: rotate-counter-clockwise 10s linear infinite;
+      opacity: 0.7;
+    }
+
+    .avatar-core {
+      width: 70%;
+      height: 70%;
+      background: rgba(0, 0, 0, 0.75);
+      border: 1px solid var(--accent-gold);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.2rem;
+      box-shadow: 0 0 15px var(--accent-gold-glow);
+      z-index: 2;
+    }
+
+    .avatar-status-dot {
+      position: absolute;
+      bottom: 6px;
+      right: 14px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      border: 2px solid var(--bg-deep);
+      z-index: 3;
+    }
+    .avatar-status-dot.active {
+      background: #22c55e;
+      box-shadow: 0 0 8px #22c55e;
+    }
+    .avatar-status-dot.inactive {
+      background: #ef4444;
+      box-shadow: 0 0 8px #ef4444;
+    }
+
+    @keyframes rotate-clockwise {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes rotate-counter-clockwise {
+      from { transform: rotate(360deg); }
+      to { transform: rotate(0deg); }
+    }
+
+    .identity-stats {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 1rem;
+      width: 100%;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .identity-stat-badge {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border-subtle);
+      border-radius: 20px;
+      padding: 0.25rem 0.6rem;
+      font-size: 0.7rem;
+      color: var(--text-secondary);
+    }
+
+    /* Security posture assessment progress bars */
+    .assessment-item {
+      margin-bottom: 0.85rem;
+    }
+    .assessment-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      margin-bottom: 0.3rem;
+      color: var(--text-secondary);
+    }
+    .assessment-bar-bg {
+      width: 100%;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.04);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .assessment-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent-gold-soft) 0%, var(--accent-gold) 100%);
+      border-radius: 3px;
+      transition: width 0.3s ease;
+    }
+
+    /* Initialization matrix card styling */
+    .gen-matrix-card {
+      background: linear-gradient(135deg, rgba(197, 168, 92, 0.03) 0%, rgba(5, 5, 8, 0.4) 100%);
+      border: 1px solid var(--accent-gold-soft);
+      min-height: 330px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .active-identity-highlight {
+      border-color: var(--accent-gold) !important;
+      box-shadow: 0 0 12px var(--accent-gold-glow) !important;
+    }
+
+    .active-identity-badge {
+      background: var(--accent-gold);
+      color: black;
+      font-size: 0.6rem;
+      font-weight: 700;
+      padding: 0.15rem 0.4rem;
+      border-radius: 3px;
+      text-transform: uppercase;
+      margin-left: 0.5rem;
+      letter-spacing: 0.5px;
+    }
+
+    .key-list-scroll {
+      max-height: 240px;
+      overflow-y: auto;
+      padding-right: 2px;
+    }
+  </style>
 </head>
 <body>
   <header class="global-header">
     <a href="index.html" class="global-logo">
-      <img src="lib/seraphim-logo.png" class="header-svg" alt="Seraphim" onerror="this.style.display='none'">
+      <img src="lib/ophanim-logo.png" class="header-svg" alt="Ophanim" onerror="this.style.display='none'">
     </a>
     <nav class="header-nav">
       <a href="index.html">Home</a>
@@ -26,61 +225,142 @@
   <main class="page-content reveal">
     <div class="page-container wide">
       <div class="page-title">
-        <h1>Key Manager</h1>
-        <p>Generate, store, and manage your PGP keypairs. Keys are saved in your browser only.</p>
+        <h1>Key Dashboard</h1>
+        <p>Manage and initialize cryptographic identities stored locally in your browser sandboxed vault.</p>
       </div>
 
-      <div class="grid-2col">
-        <!-- Left Column: Actions -->
-        <div>
-          <!-- Generate Key Card -->
-          <div class="card" style="margin-bottom:1.5rem;">
-            <div class="card-header">
-              <div>
-                <div class="card-title">Generate New Keypair</div>
-                <div class="card-subtitle">ECC Curve25519 — fast, modern, secure</div>
+      <div class="dashboard-grid">
+        <!-- Left Column: Main Node Actions -->
+        <div class="dashboard-main">
+          
+          <!-- Row 1: Profile + Generate -->
+          <div class="main-row-1">
+            
+            <!-- Active Identity Node Card (Inspired by Kristin Watson Profile Card) -->
+            <div class="card identity-card">
+              <div class="card-header" style="width: 100%; justify-content: space-between; margin-bottom: 0;">
+                <div class="card-title" style="font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em;">Active Identity Node</div>
+                <button class="btn btn-ghost btn-sm" onclick="updateActiveIdentityDisplay()" title="Refresh node display" style="padding: 4px; min-width: auto; border: none; background: transparent; color: var(--text-secondary);">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+                </button>
+              </div>
+              
+              <div class="identity-avatar-container">
+                <div class="avatar-ring-outer"></div>
+                <div class="avatar-ring-inner"></div>
+                <div class="avatar-core">
+                  <span style="color: var(--accent-gold); font-family: var(--font-serif); font-weight: bold;">Ω</span>
+                </div>
+                <div id="identity-avatar-status" class="avatar-status-dot inactive"></div>
+              </div>
+              
+              <div style="width: 100%;">
+                <div id="active-identity-name" style="font-size: 1.15rem; font-weight: 600; color: var(--text-primary);">No Active Identity</div>
+                <div id="active-identity-meta" class="text-muted" style="font-size: 0.75rem; font-family: var(--font-mono); margin-top: 0.2rem; max-width: 90%; margin-left: auto; margin-right: auto; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Activate an identity card below</div>
+              </div>
+              
+              <div class="identity-stats">
+                <span class="identity-stat-badge" id="badge-keys-count">🔑 Keys: 0</span>
+                <span class="identity-stat-badge" id="badge-contacts-count">👤 Contacts: 0</span>
+                <span class="identity-stat-badge">🛡️ Node: Curve25519</span>
+              </div>
+            </div>
+            
+            <!-- Identity Initialization Matrix (Inspired by tasks cards) -->
+            <div class="card gen-matrix-card">
+              <div class="card-header" style="margin-bottom: 0.5rem;">
+                <div>
+                  <div class="card-title" style="font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--accent-gold);">Initialization Matrix</div>
+                  <div class="card-subtitle">Generate modern Curve25519 ECC keypair</div>
+                </div>
+              </div>
+
+              <div style="width: 100%;">
+                <div class="form-row" style="display:flex;gap:0.75rem;margin-bottom:0.75rem;">
+                  <div class="form-group" style="flex:1;margin-bottom:0;">
+                    <label class="form-label" for="gen-name" style="font-size: 0.7rem;">Node Name</label>
+                    <input class="form-input" id="gen-name" placeholder="e.g. Kristin Watson" style="padding: 0.45rem 0.6rem; font-size: 0.8rem;">
+                  </div>
+                  <div class="form-group" style="flex:1;margin-bottom:0;">
+                    <label class="form-label" for="gen-email" style="font-size: 0.7rem;">Node Email</label>
+                    <input class="form-input" id="gen-email" type="email" placeholder="kristin@example.com" style="padding: 0.45rem 0.6rem; font-size: 0.8rem;">
+                  </div>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 1rem;">
+                  <label class="form-label" for="gen-pass" style="font-size: 0.7rem;">Vault Passphrase</label>
+                  <input class="form-input" id="gen-pass" type="password" placeholder="Passphrase to encrypt private key" style="padding: 0.45rem 0.6rem; font-size: 0.8rem;">
+                </div>
+              </div>
+
+              <div style="width: 100%;">
+                <button class="btn btn-primary" id="gen-btn" onclick="handleGenerate()" style="width: 100%; padding: 0.55rem; font-size: 0.8rem;">⚡ Initialize Identity</button>
+                <div class="status" id="gen-status"></div>
               </div>
             </div>
 
-            <div class="form-row" style="display:flex;gap:1rem;margin-bottom:1.25rem;">
-              <div class="form-group" style="flex:1;margin-bottom:0;">
-                <label class="form-label" for="gen-name">Name</label>
-                <input class="form-input" id="gen-name" placeholder="Your name">
-              </div>
-              <div class="form-group" style="flex:1;margin-bottom:0;">
-                <label class="form-label" for="gen-email">Email</label>
-                <input class="form-input" id="gen-email" type="email" placeholder="you@example.com">
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label class="form-label" for="gen-pass">Passphrase</label>
-              <input class="form-input" id="gen-pass" type="password" placeholder="Strong passphrase to protect your key">
-            </div>
-
-            <button class="btn btn-primary" id="gen-btn" onclick="handleGenerate()">Generate Keys</button>
-            <div class="status" id="gen-status"></div>
           </div>
-
-          <!-- Generated Keys Output -->
+          
+          <!-- Row 2: Cryptographic Import Gateway (Inspired by Focusing panel) -->
+          <div class="card">
+            <div class="card-header" style="margin-bottom: 1rem;">
+              <div>
+                <div class="card-title" style="font-size: 1rem; text-transform: uppercase; letter-spacing: 0.05em;">Cryptographic Import Gateway</div>
+                <div class="card-subtitle">Ingest external public keys into the keyring</div>
+              </div>
+            </div>
+            
+            <div class="grid-2col" style="gap: 1.5rem; align-items: stretch;">
+              <!-- Drop Zone -->
+              <div style="display: flex; flex-direction: column;">
+                <label class="form-label">Key File Ingest</label>
+                <div class="drag-drop-zone" id="contact-key-drop-zone" style="flex: 1; display: flex; align-items: center; justify-content: center; min-height: 120px; margin-top: 0.5rem;">
+                  Drag &amp; drop contact's public key file (.asc, .pub, .txt) here, or click to load
+                  <input type="file" id="contact-key-file-input" style="display:none;" accept=".asc,.pub,.txt">
+                </div>
+              </div>
+              <!-- Form Fields -->
+              <div>
+                <div class="form-group" style="margin-bottom: 0.75rem;">
+                  <label class="form-label" for="contact-name">Contact Name</label>
+                  <input class="form-input" id="contact-name" placeholder="Contact's display name" style="padding: 0.45rem 0.6rem; font-size: 0.8rem;">
+                </div>
+                <div class="form-group" style="margin-bottom: 0;">
+                  <label class="form-label" for="contact-pubkey">Armored Public Key Block</label>
+                  <textarea class="form-textarea" id="contact-pubkey" placeholder="Paste their public key block here..." style="height: 80px; padding: 0.5rem; font-size: 0.75rem; font-family: var(--font-mono);"></textarea>
+                </div>
+              </div>
+            </div>
+            
+            <button class="btn btn-secondary btn-block" onclick="addContact()" style="margin-top: 1.25rem; padding: 0.55rem; font-size: 0.8rem;">💾 Save Contact to Directory</button>
+            <div class="status" id="contact-status"></div>
+          </div>
+          
+          <!-- Generated Keys Output (Conditionally Displayed) -->
           <div class="card mt-2" id="gen-output" style="display:none; margin-bottom:1.5rem;">
             <div class="card-header">
               <div>
                 <div class="card-title">Generated Keypair</div>
-                <div class="card-subtitle" id="gen-fingerprint" style="font-family:var(--font-mono);color:var(--text-silver);"></div>
+                <div class="card-subtitle" id="gen-fingerprint" style="font-family:var(--font-mono);color:var(--text-silver); font-size: 0.75rem;"></div>
               </div>
             </div>
 
             <div class="form-group">
               <label class="form-label">Public Key</label>
-              <div class="output-box" id="gen-pubkey" style="max-height:150px;overflow-y:auto;"></div>
-              <button class="btn btn-ghost btn-sm mt-1" onclick="copyEl('gen-pubkey', this)">Copy Public Key</button>
+              <div class="output-box" id="gen-pubkey" style="max-height:120px;overflow-y:auto; font-size: 0.75rem; font-family: var(--font-mono);"></div>
+              <div class="btn-group mt-1">
+                <button class="btn btn-ghost btn-sm" onclick="copyEl('gen-pubkey', this)">Copy Public Key</button>
+                <button class="btn btn-ghost btn-sm" onclick="downloadGeneratedKey('pub')">Download Public Key</button>
+              </div>
             </div>
 
             <div class="form-group">
               <label class="form-label">Private Key</label>
-              <div class="output-box" id="gen-privkey" style="max-height:150px;overflow-y:auto;color:var(--text-silver);"></div>
-              <button class="btn btn-ghost btn-sm mt-1" onclick="copyEl('gen-privkey', this)">Copy Private Key</button>
+              <div class="output-box" id="gen-privkey" style="max-height:120px;overflow-y:auto;color:var(--text-silver); font-size: 0.75rem; font-family: var(--font-mono);"></div>
+              <div class="btn-group mt-1">
+                <button class="btn btn-ghost btn-sm" onclick="copyEl('gen-privkey', this)">Copy Private Key</button>
+                <button class="btn btn-ghost btn-sm" onclick="downloadGeneratedKey('priv')">Download Private Key</button>
+              </div>
             </div>
 
             <div class="btn-group">
@@ -89,54 +369,81 @@
             <div class="status" id="save-status"></div>
           </div>
 
-          <!-- Add Contact Card -->
-          <div class="card" style="margin-bottom:1.5rem;">
-            <div class="card-header">
-              <div>
-                <div class="card-title">Add Contact</div>
-                <div class="card-subtitle">Import public key of a contact</div>
-              </div>
-            </div>
-            <div class="form-group">
-              <label class="form-label" for="contact-name">Contact Name</label>
-              <input class="form-input" id="contact-name" placeholder="Contact name">
-            </div>
-            <div class="form-group">
-              <label class="form-label" for="contact-pubkey">Public Key Block</label>
-              <div class="drag-drop-zone" id="contact-key-drop-zone">
-                Drag &amp; drop contact's public key file (.asc, .pub, .txt) here, or click to load
-                <input type="file" id="contact-key-file-input" style="display:none;" accept=".asc,.pub,.txt">
-              </div>
-              <textarea class="form-textarea mt-1" id="contact-pubkey" placeholder="Paste their public key here..." style="height:100px;"></textarea>
-            </div>
-            <button class="btn btn-secondary btn-block" onclick="addContact()">Save Contact</button>
-            <div class="status" id="contact-status"></div>
-          </div>
         </div>
-
-        <!-- Right Column: Lists -->
-        <div>
-          <!-- Saved Keys -->
-          <div class="card" style="margin-bottom:1.5rem;">
-            <div class="card-header">
+        
+        <!-- Right Column: Sidebar Lists & Assessment -->
+        <div class="dashboard-sidebar">
+          
+          <!-- Active Keychain Registry Card (Inspired by My Meetings) -->
+          <div class="card">
+            <div class="card-header" style="margin-bottom: 0.75rem;">
               <div>
-                <div class="card-title">My Saved Keys</div>
+                <div class="card-title" style="font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em;">Keychain Registry</div>
                 <div class="card-subtitle" id="key-count">Loading...</div>
               </div>
             </div>
-            <div id="saved-keys" class="key-list"></div>
+            <div id="saved-keys" class="key-list key-list-scroll"></div>
           </div>
-
-          <!-- Contacts -->
-          <div class="card" style="margin-bottom:1.5rem;">
-            <div class="card-header">
+          
+          <!-- Verified Contacts Directory Card (Inspired by My Meetings list 2) -->
+          <div class="card">
+            <div class="card-header" style="margin-bottom: 0.75rem;">
               <div>
-                <div class="card-title">Contacts</div>
-                <div class="card-subtitle">People you communicate with</div>
+                <div class="card-title" style="font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em;">Contacts Directory</div>
+                <div class="card-subtitle">Verified communication nodes</div>
               </div>
             </div>
-            <div id="contacts-list" class="key-list"></div>
+            <div id="contacts-list" class="key-list key-list-scroll"></div>
           </div>
+          
+          <!-- Cryptographic Node Assessment (Inspired by Developed Areas progress bars) -->
+          <div class="card">
+            <div class="card-header" style="margin-bottom: 0.75rem;">
+              <div>
+                <div class="card-title" style="font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em;">Node Posture Score</div>
+                <div class="card-subtitle">Real-time local cryptographic score</div>
+              </div>
+            </div>
+            <div style="padding: 0.15rem 0;">
+              <div class="assessment-item">
+                <div class="assessment-header">
+                  <span>ECC Strength (Curve25519)</span>
+                  <span>100%</span>
+                </div>
+                <div class="assessment-bar-bg">
+                  <div class="assessment-bar-fill" style="width: 100%;"></div>
+                </div>
+              </div>
+              <div class="assessment-item">
+                <div class="assessment-header">
+                  <span>Passphrase Entropy</span>
+                  <span id="entropy-percent">0%</span>
+                </div>
+                <div class="assessment-bar-bg">
+                  <div class="assessment-bar-fill" id="entropy-bar" style="width: 0%;"></div>
+                </div>
+              </div>
+              <div class="assessment-item">
+                <div class="assessment-header">
+                  <span>Zero-Knowledge Isolation</span>
+                  <span>100%</span>
+                </div>
+                <div class="assessment-bar-bg">
+                  <div class="assessment-bar-fill" style="width: 100%;"></div>
+                </div>
+              </div>
+              <div class="assessment-item">
+                <div class="assessment-header">
+                  <span>Browser Storage Integrity</span>
+                  <span>90%</span>
+                </div>
+                <div class="assessment-bar-bg">
+                  <div class="assessment-bar-fill" style="width: 90%;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
         </div>
       </div>
     </div>
@@ -227,8 +534,8 @@
       btn.disabled = true;
       btn.innerHTML = 'Generating...';
       try {
-        const keys = await SeraphimCrypto.generateKeyPair(name, email, pass);
-        const fp = await SeraphimCrypto.getFingerprint(keys.publicKey);
+        const keys = await OphanimCrypto.generateKeyPair(name, email, pass);
+        const fp = await OphanimCrypto.getFingerprint(keys.publicKey);
         lastGenerated = { ...keys, name, email, fingerprint: fp };
 
         document.getElementById('gen-pubkey').textContent = keys.publicKey;
@@ -246,7 +553,7 @@
 
     function saveGenerated() {
       if (!lastGenerated) return;
-      const keys = JSON.parse(localStorage.getItem('seraphim_keys') || '[]');
+      const keys = JSON.parse(localStorage.getItem('ophanim_keys') || '[]');
       keys.push({
         id: crypto.randomUUID(),
         name: lastGenerated.name,
@@ -256,42 +563,110 @@
         fingerprint: lastGenerated.fingerprint,
         createdAt: new Date().toISOString()
       });
-      localStorage.setItem('seraphim_keys', JSON.stringify(keys));
+      localStorage.setItem('ophanim_keys', JSON.stringify(keys));
       showStatus('save-status', 'success', '✓ Saved to browser!');
+      
+      // Auto-activate the newly generated key
+      localStorage.setItem('ophanim_active_key_index', keys.length - 1);
+      updateActiveIdentityDisplay();
+      
+      renderKeys();
+      
+      // Hide generation output
+      document.getElementById('gen-output').style.display = 'none';
+      document.getElementById('gen-name').value = '';
+      document.getElementById('gen-email').value = '';
+      document.getElementById('gen-pass').value = '';
+      document.getElementById('entropy-percent').textContent = '0%';
+      document.getElementById('entropy-bar').style.width = '0%';
+    }
+
+    // Active Identity Helpers
+    function getActiveIdentityIndex() {
+      const activeIdx = localStorage.getItem('ophanim_active_key_index');
+      if (activeIdx === null) return -1;
+      return parseInt(activeIdx);
+    }
+
+    function updateActiveIdentityDisplay() {
+      const keys = JSON.parse(localStorage.getItem('ophanim_keys') || '[]');
+      const activeIdx = getActiveIdentityIndex();
+      
+      const avatarStatus = document.getElementById('identity-avatar-status');
+      const identityName = document.getElementById('active-identity-name');
+      const identityMeta = document.getElementById('active-identity-meta');
+      const badgeKeys = document.getElementById('badge-keys-count');
+      const badgeContacts = document.getElementById('badge-contacts-count');
+      
+      badgeKeys.textContent = `🔑 Keys: ${keys.length}`;
+      const contacts = JSON.parse(localStorage.getItem('ophanim_contacts') || '[]');
+      badgeContacts.textContent = `👤 Contacts: ${contacts.length}`;
+      
+      if (activeIdx >= 0 && activeIdx < keys.length) {
+        const activeKey = keys[activeIdx];
+        avatarStatus.className = 'avatar-status-dot active';
+        identityName.textContent = activeKey.name;
+        identityMeta.textContent = activeKey.email || activeKey.fingerprint.substring(0, 16) + '...';
+        identityMeta.title = activeKey.fingerprint;
+      } else {
+        avatarStatus.className = 'avatar-status-dot inactive';
+        identityName.textContent = 'No Active Identity';
+        identityMeta.textContent = 'Activate an identity card below';
+        identityMeta.removeAttribute('title');
+      }
+    }
+
+    function setActiveIdentity(idx) {
+      localStorage.setItem('ophanim_active_key_index', idx);
+      updateActiveIdentityDisplay();
       renderKeys();
     }
 
     // Render saved keys
     function renderKeys() {
-      const keys = JSON.parse(localStorage.getItem('seraphim_keys') || '[]');
+      const keys = JSON.parse(localStorage.getItem('ophanim_keys') || '[]');
       const el = document.getElementById('saved-keys');
       document.getElementById('key-count').textContent = keys.length + ' keypair(s)';
+      
+      const activeIdx = getActiveIdentityIndex();
 
       if (keys.length === 0) {
         el.innerHTML = '<p class="text-muted text-sm text-center">No saved keys yet. Generate one.</p>';
         return;
       }
 
-      el.innerHTML = keys.map((k, i) => `
-        <div class="list-item">
+      el.innerHTML = keys.map((k, i) => {
+        const isActive = (i === activeIdx);
+        return `
+        <div class="list-item ${isActive ? 'active-identity-highlight' : ''}">
           <div class="list-item-header">
             <div>
-              <div class="list-item-title">${esc(k.name)}</div>
+              <div class="list-item-title" style="display:flex;align-items:center;">
+                ${esc(k.name)}
+                ${isActive ? '<span class="active-identity-badge">Active</span>' : ''}
+              </div>
               <div class="list-item-subtitle">${esc(k.email || '')}</div>
             </div>
             <div class="btn-group">
-              <button class="btn btn-ghost btn-sm" onclick="exportKey(${i},'pub', this)" title="Copy public key">Pub Key</button>
-              <button class="btn btn-ghost btn-sm" onclick="exportKey(${i},'priv', this)" title="Copy private key">Priv Key</button>
-              <button class="btn btn-killswitch" style="padding:4px 8px;font-size:11px;" onclick="deleteKey(${i})">Delete</button>
+              ${!isActive ? `<button class="btn btn-ghost btn-sm" onclick="setActiveIdentity(${i})" style="color:var(--accent-gold); font-size:10px;">Activate</button>` : ''}
+              <button class="btn btn-ghost btn-sm" onclick="exportKey(${i},'pub', this)" title="Copy public key" style="font-size:10px;">Copy Pub</button>
+              <button class="btn btn-ghost btn-sm" onclick="downloadSavedKey(${i},'pub')" title="Download public key" style="font-size:10px; padding: 4px 6px;">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+              </button>
+              <button class="btn btn-ghost btn-sm" onclick="exportKey(${i},'priv', this)" title="Copy private key" style="font-size:10px;">Copy Priv</button>
+              <button class="btn btn-ghost btn-sm" onclick="downloadSavedKey(${i},'priv')" title="Download private key" style="font-size:10px; padding: 4px 6px;">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+              </button>
+              <button class="btn btn-killswitch" style="padding:4px 8px;font-size:10px;" onclick="deleteKey(${i})">Delete</button>
             </div>
           </div>
-          <div class="list-item-meta">${esc(k.fingerprint || 'N/A')}</div>
+          <div class="list-item-meta" style="font-size: 9px;">${esc(k.fingerprint || 'N/A')}</div>
         </div>
-      `).join('');
+      `}).join('');
     }
 
     function exportKey(idx, type, btn) {
-      const keys = JSON.parse(localStorage.getItem('seraphim_keys') || '[]');
+      const keys = JSON.parse(localStorage.getItem('ophanim_keys') || '[]');
       const text = type === 'pub' ? keys[idx].publicKey : keys[idx].privateKey;
       navigator.clipboard.writeText(text).then(() => {
         const oldText = btn.textContent;
@@ -300,17 +675,59 @@
       });
     }
 
+    function downloadKeyText(text, filename) {
+      const blob = new Blob([text], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    function downloadGeneratedKey(type) {
+      if (!lastGenerated) return;
+      const nameClean = lastGenerated.name.toLowerCase().replace(/[^a-z0-9]/g, '_');
+      if (type === 'pub') {
+        downloadKeyText(lastGenerated.publicKey, `${nameClean}_public.pub`);
+      } else {
+        downloadKeyText(lastGenerated.privateKey, `${nameClean}_private.asc`);
+      }
+    }
+
+    function downloadSavedKey(idx, type) {
+      const keys = JSON.parse(localStorage.getItem('ophanim_keys') || '[]');
+      const k = keys[idx];
+      const nameClean = k.name.toLowerCase().replace(/[^a-z0-9]/g, '_');
+      if (type === 'pub') {
+        downloadKeyText(k.publicKey, `${nameClean}_public.pub`);
+      } else {
+        downloadKeyText(k.privateKey, `${nameClean}_private.asc`);
+      }
+    }
+
     function deleteKey(idx) {
       if (!confirm('Delete this keypair? This cannot be undone.')) return;
-      const keys = JSON.parse(localStorage.getItem('seraphim_keys') || '[]');
+      const keys = JSON.parse(localStorage.getItem('ophanim_keys') || '[]');
       keys.splice(idx, 1);
-      localStorage.setItem('seraphim_keys', JSON.stringify(keys));
+      localStorage.setItem('ophanim_keys', JSON.stringify(keys));
+      
+      const activeIdx = getActiveIdentityIndex();
+      if (activeIdx === idx) {
+        localStorage.removeItem('ophanim_active_key_index');
+      } else if (activeIdx > idx) {
+        localStorage.setItem('ophanim_active_key_index', activeIdx - 1);
+      }
+      
+      updateActiveIdentityDisplay();
       renderKeys();
     }
 
     // Contacts
     function renderContacts() {
-      const contacts = JSON.parse(localStorage.getItem('seraphim_contacts') || '[]');
+      const contacts = JSON.parse(localStorage.getItem('ophanim_contacts') || '[]');
       const el = document.getElementById('contacts-list');
       if (contacts.length === 0) {
         el.innerHTML = '<p class="text-muted text-sm text-center">No contacts saved.</p>';
@@ -321,8 +738,8 @@
           <div class="list-item-header">
             <div class="list-item-title">${esc(c.name)}</div>
             <div class="btn-group">
-              <button class="btn btn-ghost btn-sm" onclick="copyContactKey(${i}, this)">Copy Key</button>
-              <button class="btn btn-killswitch" style="padding:4px 8px;font-size:11px;" onclick="deleteContact(${i})">Delete</button>
+              <button class="btn btn-ghost btn-sm" onclick="copyContactKey(${i}, this)" style="font-size:10px;">Copy Key</button>
+              <button class="btn btn-killswitch" style="padding:4px 8px;font-size:10px;" onclick="deleteContact(${i})">Delete</button>
             </div>
           </div>
         </div>
@@ -330,7 +747,7 @@
     }
 
     function copyContactKey(idx, btn) {
-      const contacts = JSON.parse(localStorage.getItem('seraphim_contacts') || '[]');
+      const contacts = JSON.parse(localStorage.getItem('ophanim_contacts') || '[]');
       navigator.clipboard.writeText(contacts[idx].publicKey).then(() => {
         const oldText = btn.textContent;
         btn.textContent = '✓ Copied';
@@ -340,26 +757,51 @@
 
     function deleteContact(idx) {
       if (!confirm('Remove this contact?')) return;
-      const contacts = JSON.parse(localStorage.getItem('seraphim_contacts') || '[]');
+      const contacts = JSON.parse(localStorage.getItem('ophanim_contacts') || '[]');
       contacts.splice(idx, 1);
-      localStorage.setItem('seraphim_contacts', JSON.stringify(contacts));
+      localStorage.setItem('ophanim_contacts', JSON.stringify(contacts));
       renderContacts();
+      updateActiveIdentityDisplay();
     }
 
     function addContact() {
       const name = document.getElementById('contact-name').value.trim();
       const pk = document.getElementById('contact-pubkey').value.trim();
       if (!name || !pk) return showStatus('contact-status', 'error', '⚠ Name and public key required.');
-      const contacts = JSON.parse(localStorage.getItem('seraphim_contacts') || '[]');
+      const contacts = JSON.parse(localStorage.getItem('ophanim_contacts') || '[]');
       contacts.push({ id: crypto.randomUUID(), name, publicKey: pk });
-      localStorage.setItem('seraphim_contacts', JSON.stringify(contacts));
+      localStorage.setItem('ophanim_contacts', JSON.stringify(contacts));
       renderContacts();
+      updateActiveIdentityDisplay();
+      
       document.getElementById('contact-name').value = '';
       document.getElementById('contact-pubkey').value = '';
       showStatus('contact-status', 'success', '✓ Contact added successfully.');
     }
 
+    // Entropy calculation for Vault Passphrase
+    function calculateEntropy(passphrase) {
+      if (!passphrase) return 0;
+      let score = 0;
+      score += Math.min(passphrase.length * 5, 50);
+      if (/[A-Z]/.test(passphrase)) score += 15;
+      if (/[a-z]/.test(passphrase)) score += 15;
+      if (/[0-9]/.test(passphrase)) score += 10;
+      if (/[^A-Za-z0-9]/.test(passphrase)) score += 10;
+      return Math.min(score, 100);
+    }
+
+    const genPassInput = document.getElementById('gen-pass');
+    if (genPassInput) {
+      genPassInput.addEventListener('input', (e) => {
+        const score = calculateEntropy(e.target.value);
+        document.getElementById('entropy-percent').textContent = `${score}%`;
+        document.getElementById('entropy-bar').style.width = `${score}%`;
+      });
+    }
+
     // Init
+    updateActiveIdentityDisplay();
     renderKeys();
     renderContacts();
   </script>
