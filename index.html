@@ -328,16 +328,22 @@
       </section>
 
       <!-- ── Section 2: Matrix Cinematic ── -->
-      <section id="matrix-section" style="position: relative;">
-        <div class="matrix-hero" id="matrix-hero">
-          <img src="lib/matrix.png" alt="Choose your path" class="matrix-hero-img" id="matrix-img">
+      <section id="matrix-section" class="matrix-section">
+        <div class="matrix-hero">
+          <img src="lib/matrix.png" alt="Choose your path" class="matrix-hero-img">
         </div>
-        <canvas id="line-canvas"></canvas>
 
-        <!-- 50/50 Split Destination -->
+        <!-- Diverging Paths SVG Overlay -->
+        <svg id="line-svg" class="line-svg" preserveAspectRatio="none" viewBox="0 0 100 100">
+          <path id="red-path" d="M 43 25 C 35 50, 20 65, 15 85" class="svg-path red-path" />
+          <path id="blue-path" d="M 57 25 C 65 50, 80 65, 85 85" class="svg-path blue-path" />
+        </svg>
+
+        <!-- Diverging Text Destination (Anchored to the bottom) -->
         <div class="split-section" id="split-section">
-          <!-- Red Pill Side -->
-          <div class="split-pane red">
+          
+          <!-- Red Pill Side (Left) -->
+          <div class="split-pane red" id="red-pane">
             <div class="split-label">The Red Pill</div>
             <div class="split-title">Ophanim</div>
             <div class="split-body">
@@ -353,11 +359,8 @@
             </div>
           </div>
 
-          <!-- Divider -->
-          <div class="split-divider"></div>
-
-          <!-- Blue Pill Side -->
-          <div class="split-pane blue">
+          <!-- Blue Pill Side (Right) -->
+          <div class="split-pane blue" id="blue-pane">
             <div class="split-label">The Blue Pill</div>
             <div class="split-title">Traditional Messaging</div>
             <div class="split-body">
@@ -372,6 +375,7 @@
               <span class="s-tag blue">Metadata Exposed</span>
             </div>
           </div>
+          
         </div>
       </section>
     </main>
@@ -385,108 +389,7 @@
     }
   </style>
 
-  <script>
-  (function () {
-    const hero    = document.getElementById('hero-section');
-    const img     = document.getElementById('matrix-img');
-    const canvas  = document.getElementById('line-canvas');
-    const ctx     = canvas.getContext('2d');
-    const split   = document.getElementById('split-section');
-    const section = document.getElementById('matrix-section');
 
-    /* ── Resize canvas to match matrix-section ── */
-    function sizeCanvas() {
-      if (!section || !canvas) return;
-      canvas.width  = section.offsetWidth;
-      canvas.height = section.offsetHeight;
-    }
-
-    /* ── Draw the two vertical falling lines ── */
-    function drawLines() {
-      if (!img || !canvas || !ctx || !section) return;
-      sizeCanvas();
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      const sRect = section.getBoundingClientRect();
-      const iRect = img.getBoundingClientRect();
-
-      // Red pill position: ~30% from left of image, ~82% from top
-      const redX  = iRect.left + iRect.width * 0.30 - sRect.left;
-      const redY  = iRect.top  + iRect.height * 0.82 - sRect.top;
-      // Blue pill position: ~70% from left of image, ~82% from top
-      const blueX = iRect.left + iRect.width * 0.70 - sRect.left;
-      const blueY = iRect.top  + iRect.height * 0.82 - sRect.top;
-
-      // How far the lines have "fallen" — based on scroll progress
-      const scrollTop = window.scrollY;
-      const vH = window.innerHeight;
-      // Lines start appearing after 1 viewport of scroll, fully extend over next 1.5 viewports
-      const lineProgress = Math.min(Math.max((scrollTop - vH * 0.8) / (vH * 1.2), 0), 1);
-      const maxLen = canvas.height - redY;
-      const lineLen = maxLen * lineProgress;
-
-      if (lineLen <= 0) return;
-
-      // Red line
-      const redGrad = ctx.createLinearGradient(redX, redY, redX, redY + lineLen);
-      redGrad.addColorStop(0, 'rgba(248,113,113,0.7)');
-      redGrad.addColorStop(1, 'rgba(248,113,113,0.05)');
-      ctx.beginPath();
-      ctx.moveTo(redX, redY);
-      ctx.lineTo(redX, redY + lineLen);
-      ctx.strokeStyle = redGrad;
-      ctx.lineWidth = 2;
-      ctx.stroke();
-
-      // Red dot at origin
-      ctx.beginPath();
-      ctx.arc(redX, redY, 3, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(248,113,113,0.9)';
-      ctx.fill();
-
-      // Blue line
-      const blueGrad = ctx.createLinearGradient(blueX, blueY, blueX, blueY + lineLen);
-      blueGrad.addColorStop(0, 'rgba(96,165,250,0.7)');
-      blueGrad.addColorStop(1, 'rgba(96,165,250,0.05)');
-      ctx.beginPath();
-      ctx.moveTo(blueX, blueY);
-      ctx.lineTo(blueX, blueY + lineLen);
-      ctx.strokeStyle = blueGrad;
-      ctx.lineWidth = 2;
-      ctx.stroke();
-
-      // Blue dot at origin
-      ctx.beginPath();
-      ctx.arc(blueX, blueY, 3, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(96,165,250,0.9)';
-      ctx.fill();
-    }
-
-    /* ── Hero crossfade ── */
-    function onScroll() {
-      const scrollY  = window.scrollY;
-      const vH       = window.innerHeight;
-      const progress = Math.min(Math.max(scrollY / (vH * 0.6), 0), 1);
-      if (hero) hero.style.opacity = 1 - progress;
-      drawLines();
-    }
-
-    /* ── Split section reveal via IntersectionObserver ── */
-    if (split) {
-      const obs = new IntersectionObserver(entries => {
-        entries.forEach(e => {
-          if (e.isIntersecting) split.classList.add('visible');
-        });
-      }, { threshold: 0.15 });
-      obs.observe(split);
-    }
-
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', () => { sizeCanvas(); drawLines(); });
-    window.addEventListener('load', () => { sizeCanvas(); drawLines(); });
-    onScroll();
-  })();
-  </script>
 
   <!-- Sidebar Script Functions -->
   <script>

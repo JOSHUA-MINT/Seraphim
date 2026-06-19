@@ -1086,3 +1086,114 @@ h3 {
     max-width: 85%;
   }
 }
+
+/* ── Matrix Section Styling ── */
+.matrix-section {
+  position: relative;
+  min-height: 200vh; /* Scroll Runway */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+  background-color: transparent;
+}
+
+.matrix-hero {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  padding-top: 6vh;
+  z-index: 20;
+}
+
+.matrix-hero-img {
+  width: min(700px, 85vw);
+  height: auto;
+  mix-blend-mode: screen;
+  filter: contrast(1.1) brightness(1.05);
+}
+
+/* SVG Line Overlay */
+.line-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.svg-path {
+  fill: none;
+  stroke-width: 4; /* pixels, because of non-scaling-stroke */
+  vector-effect: non-scaling-stroke; /* Keeps stroke crisp regardless of aspect ratio stretching */
+  stroke-linecap: round;
+}
+
+.red-path { 
+  stroke: #ff3333; 
+  filter: drop-shadow(0 0 8px rgba(255, 51, 51, 0.8));
+}
+
+.blue-path { 
+  stroke: #3388ff; 
+  filter: drop-shadow(0 0 8px rgba(51, 136, 255, 0.8));
+}
+
+/* Text Blocks Layout */
+.split-section {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 5vw 10vh 5vw;
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  z-index: 20;
+}
+
+.split-pane {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  width: 45%;
+  max-width: 420px;
+  opacity: 0;                      /* Hidden State */
+  transform: translateY(40px);     /* Hidden State */
+  transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1), transform 1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* JavaScript Reveal Class */
+.split-pane.reveal-active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Typography & Tag Styles */
+.split-pane.red { text-align: left; }
+.split-pane.blue { text-align: right; align-items: flex-end; }
+
+.split-label { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; }
+.split-pane.red .split-label { color: #f87171; }
+.split-pane.blue .split-label { color: #60a5fa; }
+
+.split-title { font-size: 1.8rem; font-weight: 700; line-height: 1.2; color: #f0f0f5; }
+
+.split-body { font-size: 0.9rem; line-height: 1.75; color: #71717a; }
+.split-pane.blue .split-body { text-align: right; }
+
+.split-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.5rem; }
+.split-pane.red .split-tags { justify-content: flex-start; }
+.split-pane.blue .split-tags { justify-content: flex-end; }
+
+.s-tag { font-size: 0.65rem; font-weight: 600; padding: 4px 10px; border-radius: 4px; border: 1px solid; font-family: 'Fira Code', monospace; }
+.s-tag.red { color: #fca5a5; border-color: rgba(248,113,113,0.25); background: rgba(248,113,113,0.05); }
+.s-tag.blue { color: #93c5fd; border-color: rgba(96,165,250,0.25); background: rgba(96,165,250,0.05); }
+
+@media (max-width: 768px) {
+  .split-section { flex-direction: column; align-items: center; padding: 0 2rem 5vh 2rem; gap: 4rem; }
+  .split-pane { text-align: left !important; align-items: flex-start !important; width: 100%; }
+  .split-pane.blue .split-body { text-align: left; }
+  .split-pane.blue .split-tags { justify-content: flex-start; }
+}
