@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,10 +8,10 @@
     content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; connect-src 'self' ws://localhost:3000 wss://localhost:3000; img-src 'self' data:; font-src 'self' https://fonts.gstatic.com;">
   <title>Ophanim — Secure Chat</title>
   <meta name="description" content="End-to-end encrypted real-time chat with kill switch.">
-  
+
   <!-- Tailwind CSS Play CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  
+
   <script>
     tailwind.config = {
       theme: {
@@ -40,39 +41,47 @@
   </script>
 
   <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap"
+    rel="stylesheet">
 
   <style>
     body::after {
       content: '';
       position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
       background: url("lib/ophanim-logo.png") no-repeat center center;
       background-size: min(80vw, 450px) auto;
       opacity: 0.025;
       pointer-events: none;
       z-index: 0;
     }
-    
+
     /* Chat bubbles */
     #chat-messages {
       display: flex;
       flex-direction: column;
       gap: 0.75rem;
     }
+
     .message-bubble {
       max-width: 75%;
       font-size: 0.825rem;
       line-height: 1.4;
     }
+
     .message-bubble.sent {
       align-self: flex-end;
-      background-color: #a3e635; /* accent-lime */
+      background-color: #a3e635;
+      /* accent-lime */
       color: #070709;
       border-radius: 12px 12px 0 12px;
       padding: 0.65rem 0.85rem;
     }
+
     .message-bubble.received {
       align-self: flex-start;
       background-color: #16161b;
@@ -81,6 +90,7 @@
       border-radius: 12px 12px 12px 0;
       padding: 0.65rem 0.85rem;
     }
+
     .message-bubble.system {
       align-self: center;
       max-width: 90%;
@@ -93,12 +103,14 @@
       font-size: 0.75rem;
       text-align: center;
     }
+
     .message-bubble.system.kill {
       background-color: rgba(127, 29, 29, 0.2);
       border-color: rgba(153, 27, 27, 0.5);
       color: #f87171;
       font-weight: 700;
     }
+
     .msg-sender {
       font-weight: 700;
       font-size: 0.7rem;
@@ -107,23 +119,32 @@
       text-transform: uppercase;
       letter-spacing: 0.05em;
     }
+
     .msg-time {
       font-size: 0.65rem;
-      color: rgba(255,255,255,0.4);
+      color: rgba(255, 255, 255, 0.4);
       text-align: right;
       margin-top: 0.2rem;
     }
+
     .message-bubble.sent .msg-time {
-      color: rgba(0,0,0,0.5);
+      color: rgba(0, 0, 0, 0.5);
     }
+
     .modal-overlay {
       position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.85);
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.85);
       backdrop-filter: blur(4px);
-      display: flex; align-items: center; justify-content: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       z-index: 2000;
     }
+
     /* Active button styling */
     .room-type-btn.active {
       border-color: #a3e635 !important;
@@ -131,26 +152,34 @@
     }
   </style>
 </head>
-<body class="bg-charcoal-900 text-white font-sans min-h-screen overflow-x-hidden relative">
+
+<body class="bg-transparent text-white font-sans min-h-screen overflow-x-hidden relative">
 
   <!-- Sidebar Toggle Trigger Button (when collapsed) -->
-  <button id="sidebar-toggle" onclick="toggleSidebar()" class="fixed top-5 right-5 z-[1200] p-2 bg-charcoal-850 hover:bg-charcoal-800 text-zinc-400 hover:text-white rounded-md border border-zinc-800 shadow-lg hidden transition duration-150">
+  <button id="sidebar-toggle" onclick="toggleSidebar()"
+    class="fixed top-5 right-5 z-[1200] p-2 bg-charcoal-850 hover:bg-charcoal-800 text-zinc-400 hover:text-white rounded-md border border-zinc-800 shadow-lg hidden transition duration-150">
     <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
       <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path>
     </svg>
   </button>
 
   <!-- Sidebar Component (Right Side Navigation) -->
-  <aside id="sidebar" class="fixed top-4 bottom-4 right-4 w-72 bg-[#121315] border border-zinc-800/60 rounded-2xl flex flex-col z-[1100] transition-all duration-300 ease-in-out shadow-2xl shadow-black/80">
+  <aside id="sidebar"
+    class="fixed top-4 bottom-4 right-4 w-72 bg-[#121315] border border-zinc-800/60 rounded-2xl flex flex-col z-[1100] transition-all duration-300 ease-in-out shadow-2xl shadow-black/80">
     <div class="p-5 pb-2 flex items-center justify-between">
       <div class="flex items-center gap-2.5">
-        <div class="w-6 h-6 rounded-full bg-gradient-to-tr from-orange-400 via-rose-500 to-amber-350 shadow-sm shrink-0"></div>
+        <div
+          class="w-6 h-6 rounded-full bg-gradient-to-tr from-orange-400 via-rose-500 to-amber-350 shadow-sm shrink-0">
+        </div>
         <span class="font-bold text-sm tracking-wide text-white">Ophanim</span>
       </div>
       <!-- Collapse Button -->
-      <button onclick="toggleSidebar()" class="w-7 h-7 flex items-center justify-center bg-zinc-900 border border-zinc-850 hover:border-zinc-700 text-zinc-400 hover:text-white rounded-md transition duration-150" title="Collapse Sidebar">
+      <button onclick="toggleSidebar()"
+        class="w-7 h-7 flex items-center justify-center bg-zinc-900 border border-zinc-850 hover:border-zinc-700 text-zinc-400 hover:text-white rounded-md transition duration-150"
+        title="Collapse Sidebar">
         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h2m10-9H9m0 0l4-4m-4 4l4 4"></path>
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h2m10-9H9m0 0l4-4m-4 4l4 4"></path>
         </svg>
       </button>
     </div>
@@ -160,34 +189,46 @@
       <div>
         <div class="text-[10px] font-bold uppercase tracking-widest text-zinc-500 px-3 mb-2">Main</div>
         <nav class="flex flex-col gap-1">
-          <a href="index.html" id="nav-home" class="flex items-center w-full px-3 py-2 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/20 rounded-xl text-xs font-medium transition duration-150">
+          <a href="index.html" id="nav-home"
+            class="flex items-center w-full px-3 py-2 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/20 rounded-xl text-xs font-medium transition duration-150">
             <span class="w-7 h-7 rounded-lg flex items-center justify-center mr-3 shrink-0 text-zinc-400">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6">
+                </path>
               </svg>
             </span>
             <span>Home</span>
           </a>
-          <a href="encrypt.html" id="nav-encrypt" class="flex items-center w-full px-3 py-2 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/20 rounded-xl text-xs font-medium transition duration-150">
+          <a href="encrypt.html" id="nav-encrypt"
+            class="flex items-center w-full px-3 py-2 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/20 rounded-xl text-xs font-medium transition duration-150">
             <span class="w-7 h-7 rounded-lg flex items-center justify-center mr-3 shrink-0 text-zinc-400">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z">
+                </path>
               </svg>
             </span>
             <span>PGP Encrypt</span>
           </a>
-          <a href="decrypt.html" id="nav-decrypt" class="flex items-center w-full px-3 py-2 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/20 rounded-xl text-xs font-medium transition duration-150">
+          <a href="decrypt.html" id="nav-decrypt"
+            class="flex items-center w-full px-3 py-2 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/20 rounded-xl text-xs font-medium transition duration-150">
             <span class="w-7 h-7 rounded-lg flex items-center justify-center mr-3 shrink-0 text-zinc-400">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z">
+                </path>
               </svg>
             </span>
             <span>PGP Decrypt</span>
           </a>
-          <a href="keys.html" id="nav-keys" class="flex items-center w-full px-3 py-2 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/20 rounded-xl text-xs font-medium transition duration-150">
+          <a href="keys.html" id="nav-keys"
+            class="flex items-center w-full px-3 py-2 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/20 rounded-xl text-xs font-medium transition duration-150">
             <span class="w-7 h-7 rounded-lg flex items-center justify-center mr-3 shrink-0 text-zinc-400">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M15 7a2 2 0 012 2m-3.418-4.018A15.05 15.05 0 0119 5v14a1.5 1.5 0 01-2 1.482M7 19.5a2.5 2.5 0 005 0V5a2.5 2.5 0 00-5 0v14.5z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M15 7a2 2 0 012 2m-3.418-4.018A15.05 15.05 0 0119 5v14a1.5 1.5 0 01-2 1.482M7 19.5a2.5 2.5 0 005 0V5a2.5 2.5 0 00-5 0v14.5z">
+                </path>
               </svg>
             </span>
             <span>Key Manager</span>
@@ -199,10 +240,13 @@
         <div class="text-[10px] font-bold uppercase tracking-widest text-zinc-500 px-3 mb-2">Performance</div>
         <nav class="flex flex-col gap-1">
           <!-- Active Link (Secure Chat) -->
-          <a href="chat.html" id="nav-chat" class="flex items-center w-full px-3 py-2 bg-white text-zinc-950 rounded-xl text-xs font-semibold shadow-md shadow-black/10">
+          <a href="chat.html" id="nav-chat"
+            class="flex items-center w-full px-3 py-2 bg-white text-zinc-950 rounded-xl text-xs font-semibold shadow-md shadow-black/10">
             <span class="w-7 h-7 rounded-lg bg-[#a3e635] flex items-center justify-center mr-3 shrink-0 text-zinc-950">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z">
+                </path>
               </svg>
             </span>
             <span>Secure Chat</span>
@@ -213,10 +257,13 @@
       <div class="mt-auto pt-4">
         <div class="text-[10px] font-bold uppercase tracking-widest text-zinc-500 px-3 mb-2">System</div>
         <nav class="flex flex-col gap-1">
-          <a href="#" class="flex items-center w-full px-3 py-2 text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800/10 rounded-xl text-[11px] transition duration-150">
+          <a href="#"
+            class="flex items-center w-full px-3 py-2 text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800/10 rounded-xl text-[11px] transition duration-150">
             <span class="w-7 h-7 rounded-lg flex items-center justify-center mr-3 shrink-0 text-zinc-500">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z">
+                </path>
                 <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
               </svg>
             </span>
@@ -230,16 +277,21 @@
     <div class="p-4 border-t border-zinc-800/40 bg-zinc-950/20">
       <div class="text-[10px] font-bold uppercase tracking-widest text-zinc-500 px-1 mb-2">User Account</div>
       <div class="flex items-center gap-3">
-        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center text-[10px] font-bold text-white font-mono shrink-0 shadow-sm shadow-black/20" id="sidebar-avatar">
+        <div
+          class="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center text-[10px] font-bold text-white font-mono shrink-0 shadow-sm shadow-black/20"
+          id="sidebar-avatar">
           OP
         </div>
         <div class="overflow-hidden flex-1">
-          <div class="text-xs font-semibold text-zinc-200 truncate leading-tight" id="sidebar-key-name">Checking keys...</div>
+          <div class="text-xs font-semibold text-zinc-200 truncate leading-tight" id="sidebar-key-name">Checking keys...
+          </div>
           <div class="text-[9px] text-zinc-500 truncate mt-0.5" id="sidebar-key-id">#OPH-GUEST</div>
         </div>
-        <button class="p-1 hover:bg-zinc-800/40 text-zinc-500 hover:text-zinc-300 rounded transition duration-150 shrink-0">
+        <button
+          class="p-1 hover:bg-zinc-800/40 text-zinc-500 hover:text-zinc-300 rounded transition duration-150 shrink-0">
           <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+            <path
+              d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" />
           </svg>
         </button>
       </div>
@@ -247,8 +299,9 @@
   </aside>
 
   <!-- Left Main Content Area -->
-  <div id="main-content" class="min-h-screen flex flex-col p-6 lg:p-8 transition-all duration-300 ease-in-out lg:pr-[304px] relative z-10 bg-transparent">
-    
+  <div id="main-content"
+    class="min-h-screen flex flex-col p-6 lg:p-8 transition-all duration-300 ease-in-out lg:pr-[304px] relative z-10 bg-transparent">
+
     <!-- Topbar Header -->
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-zinc-800/80 pb-5 mb-8">
       <div>
@@ -263,15 +316,16 @@
 
     <!-- 1. Join Panel (Before Room Connection) -->
     <div id="join-panel" class="space-y-6">
-      
+
       <!-- Grid System -->
       <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
-        
+
         <!-- Main Form Cards (2 columns) -->
         <div class="xl:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
-          
+
           <!-- Column 1: Join Existing Room -->
-          <div class="bg-charcoal-850/80 border border-zinc-800/60 rounded-lg p-6 shadow-sm flex flex-col justify-between">
+          <div
+            class="bg-charcoal-850/80 border border-zinc-800/60 rounded-lg p-6 shadow-sm flex flex-col justify-between">
             <div>
               <div class="border-b border-zinc-800/50 pb-3 mb-4">
                 <h2 class="text-sm font-semibold text-white">Join Existing Room</h2>
@@ -280,28 +334,42 @@
 
               <div class="space-y-3.5">
                 <div>
-                  <label class="block text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-1" for="join-name-existing">Screen Name</label>
-                  <input class="w-full bg-charcoal-900/60 border border-zinc-800 focus:border-accent-lime rounded-md px-3 py-1.5 text-xs text-zinc-200 focus:outline-none" id="join-name-existing" placeholder="Enter screen name">
+                  <label class="block text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-1"
+                    for="join-name-existing">Screen Name</label>
+                  <input
+                    class="w-full bg-charcoal-900/60 border border-zinc-800 focus:border-accent-lime rounded-md px-3 py-1.5 text-xs text-zinc-200 focus:outline-none"
+                    id="join-name-existing" placeholder="Enter screen name">
                 </div>
                 <div>
-                  <label class="block text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-1" for="join-key-existing">Select Keypair</label>
-                  <select class="w-full bg-charcoal-900 border border-zinc-800 focus:border-accent-lime rounded-md px-3 py-1.5 text-xs text-zinc-200 focus:outline-none cursor-pointer" id="join-key-existing">
+                  <label class="block text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-1"
+                    for="join-key-existing">Select Keypair</label>
+                  <select
+                    class="w-full bg-charcoal-900 border border-zinc-800 focus:border-accent-lime rounded-md px-3 py-1.5 text-xs text-zinc-200 focus:outline-none cursor-pointer"
+                    id="join-key-existing">
                     <option value="">-- Select your key --</option>
                   </select>
                 </div>
                 <div>
-                  <label class="block text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-1" for="join-pass-existing">Key Passphrase</label>
-                  <input class="w-full bg-charcoal-900/60 border border-zinc-800 focus:border-accent-lime rounded-md px-3 py-1.5 text-xs text-zinc-200 focus:outline-none" type="password" id="join-pass-existing" placeholder="Passphrase for selected key">
+                  <label class="block text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-1"
+                    for="join-pass-existing">Key Passphrase</label>
+                  <input
+                    class="w-full bg-charcoal-900/60 border border-zinc-800 focus:border-accent-lime rounded-md px-3 py-1.5 text-xs text-zinc-200 focus:outline-none"
+                    type="password" id="join-pass-existing" placeholder="Passphrase for selected key">
                 </div>
                 <div>
-                  <label class="block text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-1" for="join-room-existing">Room Code</label>
-                  <input class="w-full bg-charcoal-900/60 border border-zinc-800 focus:border-accent-lime rounded-md px-3 py-1.5 text-xs text-zinc-200 focus:outline-none" id="join-room-existing" placeholder="e.g. ABC123">
+                  <label class="block text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-1"
+                    for="join-room-existing">Room Code</label>
+                  <input
+                    class="w-full bg-charcoal-900/60 border border-zinc-800 focus:border-accent-lime rounded-md px-3 py-1.5 text-xs text-zinc-200 focus:outline-none"
+                    id="join-room-existing" placeholder="e.g. ABC123">
                 </div>
               </div>
             </div>
 
             <div class="mt-6">
-              <button class="w-full bg-accent-lime hover:bg-accent-limeHover text-charcoal-950 font-bold text-xs py-2 px-4 rounded-md transition duration-150 flex items-center justify-center gap-1.5 shadow-sm" onclick="joinRoom(false)">
+              <button
+                class="w-full bg-accent-lime hover:bg-accent-limeHover text-charcoal-950 font-bold text-xs py-2 px-4 rounded-md transition duration-150 flex items-center justify-center gap-1.5 shadow-sm"
+                onclick="joinRoom(false)">
                 Join Room
               </button>
               <div class="status mt-2 hidden text-xs p-2 rounded border" id="join-status"></div>
@@ -309,7 +377,8 @@
           </div>
 
           <!-- Column 2: Create New Room -->
-          <div class="bg-charcoal-850/80 border border-zinc-800/60 rounded-lg p-6 shadow-sm flex flex-col justify-between">
+          <div
+            class="bg-charcoal-850/80 border border-zinc-800/60 rounded-lg p-6 shadow-sm flex flex-col justify-between">
             <div>
               <div class="border-b border-zinc-800/50 pb-3 mb-4">
                 <h2 class="text-sm font-semibold text-white">Create New Room</h2>
@@ -318,27 +387,41 @@
 
               <div class="space-y-3.5">
                 <div>
-                  <label class="block text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-1" for="join-name-create">Screen Name</label>
-                  <input class="w-full bg-charcoal-900/60 border border-zinc-800 focus:border-accent-lime rounded-md px-3 py-1.5 text-xs text-zinc-200 focus:outline-none" id="join-name-create" placeholder="Enter screen name">
+                  <label class="block text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-1"
+                    for="join-name-create">Screen Name</label>
+                  <input
+                    class="w-full bg-charcoal-900/60 border border-zinc-800 focus:border-accent-lime rounded-md px-3 py-1.5 text-xs text-zinc-200 focus:outline-none"
+                    id="join-name-create" placeholder="Enter screen name">
                 </div>
                 <div>
-                  <label class="block text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-1" for="join-key-create">Select Keypair</label>
-                  <select class="w-full bg-charcoal-900 border border-zinc-800 focus:border-accent-lime rounded-md px-3 py-1.5 text-xs text-zinc-200 focus:outline-none cursor-pointer" id="join-key-create">
+                  <label class="block text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-1"
+                    for="join-key-create">Select Keypair</label>
+                  <select
+                    class="w-full bg-charcoal-900 border border-zinc-800 focus:border-accent-lime rounded-md px-3 py-1.5 text-xs text-zinc-200 focus:outline-none cursor-pointer"
+                    id="join-key-create">
                     <option value="">-- Select your key --</option>
                   </select>
                 </div>
                 <div>
-                  <label class="block text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-1" for="join-pass-create">Key Passphrase</label>
-                  <input class="w-full bg-charcoal-900/60 border border-zinc-800 focus:border-accent-lime rounded-md px-3 py-1.5 text-xs text-zinc-200 focus:outline-none" type="password" id="join-pass-create" placeholder="Passphrase for selected key">
+                  <label class="block text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-1"
+                    for="join-pass-create">Key Passphrase</label>
+                  <input
+                    class="w-full bg-charcoal-900/60 border border-zinc-800 focus:border-accent-lime rounded-md px-3 py-1.5 text-xs text-zinc-200 focus:outline-none"
+                    type="password" id="join-pass-create" placeholder="Passphrase for selected key">
                 </div>
                 <div>
-                  <label class="block text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-1">Room Duration</label>
+                  <label class="block text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-1">Room
+                    Duration</label>
                   <div class="grid grid-cols-2 gap-2 mt-1">
-                    <button type="button" class="room-type-btn active px-3 py-2 bg-charcoal-900 border border-zinc-800 hover:border-zinc-700 text-left rounded-lg transition" id="btn-type-temp" onclick="setRoomType('temporary')">
+                    <button type="button"
+                      class="room-type-btn active px-3 py-2 bg-charcoal-900 border border-zinc-800 hover:border-zinc-700 text-left rounded-lg transition"
+                      id="btn-type-temp" onclick="setRoomType('temporary')">
                       <span class="block text-xs font-bold text-white leading-tight">Temporary</span>
                       <span class="block text-[9px] text-zinc-500 mt-0.5">Expires in 24h</span>
                     </button>
-                    <button type="button" class="room-type-btn px-3 py-2 bg-charcoal-900 border border-zinc-800 hover:border-zinc-700 text-left rounded-lg transition" id="btn-type-persist" onclick="setRoomType('temporary')">
+                    <button type="button"
+                      class="room-type-btn px-3 py-2 bg-charcoal-900 border border-zinc-800 hover:border-zinc-700 text-left rounded-lg transition"
+                      id="btn-type-persist" onclick="setRoomType('temporary')">
                       <span class="block text-xs font-bold text-white leading-tight">Persistent</span>
                       <span class="block text-[9px] text-zinc-500 mt-0.5">Always active</span>
                     </button>
@@ -348,7 +431,9 @@
             </div>
 
             <div class="mt-6">
-              <button class="w-full bg-accent-lime hover:bg-accent-limeHover text-charcoal-950 font-bold text-xs py-2 px-4 rounded-md transition duration-150 flex items-center justify-center gap-1.5 shadow-sm" onclick="joinRoom(true)">
+              <button
+                class="w-full bg-accent-lime hover:bg-accent-limeHover text-charcoal-950 font-bold text-xs py-2 px-4 rounded-md transition duration-150 flex items-center justify-center gap-1.5 shadow-sm"
+                onclick="joinRoom(true)">
                 Create &amp; Join Room
               </button>
               <div class="status mt-2 hidden text-xs p-2 rounded border" id="create-status"></div>
@@ -372,7 +457,7 @@
               </div>
             </div>
           </div>
-          
+
           <div class="bg-charcoal-850/80 border border-zinc-800/60 rounded-lg p-5 shadow-sm">
             <h3 class="text-xs font-bold uppercase tracking-wider text-zinc-500 mb-3.5">Security Parameters</h3>
             <div class="space-y-2 text-[11px] text-zinc-400">
@@ -389,20 +474,24 @@
 
     <!-- 2. Chat Panel (After Room Connection) -->
     <div id="chat-panel" class="hidden space-y-6">
-      
+
       <!-- Fingerprint Warning Banner -->
-      <div id="fp-warning-banner" class="bg-amber-950/20 border border-amber-900/50 text-amber-400 text-xs px-4 py-3 rounded-lg flex items-center justify-between">
+      <div id="fp-warning-banner"
+        class="bg-amber-950/20 border border-amber-900/50 text-amber-400 text-xs px-4 py-3 rounded-lg flex items-center justify-between">
         <span class="font-medium">⚠ WARNING: Fingerprint not verified — messages may be intercepted.</span>
-        <button class="bg-amber-800/20 hover:bg-amber-800/40 text-amber-300 px-3 py-1 rounded text-[10px] font-semibold border border-amber-800/40 transition" onclick="showFingerprintOverlay()">
+        <button
+          class="bg-amber-800/20 hover:bg-amber-800/40 text-amber-300 px-3 py-1 rounded text-[10px] font-semibold border border-amber-800/40 transition"
+          onclick="showFingerprintOverlay()">
           Verify Now
         </button>
       </div>
 
       <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
-        
+
         <!-- Left: Chat Messages scroller & inputs (2 columns) -->
-        <div class="xl:col-span-2 bg-charcoal-850/80 border border-zinc-800/60 rounded-lg p-5 flex flex-col h-[520px] shadow-sm relative">
-          
+        <div
+          class="xl:col-span-2 bg-charcoal-850/80 border border-zinc-800/60 rounded-lg p-5 flex flex-col h-[520px] shadow-sm relative">
+
           <!-- Messages viewport -->
           <div id="chat-messages" class="flex-1 overflow-y-auto mb-4 pr-2 select-text">
             <!-- Messages appends here -->
@@ -413,8 +502,13 @@
 
           <!-- Input bar -->
           <div class="flex gap-2.5 border-t border-zinc-800/60 pt-3.5">
-            <input class="flex-1 bg-charcoal-900 border border-zinc-800 focus:border-accent-lime rounded-lg px-4 py-2 text-xs text-zinc-200 focus:outline-none focus:ring-1 focus:ring-accent-lime transition" id="msg-input" placeholder="Verify fingerprint to unlock chat" disabled onkeydown="if(event.key==='Enter')sendMessage()" oninput="emitTyping()">
-            <button class="bg-accent-lime hover:bg-accent-limeHover disabled:opacity-40 text-charcoal-950 font-bold text-xs py-2 px-5 rounded-lg transition" id="send-btn" onclick="sendMessage()" disabled>
+            <input
+              class="flex-1 bg-charcoal-900 border border-zinc-800 focus:border-accent-lime rounded-lg px-4 py-2 text-xs text-zinc-200 focus:outline-none focus:ring-1 focus:ring-accent-lime transition"
+              id="msg-input" placeholder="Verify fingerprint to unlock chat" disabled
+              onkeydown="if(event.key==='Enter')sendMessage()" oninput="emitTyping()">
+            <button
+              class="bg-accent-lime hover:bg-accent-limeHover disabled:opacity-40 text-charcoal-950 font-bold text-xs py-2 px-5 rounded-lg transition"
+              id="send-btn" onclick="sendMessage()" disabled>
               Send
             </button>
           </div>
@@ -422,25 +516,35 @@
 
         <!-- Right: Room Controls / Online Users (1 column) -->
         <div class="space-y-6">
-          
+
           <!-- Room info card -->
           <div class="bg-charcoal-850/80 border border-zinc-800/60 rounded-lg p-5 shadow-sm text-center">
             <div class="text-[10px] font-bold uppercase tracking-wider text-zinc-500 mb-1">Room Code</div>
-            <div id="room-code-display" class="font-mono text-xl text-white tracking-widest font-extrabold mb-1.5">-</div>
-            
+            <div id="room-code-display" class="font-mono text-xl text-white tracking-widest font-extrabold mb-1.5">-
+            </div>
+
             <div class="flex items-center justify-center gap-1.5 mb-5">
-              <span class="text-[10px] uppercase font-bold tracking-wide px-2 py-0.5 rounded bg-accent-limeSoft text-accent-lime border border-accent-lime/20" id="room-type-display">Standard</span>
-              <span id="room-timer-display" class="text-[10px] font-mono text-red-400 bg-red-950/20 border border-red-900/30 px-2 py-0.5 rounded hidden"></span>
+              <span
+                class="text-[10px] uppercase font-bold tracking-wide px-2 py-0.5 rounded bg-accent-limeSoft text-accent-lime border border-accent-lime/20"
+                id="room-type-display">Standard</span>
+              <span id="room-timer-display"
+                class="text-[10px] font-mono text-red-400 bg-red-950/20 border border-red-900/30 px-2 py-0.5 rounded hidden"></span>
             </div>
 
             <div class="flex flex-col gap-2.5">
-              <button class="w-full py-2 px-4 text-xs font-semibold text-zinc-300 bg-charcoal-800 hover:bg-charcoal-700 border border-zinc-800 hover:border-zinc-700 rounded-md transition" onclick="copyRoomCode()">
+              <button
+                class="w-full py-2 px-4 text-xs font-semibold text-zinc-300 bg-charcoal-800 hover:bg-charcoal-700 border border-zinc-800 hover:border-zinc-700 rounded-md transition"
+                onclick="copyRoomCode()">
                 Copy Code
               </button>
-              <button class="w-full py-2 px-4 text-xs font-semibold text-zinc-300 bg-charcoal-800 hover:bg-charcoal-700 border border-zinc-800 hover:border-zinc-700 rounded-md transition" onclick="leaveRoom()">
+              <button
+                class="w-full py-2 px-4 text-xs font-semibold text-zinc-300 bg-charcoal-800 hover:bg-charcoal-700 border border-zinc-800 hover:border-zinc-700 rounded-md transition"
+                onclick="leaveRoom()">
                 Leave Room
               </button>
-              <button class="w-full py-2 px-4 text-xs font-bold text-red-400 bg-red-950/20 hover:bg-red-950/40 border border-red-900/30 rounded-md transition mt-1" onclick="triggerKillSwitch()">
+              <button
+                class="w-full py-2 px-4 text-xs font-bold text-red-400 bg-red-950/20 hover:bg-red-950/40 border border-red-900/30 rounded-md transition mt-1"
+                onclick="triggerKillSwitch()">
                 Kill Switch
               </button>
             </div>
@@ -469,19 +573,23 @@
         <div class="border-b border-zinc-800/60 pb-3 mb-4">
           <h3 class="text-sm font-semibold text-white">Verify Fingerprint</h3>
         </div>
-        
+
         <p class="text-xs text-zinc-400 leading-relaxed mb-4">
           Verify your contact's fingerprint before chatting.<br>
           Read this fingerprint to your contact over a phone call.<br>
           If it matches what they see on their screen, click <strong>Verified</strong>.
         </p>
 
-        <div class="bg-charcoal-900/80 border border-zinc-800 rounded-lg p-4 font-mono text-sm tracking-wider text-accent-lime mb-5 break-words select-all" id="fp-display-value">
+        <div
+          class="bg-charcoal-900/80 border border-zinc-800 rounded-lg p-4 font-mono text-sm tracking-wider text-accent-lime mb-5 break-words select-all"
+          id="fp-display-value">
           Waiting for another user to join...
         </div>
 
         <div class="flex gap-2">
-          <button class="flex-1 py-2 px-4 text-xs font-bold text-charcoal-950 bg-accent-lime hover:bg-accent-limeHover disabled:opacity-40 disabled:pointer-events-none rounded transition" id="fp-verify-btn" onclick="confirmFingerprint()" disabled>
+          <button
+            class="flex-1 py-2 px-4 text-xs font-bold text-charcoal-950 bg-accent-lime hover:bg-accent-limeHover disabled:opacity-40 disabled:pointer-events-none rounded transition"
+            id="fp-verify-btn" onclick="confirmFingerprint()" disabled>
             Fingerprint Verified
           </button>
         </div>
@@ -512,7 +620,7 @@
       const keys = JSON.parse(localStorage.getItem('ophanim_keys') || '[]');
       const sel1 = document.getElementById('join-key-existing');
       const sel2 = document.getElementById('join-key-create');
-      
+
       keys.forEach((k, i) => {
         const opt1 = document.createElement('option');
         opt1.value = i;
@@ -874,9 +982,9 @@
       const sidebar = document.getElementById('sidebar');
       const mainContent = document.getElementById('main-content');
       const toggleBtn = document.getElementById('sidebar-toggle');
-      
+
       const isCollapsed = sidebar.classList.contains('translate-x-[calc(100%+24px)]');
-      
+
       if (isCollapsed) {
         sidebar.classList.remove('translate-x-[calc(100%+24px)]', 'opacity-0', 'pointer-events-none');
         mainContent.classList.add('lg:pr-[304px]');
@@ -894,7 +1002,7 @@
       const sidebar = document.getElementById('sidebar');
       const mainContent = document.getElementById('main-content');
       const toggleBtn = document.getElementById('sidebar-toggle');
-      
+
       const isCollapsed = localStorage.getItem('sidebar-collapsed') === 'true';
       if (isCollapsed) {
         sidebar.classList.add('translate-x-[calc(100%+24px)]', 'opacity-0', 'pointer-events-none');
@@ -913,7 +1021,7 @@
         const nameEl = document.getElementById('sidebar-key-name');
         const avatarEl = document.getElementById('sidebar-avatar');
         const idEl = document.getElementById('sidebar-key-id');
-        
+
         if (keys.length > 0) {
           const idx = activeIdx !== null ? parseInt(activeIdx) : 0;
           const primary = keys[idx] || keys[0];
@@ -924,11 +1032,12 @@
             idEl.textContent = displayId;
           }
         }
-      } catch(e){}
+      } catch (e) { }
     }
     document.addEventListener('DOMContentLoaded', initSidebar);
   </script>
 
   <script src="animations.js"></script>
 </body>
+
 </html>

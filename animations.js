@@ -43,7 +43,12 @@
   }
 
   function init() { particles = Array.from({ length: COUNT }, () => new Particle()); }
-  function loop() { ctx.clearRect(0, 0, width, height); particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(loop); }
+  function loop() {
+    ctx.fillStyle = '#07070b';
+    ctx.fillRect(0, 0, width, height);
+    particles.forEach(p => { p.update(); p.draw(); });
+    requestAnimationFrame(loop);
+  }
   window.addEventListener('resize', () => { resize(); init(); });
   resize(); init(); loop();
 
