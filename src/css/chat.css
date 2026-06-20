@@ -1,0 +1,120 @@
+/**
+ * Ophanim — chat.css
+ * Page-specific styles for chat.html (Secure Chat page).
+ * Shared styles are loaded via src/css/style.css.
+ */
+
+/* ── Watermark override ── */
+body::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url("public/assets/ophanim-logo.png") no-repeat center center;
+  background-size: min(80vw, 450px) auto;
+  opacity: 0.025;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── Chat Message Bubbles ── */
+#chat-messages {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.message-bubble {
+  max-width: 75%;
+  font-size: 0.825rem;
+  line-height: 1.4;
+}
+
+.message-bubble.sent {
+  align-self: flex-end;
+  background-color: #a3e635; /* accent-lime */
+  color: #070709;
+  border-radius: 12px 12px 0 12px;
+  padding: 0.65rem 0.85rem;
+}
+
+.message-bubble.received {
+  align-self: flex-start;
+  background-color: #16161b;
+  color: #e4e4e7;
+  border: 1px solid #22222b;
+  border-radius: 12px 12px 12px 0;
+  padding: 0.65rem 0.85rem;
+}
+
+.message-bubble.system {
+  align-self: center;
+  max-width: 90%;
+  background-color: rgba(22, 22, 27, 0.6);
+  border: 1px solid rgba(34, 34, 43, 0.4);
+  color: #71717a;
+  border-radius: 6px;
+  padding: 0.35rem 0.65rem;
+  font-family: monospace;
+  font-size: 0.75rem;
+  text-align: center;
+}
+
+.message-bubble.system.kill {
+  background-color: rgba(127, 29, 29, 0.2);
+  border-color: rgba(153, 27, 27, 0.5);
+  color: #f87171;
+  font-weight: 700;
+}
+
+.msg-sender {
+  font-weight: 700;
+  font-size: 0.7rem;
+  color: #a3e635;
+  margin-bottom: 0.15rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.msg-time {
+  font-size: 0.65rem;
+  color: rgba(255, 255, 255, 0.4);
+  text-align: right;
+  margin-top: 0.2rem;
+}
+
+.message-bubble.sent .msg-time {
+  color: rgba(0, 0, 0, 0.5);
+}
+
+/* ── Modal Overlay ── */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.modal-content-card {
+  background: #121217;
+  border: 1px solid #22222b;
+  border-radius: 8px;
+  padding: 1.5rem;
+  width: 100%;
+  max-width: 440px;
+}
+
+/* ── Active Room Type Button ── */
+.room-type-btn.active {
+  border-color: #a3e635 !important;
+  background-color: rgba(163, 230, 53, 0.05) !important;
+}

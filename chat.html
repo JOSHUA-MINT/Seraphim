@@ -44,113 +44,7 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap"
     rel="stylesheet">
-
-  <style>
-    body::after {
-      content: '';
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: url("lib/ophanim-logo.png") no-repeat center center;
-      background-size: min(80vw, 450px) auto;
-      opacity: 0.025;
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    /* Chat bubbles */
-    #chat-messages {
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-    }
-
-    .message-bubble {
-      max-width: 75%;
-      font-size: 0.825rem;
-      line-height: 1.4;
-    }
-
-    .message-bubble.sent {
-      align-self: flex-end;
-      background-color: #a3e635;
-      /* accent-lime */
-      color: #070709;
-      border-radius: 12px 12px 0 12px;
-      padding: 0.65rem 0.85rem;
-    }
-
-    .message-bubble.received {
-      align-self: flex-start;
-      background-color: #16161b;
-      color: #e4e4e7;
-      border: 1px solid #22222b;
-      border-radius: 12px 12px 12px 0;
-      padding: 0.65rem 0.85rem;
-    }
-
-    .message-bubble.system {
-      align-self: center;
-      max-width: 90%;
-      background-color: rgba(22, 22, 27, 0.6);
-      border: 1px solid rgba(34, 34, 43, 0.4);
-      color: #71717a;
-      border-radius: 6px;
-      padding: 0.35rem 0.65rem;
-      font-family: monospace;
-      font-size: 0.75rem;
-      text-align: center;
-    }
-
-    .message-bubble.system.kill {
-      background-color: rgba(127, 29, 29, 0.2);
-      border-color: rgba(153, 27, 27, 0.5);
-      color: #f87171;
-      font-weight: 700;
-    }
-
-    .msg-sender {
-      font-weight: 700;
-      font-size: 0.7rem;
-      color: #a3e635;
-      margin-bottom: 0.15rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-
-    .msg-time {
-      font-size: 0.65rem;
-      color: rgba(255, 255, 255, 0.4);
-      text-align: right;
-      margin-top: 0.2rem;
-    }
-
-    .message-bubble.sent .msg-time {
-      color: rgba(0, 0, 0, 0.5);
-    }
-
-    .modal-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.85);
-      backdrop-filter: blur(4px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 2000;
-    }
-
-    /* Active button styling */
-    .room-type-btn.active {
-      border-color: #a3e635 !important;
-      background-color: rgba(163, 230, 53, 0.05) !important;
-    }
-  </style>
+  <link rel="stylesheet" href="src/css/chat.css">
 </head>
 
 <body class="bg-transparent text-white font-sans min-h-screen overflow-x-hidden relative">
@@ -598,9 +492,9 @@
   </div>
 
   <!-- Scripts -->
-  <script src="lib/openpgp.min.js"></script>
-  <script src="crypto.js"></script>
-  <script src="lib/socket.io.min.js"></script>
+  <script src="public/assets/openpgp.min.js"></script>
+  <script src="src/js/crypto.js"></script>
+  <script src="public/assets/socket.io.min.js"></script>
   <script>
     // ── State ──────────────────────────────────────────
     let socket = null;
@@ -976,68 +870,10 @@
     }
   </script>
 
-  <!-- Sidebar Script Functions -->
-  <script>
-    function toggleSidebar() {
-      const sidebar = document.getElementById('sidebar');
-      const mainContent = document.getElementById('main-content');
-      const toggleBtn = document.getElementById('sidebar-toggle');
+  <!-- Sidebar (shared) -->
+  <script src="src/js/sidebar.js"></script>
 
-      const isCollapsed = sidebar.classList.contains('translate-x-[calc(100%+24px)]');
-
-      if (isCollapsed) {
-        sidebar.classList.remove('translate-x-[calc(100%+24px)]', 'opacity-0', 'pointer-events-none');
-        mainContent.classList.add('lg:pr-[304px]');
-        toggleBtn.classList.add('hidden');
-        localStorage.setItem('sidebar-collapsed', 'false');
-      } else {
-        sidebar.classList.add('translate-x-[calc(100%+24px)]', 'opacity-0', 'pointer-events-none');
-        mainContent.classList.remove('lg:pr-[304px]');
-        toggleBtn.classList.remove('hidden');
-        localStorage.setItem('sidebar-collapsed', 'true');
-      }
-    }
-
-    function initSidebar() {
-      const sidebar = document.getElementById('sidebar');
-      const mainContent = document.getElementById('main-content');
-      const toggleBtn = document.getElementById('sidebar-toggle');
-
-      const isCollapsed = localStorage.getItem('sidebar-collapsed') === 'true';
-      if (isCollapsed) {
-        sidebar.classList.add('translate-x-[calc(100%+24px)]', 'opacity-0', 'pointer-events-none');
-        mainContent.classList.remove('lg:pr-[304px]');
-        toggleBtn.classList.remove('hidden');
-      } else {
-        sidebar.classList.remove('translate-x-[calc(100%+24px)]', 'opacity-0', 'pointer-events-none');
-        mainContent.classList.add('lg:pr-[304px]');
-        toggleBtn.classList.add('hidden');
-      }
-
-      // Update Active Sidebar Key Info if it exists
-      try {
-        const keys = JSON.parse(localStorage.getItem('ophanim_keys') || '[]');
-        const activeIdx = localStorage.getItem('ophanim_active_key_index');
-        const nameEl = document.getElementById('sidebar-key-name');
-        const avatarEl = document.getElementById('sidebar-avatar');
-        const idEl = document.getElementById('sidebar-key-id');
-
-        if (keys.length > 0) {
-          const idx = activeIdx !== null ? parseInt(activeIdx) : 0;
-          const primary = keys[idx] || keys[0];
-          if (nameEl) nameEl.textContent = primary.name || 'Unknown Key';
-          if (avatarEl) avatarEl.textContent = (primary.name || 'OP').slice(0, 2).toUpperCase();
-          if (idEl) {
-            const displayId = primary.fingerprint ? '#' + primary.fingerprint.slice(-8).toUpperCase() : '#OPH-KEY-' + idx;
-            idEl.textContent = displayId;
-          }
-        }
-      } catch (e) { }
-    }
-    document.addEventListener('DOMContentLoaded', initSidebar);
-  </script>
-
-  <script src="animations.js"></script>
+  <script src="src/js/animations.js"></script>
 </body>
 
 </html>
