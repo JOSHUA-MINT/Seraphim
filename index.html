@@ -10,8 +10,8 @@
   <meta name="description"
     content="Ophanim is a zero-knowledge, end-to-end encrypted messaging platform. Encrypt, decrypt, and chat securely.">
 
-  <link rel="stylesheet" href="src/css/style.css">
-  <link rel="stylesheet" href="src/css/index.css">
+  <link rel="stylesheet" href="src/css/style.css?v=7">
+  <link rel="stylesheet" href="src/css/index.css?v=7">
 
   <!-- Tailwind CSS Play CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -220,20 +220,13 @@
           <img src="public/assets/matrix.png" alt="Choose your path" class="matrix-hero-img" id="matrix-img">
 
           <!-- Red Pill clickable zone (left hand of Morpheus ~30% X, ~74% Y) -->
-          <button class="pill-btn red-pill-btn" id="red-pill-btn"
-                  onclick="togglePill('red')"
-                  title="Take the Red Pill"
-                  aria-expanded="false"
-                  aria-controls="red-popup"
-                  style="left:29%;top:73%;"></button>
+          <button class="pill-btn red-pill-btn" id="red-pill-btn" onclick="togglePill('red')" title="Take the Red Pill"
+            aria-expanded="false" aria-controls="red-popup" style="left:29%;top:73%;"></button>
 
           <!-- Blue Pill clickable zone (right hand of Morpheus ~68% X, ~74% Y) -->
-          <button class="pill-btn blue-pill-btn" id="blue-pill-btn"
-                  onclick="togglePill('blue')"
-                  title="Take the Blue Pill"
-                  aria-expanded="false"
-                  aria-controls="blue-popup"
-                  style="left:66%;top:73%;"></button>
+          <button class="pill-btn blue-pill-btn" id="blue-pill-btn" onclick="togglePill('blue')"
+            title="Take the Blue Pill" aria-expanded="false" aria-controls="blue-popup"
+            style="left:66%;top:73%;"></button>
 
           <!-- Red Pill Popup (appears to the left of the red pill) -->
           <div class="pill-popup red-popup" id="red-popup" role="dialog" aria-label="Red Pill: Ophanim">
@@ -253,7 +246,8 @@
           </div>
 
           <!-- Blue Pill Popup (appears to the right of the blue pill) -->
-          <div class="pill-popup blue-popup" id="blue-popup" role="dialog" aria-label="Blue Pill: Traditional Messaging">
+          <div class="pill-popup blue-popup" id="blue-popup" role="dialog"
+            aria-label="Blue Pill: Traditional Messaging">
             <button class="popup-close" onclick="closePill('blue')" aria-label="Close">&times;</button>
             <div class="popup-eyebrow">The Blue Pill</div>
             <div class="popup-title">Traditional Messaging</div>
@@ -280,7 +274,9 @@
           <div class="compare-card red-card glass-reveal" style="--reveal-delay:0.1s">
             <div class="card-glow red-glow"></div>
             <div class="card-badge red-badge">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+              </svg>
               Ophanim
             </div>
             <h3 class="card-title">Built for <em>real</em> privacy.</h3>
@@ -297,7 +293,8 @@
                 <span class="li-icon red-icon">✦</span>
                 <div>
                   <strong>OpenPGP in your browser</strong>
-                  <span>Encryption runs client-side using OpenPGP.js. Keys are generated and stored only on your device.</span>
+                  <span>Encryption runs client-side using OpenPGP.js. Keys are generated and stored only on your
+                    device.</span>
                 </div>
               </li>
               <li>
@@ -327,7 +324,11 @@
           <div class="compare-card blue-card glass-reveal" style="--reveal-delay:0.22s">
             <div class="card-glow blue-glow"></div>
             <div class="card-badge blue-badge">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <circle cx="12" cy="12" r="10" />
+                <line x1="12" y1="8" x2="12" y2="12" />
+                <line x1="12" y1="16" x2="12.01" y2="16" />
+              </svg>
               WhatsApp / Instagram
             </div>
             <h3 class="card-title">Not private enough.</h3>
@@ -337,7 +338,8 @@
                 <span class="li-icon blue-icon">⚠</span>
                 <div>
                   <strong>Metadata is collected constantly</strong>
-                  <span>Even if messages are "encrypted", who you talk to, when, and how long — that's all logged.</span>
+                  <span>Even if messages are "encrypted", who you talk to, when, and how long — that's all
+                    logged.</span>
                 </div>
               </li>
               <li>
@@ -351,14 +353,16 @@
                 <span class="li-icon blue-icon">⚠</span>
                 <div>
                   <strong>Subpoena-vulnerable</strong>
-                  <span>Corporate entities must comply with legal orders. Your "private" chats aren't safe from courts.</span>
+                  <span>Corporate entities must comply with legal orders. Your "private" chats aren't safe from
+                    courts.</span>
                 </div>
               </li>
               <li>
                 <span class="li-icon blue-icon">⚠</span>
                 <div>
                   <strong>Cloud backups break encryption</strong>
-                  <span>iCloud and Google Drive backups of WhatsApp are often unencrypted — a well-known attack vector.</span>
+                  <span>iCloud and Google Drive backups of WhatsApp are often unencrypted — a well-known attack
+                    vector.</span>
                 </div>
               </li>
             </ul>
