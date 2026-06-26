@@ -216,55 +216,163 @@
 
       <!-- ── Section 2: Matrix Cinematic ── -->
       <section id="matrix-section" class="matrix-section">
-        <div class="matrix-hero">
-          <img src="public/assets/matrix.png" alt="Choose your path" class="matrix-hero-img">
-        </div>
+        <div class="matrix-hero" id="matrix-hero-wrap">
+          <img src="public/assets/matrix.png" alt="Choose your path" class="matrix-hero-img" id="matrix-img">
 
-        <!-- Diverging Paths SVG Overlay -->
-        <svg id="line-svg" class="line-svg" preserveAspectRatio="none" viewBox="0 0 100 100">
-          <path id="red-path" d="M 43 25 C 35 50, 20 65, 15 85" class="svg-path red-path" />
-          <path id="blue-path" d="M 57 25 C 65 50, 80 65, 85 85" class="svg-path blue-path" />
-        </svg>
+          <!-- Red Pill clickable zone (left hand of Morpheus ~30% X, ~74% Y) -->
+          <button class="pill-btn red-pill-btn" id="red-pill-btn"
+                  onclick="togglePill('red')"
+                  title="Take the Red Pill"
+                  aria-expanded="false"
+                  aria-controls="red-popup"
+                  style="left:29%;top:73%;"></button>
 
-        <!-- Diverging Text Destination (Anchored to the bottom) -->
-        <div class="split-section" id="split-section">
-          
-          <!-- Red Pill Side (Left) -->
-          <div class="split-pane red" id="red-pane">
-            <div class="split-label">The Red Pill</div>
-            <div class="split-title">Ophanim</div>
-            <div class="split-body">
-              Zero-knowledge architecture. No server ever sees your messages.
-              OpenPGP encryption runs entirely in your browser.
-              Your keys never leave your device. No metadata. No logs. No trust required.
+          <!-- Blue Pill clickable zone (right hand of Morpheus ~68% X, ~74% Y) -->
+          <button class="pill-btn blue-pill-btn" id="blue-pill-btn"
+                  onclick="togglePill('blue')"
+                  title="Take the Blue Pill"
+                  aria-expanded="false"
+                  aria-controls="blue-popup"
+                  style="left:66%;top:73%;"></button>
+
+          <!-- Red Pill Popup (appears to the left of the red pill) -->
+          <div class="pill-popup red-popup" id="red-popup" role="dialog" aria-label="Red Pill: Ophanim">
+            <button class="popup-close" onclick="closePill('red')" aria-label="Close">&times;</button>
+            <div class="popup-eyebrow">The Red Pill</div>
+            <div class="popup-title">Ophanim</div>
+            <div class="popup-body">
+              Full end-to-end encryption, entirely in your browser.
+              Zero-knowledge — no server ever sees your keys or messages.
+              No metadata. No logs. No trust required.
             </div>
-            <div class="split-tags">
-              <span class="s-tag red">OpenPGP.js</span>
-              <span class="s-tag red">Curve25519</span>
-              <span class="s-tag red">Zero-Knowledge</span>
-              <span class="s-tag red">Client-Side Only</span>
+            <div class="popup-tags">
+              <span class="p-tag red">OpenPGP.js</span>
+              <span class="p-tag red">Zero-Knowledge</span>
+              <span class="p-tag red">Client-Side Only</span>
             </div>
           </div>
 
-          <!-- Blue Pill Side (Right) -->
-          <div class="split-pane blue" id="blue-pane">
-            <div class="split-label">The Blue Pill</div>
-            <div class="split-title">Traditional Messaging</div>
-            <div class="split-body">
-              Messages routed through corporate infrastructure.
-              Metadata logged. Keys managed server-side.
-              Vulnerable to subpoenas, breaches, and insider access.
+          <!-- Blue Pill Popup (appears to the right of the blue pill) -->
+          <div class="pill-popup blue-popup" id="blue-popup" role="dialog" aria-label="Blue Pill: Traditional Messaging">
+            <button class="popup-close" onclick="closePill('blue')" aria-label="Close">&times;</button>
+            <div class="popup-eyebrow">The Blue Pill</div>
+            <div class="popup-title">Traditional Messaging</div>
+            <div class="popup-body">
+              Corporate servers store your metadata. Keys managed remotely.
+              Subpoenas, breaches, and insider access are always possible.
+              You’re never really private.
             </div>
-            <div class="split-tags">
-              <span class="s-tag blue">WhatsApp / Telegram</span>
-              <span class="s-tag blue">Signal Protocol</span>
-              <span class="s-tag blue">Centralized Servers</span>
-              <span class="s-tag blue">Metadata Exposed</span>
+            <div class="popup-tags">
+              <span class="p-tag blue">Centralized</span>
+              <span class="p-tag blue">Metadata Exposed</span>
+              <span class="p-tag blue">Server-Side Keys</span>
             </div>
           </div>
-          
         </div>
       </section>
+
+      <!-- ── Section 3: Glass Comparison Cards ── -->
+      <section id="compare-section" class="compare-section">
+
+        <div class="compare-grid">
+
+          <!-- Red Card: Why Ophanim -->
+          <div class="compare-card red-card glass-reveal" style="--reveal-delay:0.1s">
+            <div class="card-glow red-glow"></div>
+            <div class="card-badge red-badge">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              Ophanim
+            </div>
+            <h3 class="card-title">Built for <em>real</em> privacy.</h3>
+            <p class="card-sub">Every message encrypted before it leaves your device. Always.</p>
+            <ul class="card-list">
+              <li>
+                <span class="li-icon red-icon">✦</span>
+                <div>
+                  <strong>Zero-knowledge architecture</strong>
+                  <span>Our servers never see your messages, keys, or identity. Mathematically impossible.</span>
+                </div>
+              </li>
+              <li>
+                <span class="li-icon red-icon">✦</span>
+                <div>
+                  <strong>OpenPGP in your browser</strong>
+                  <span>Encryption runs client-side using OpenPGP.js. Keys are generated and stored only on your device.</span>
+                </div>
+              </li>
+              <li>
+                <span class="li-icon red-icon">✦</span>
+                <div>
+                  <strong>No metadata. No logs.</strong>
+                  <span>We don't record who you talk to, when, or how often. There's nothing to hand over.</span>
+                </div>
+              </li>
+              <li>
+                <span class="li-icon red-icon">✦</span>
+                <div>
+                  <strong>No account required</strong>
+                  <span>No phone number. No email. No identity. Just a key pair and a shared room code.</span>
+                </div>
+              </li>
+            </ul>
+            <div class="card-tags">
+              <span class="ctag red">OpenPGP.js</span>
+              <span class="ctag red">Curve25519</span>
+              <span class="ctag red">Zero-Knowledge</span>
+              <span class="ctag red">Client-Side</span>
+            </div>
+          </div>
+
+          <!-- Blue Card: Why not WhatsApp / Instagram -->
+          <div class="compare-card blue-card glass-reveal" style="--reveal-delay:0.22s">
+            <div class="card-glow blue-glow"></div>
+            <div class="card-badge blue-badge">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              WhatsApp / Instagram
+            </div>
+            <h3 class="card-title">Not private enough.</h3>
+            <p class="card-sub">If it's free, you're the product. Your data is the business model.</p>
+            <ul class="card-list">
+              <li>
+                <span class="li-icon blue-icon">⚠</span>
+                <div>
+                  <strong>Metadata is collected constantly</strong>
+                  <span>Even if messages are "encrypted", who you talk to, when, and how long — that's all logged.</span>
+                </div>
+              </li>
+              <li>
+                <span class="li-icon blue-icon">⚠</span>
+                <div>
+                  <strong>Keys managed by their servers</strong>
+                  <span>WhatsApp holds key backups. If they're compelled to hand over data, they can.</span>
+                </div>
+              </li>
+              <li>
+                <span class="li-icon blue-icon">⚠</span>
+                <div>
+                  <strong>Subpoena-vulnerable</strong>
+                  <span>Corporate entities must comply with legal orders. Your "private" chats aren't safe from courts.</span>
+                </div>
+              </li>
+              <li>
+                <span class="li-icon blue-icon">⚠</span>
+                <div>
+                  <strong>Cloud backups break encryption</strong>
+                  <span>iCloud and Google Drive backups of WhatsApp are often unencrypted — a well-known attack vector.</span>
+                </div>
+              </li>
+            </ul>
+            <div class="card-tags">
+              <span class="ctag blue">Centralized</span>
+              <span class="ctag blue">Metadata Logging</span>
+              <span class="ctag blue">Server Keys</span>
+              <span class="ctag blue">Cloud Backups</span>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
     </main>
   </div>
 

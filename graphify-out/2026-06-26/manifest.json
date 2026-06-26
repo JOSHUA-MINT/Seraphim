@@ -35,8 +35,8 @@
     "semantic_hash": ""
   },
   "index.html": {
-    "mtime": 1782488231.652322,
-    "ast_hash": "20be4cd7432bcbb8646463cd150a2413",
+    "mtime": 1781970689.9242282,
+    "ast_hash": "b7bbf3120c7122e2f60d938bca0e8bd3",
     "semantic_hash": ""
   },
   "keys.html": {
@@ -70,9 +70,9 @@
     "semantic_hash": "2b5a5f6f7e742b8f73fa48494ea78e09"
   },
   "src/js/animations.js": {
-    "mtime": 1782488058.8182466,
-    "ast_hash": "6c24c920d1ab41d776776264cdd6a5dd",
-    "semantic_hash": ""
+    "mtime": 1782484606.2914987,
+    "ast_hash": "9b32f0af803d43f1ae84154e71538c57",
+    "semantic_hash": "9b32f0af803d43f1ae84154e71538c57"
   },
   "src/js/crypto.js": {
     "mtime": 1780765229.040162,
@@ -120,23 +120,8 @@
     "semantic_hash": ""
   },
   ".gemini/settings.json": {
-    "mtime": 1782485527.8741205,
+    "mtime": 1782485026.254943,
     "ast_hash": "ddc6069a85a1acc06096e06bcd8087ac",
     "semantic_hash": "ddc6069a85a1acc06096e06bcd8087ac"
-  },
-  ".agents/rules/graphify.md": {
-    "mtime": 1782485886.676339,
-    "ast_hash": "a0e4d192b9e2e17256124dbfc8e24e6a",
-    "semantic_hash": ""
-  },
-  ".agents/workflows/graphify.md": {
-    "mtime": 1782485886.6777258,
-    "ast_hash": "637776aa6f7496d069afe7520c845c8a",
-    "semantic_hash": ""
-  },
-  "GEMINI.md": {
-    "mtime": 1782484957.5998292,
-    "ast_hash": "8a6643a420fdad6bfb583523bc6cef16",
-    "semantic_hash": ""
   }
 }
