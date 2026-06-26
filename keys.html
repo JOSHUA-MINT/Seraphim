@@ -611,6 +611,14 @@
     }
 
     // ── Key Management logic ───────────────────────
+    //
+    // SECURITY BOUNDARY: private keys are NEVER written to localStorage.
+    // They are held exclusively in this in-memory Map for the lifetime of
+    // this tab. Cross-page flows (decrypt.html, chat.html) require the user
+    // to paste their private key manually — intentional, security-first UX.
+    //
+    const _sessionPrivateKeys = new Map(); // index (number) → armoredPrivateKey
+
     async function generateKey() {
       const name = document.getElementById('gen-name').value.trim();
       const email = document.getElementById('gen-email').value.trim();
@@ -628,13 +636,18 @@
         const keyData = await OphanimCrypto.generateKeypair(name, email, pass);
         const keys = JSON.parse(localStorage.getItem('ophanim_keys') || '[]');
 
+        // Store only non-sensitive metadata + public key persistently.
+        // The private key is kept session-only in _sessionPrivateKeys.
         keys.push({
           name,
           email,
           publicKey: keyData.publicKey,
-          privateKey: keyData.privateKey,
           fingerprint: keyData.fingerprint
+          // privateKey intentionally omitted — see SECURITY BOUNDARY above
         });
+
+        // Hold private key in memory for the duration of this page session.
+        _sessionPrivateKeys.set(keys.length - 1, keyData.privateKey);
 
         localStorage.setItem('ophanim_keys', JSON.stringify(keys));
 
