@@ -35,8 +35,8 @@
     "semantic_hash": ""
   },
   "index.html": {
-    "mtime": 1782491404.300656,
-    "ast_hash": "286c71080ade9cdf561302101b53f472",
+    "mtime": 1782494713.2012305,
+    "ast_hash": "1ae382c1f8224c48f7c788b227264d3e",
     "semantic_hash": ""
   },
   "keys.html": {
@@ -94,24 +94,14 @@
     "ast_hash": "e535fd840d7644fb88bbb8eb56cbce2b",
     "semantic_hash": ""
   },
-  "lib/matrix-pills.png": {
-    "mtime": 1781871491.123834,
-    "ast_hash": "6ea714372ae7e9b1b2f40b950088b1f8",
-    "semantic_hash": ""
-  },
   "lib/matrix.png": {
-    "mtime": 1781870928.7692852,
-    "ast_hash": "4225f10ad80f13cb41aafc3465c14938",
-    "semantic_hash": ""
-  },
-  "public/assets/matrix-pills.png": {
-    "mtime": 1781871491.123834,
-    "ast_hash": "6ea714372ae7e9b1b2f40b950088b1f8",
+    "mtime": 1782494215.9458196,
+    "ast_hash": "24bf8abc3c30d2545c3ae6b5d0f019f0",
     "semantic_hash": ""
   },
   "public/assets/matrix.png": {
-    "mtime": 1781870928.7692852,
-    "ast_hash": "4225f10ad80f13cb41aafc3465c14938",
+    "mtime": 1782494370.8311474,
+    "ast_hash": "24bf8abc3c30d2545c3ae6b5d0f019f0",
     "semantic_hash": ""
   },
   "public/assets/ophanim-logo.png": {

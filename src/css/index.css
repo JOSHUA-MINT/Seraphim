@@ -37,7 +37,7 @@ body {
 }
 
 .matrix-hero-img {
-  width: min(980px, 97vw);
+  width: min(1250px, 97vw);
   height: auto;
   display: block;
   mix-blend-mode: screen;
