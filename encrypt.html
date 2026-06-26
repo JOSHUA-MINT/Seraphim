@@ -470,6 +470,10 @@
     }
 
     // ── Live Stats Tracking & Validation ───────────
+    // Generation counter: incremented on every updateStats() call so that
+    // stale async results from rapid typing are silently dropped.
+    let _validationGen = 0;
+
     function updateStats() {
       const plaintext = document.getElementById('plaintext-input').value;
       const pubkey = document.getElementById('pubkey-input').value.trim();
@@ -484,8 +488,13 @@
       const fingerprintEl = document.getElementById('validation-fingerprint');
 
       if (pubkey.includes('-----BEGIN PGP PUBLIC KEY BLOCK-----')) {
-        statusBadge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-accent-lime animate-pulse"></span><span class="text-accent-lime">Valid</span>';
-        algoEl.textContent = 'ECC (Curve25519)';
+        // ── Unverified intermediate state ──────────────────────────────────
+        // Show a neutral badge until parsing actually succeeds — do NOT claim
+        // "Valid" or assume "ECC (Curve25519)" based on the header string alone.
+        statusBadge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-yellow-400 animate-pulse"></span><span class="text-yellow-300">Armored / unverified</span>';
+        algoEl.textContent = 'PGP / unknown';
+        fingerprintEl.textContent = 'Verifying…';
+        fingerprintEl.classList.remove('text-accent-lime');
 
         if (document.getElementById('recipient-name').textContent === 'Not Selected') {
           document.getElementById('recipient-name').textContent = 'Armored Key Block';
@@ -493,14 +502,32 @@
           document.getElementById('recipient-avatar').textContent = 'PGP';
         }
 
-        fingerprintEl.textContent = 'Ready';
-        fingerprintEl.classList.add('text-accent-lime');
+        // ── Async parse & confirm ──────────────────────────────────────────
+        // Capture the current generation token so we can discard results that
+        // arrive after the user has already changed the textarea again.
+        const gen = ++_validationGen;
+        OphanimCrypto.getFingerprint(pubkey).then((fp) => {
+          if (gen !== _validationGen) return; // stale — a newer call is in flight
+          statusBadge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-accent-lime"></span><span class="text-accent-lime">Valid</span>';
+          algoEl.textContent = 'PGP (verified)';
+          fingerprintEl.textContent = fp.slice(-16);
+          fingerprintEl.classList.add('text-accent-lime');
+        }).catch(() => {
+          if (gen !== _validationGen) return;
+          statusBadge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-red-500"></span><span class="text-red-400">Invalid</span>';
+          algoEl.textContent = 'Unknown';
+          fingerprintEl.textContent = 'Malformed key';
+          fingerprintEl.classList.remove('text-accent-lime');
+        });
+
       } else if (pubkey.length > 0) {
+        ++_validationGen; // cancel any in-flight parse
         statusBadge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-red-500"></span><span class="text-red-400">Invalid</span>';
         algoEl.textContent = 'Unknown';
         fingerprintEl.textContent = 'Malformed key';
         fingerprintEl.classList.remove('text-accent-lime');
       } else {
+        ++_validationGen; // cancel any in-flight parse
         statusBadge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-zinc-600"></span><span class="text-zinc-400">Empty</span>';
         algoEl.textContent = 'None';
         fingerprintEl.textContent = '-';
