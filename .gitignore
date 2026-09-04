@@ -24,3 +24,6 @@ desktop.ini
 # Logs
 *.log
 npm-debug.log*
+
+# Graphify generated output (regenerated on every run)
+graphify-out/
