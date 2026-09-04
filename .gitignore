@@ -25,9 +25,11 @@ desktop.ini
 *.log
 npm-debug.log*
 
-.GEMINI.md
+# Graphify generated output (regenerated on every run)
+graphify-out/
 
-.agents
-.claude
-.gemini 
-.graphify-out
+# Agent tooling — local-only
+GEMINI.md
+.agents/
+.claude/
+.gemini/
