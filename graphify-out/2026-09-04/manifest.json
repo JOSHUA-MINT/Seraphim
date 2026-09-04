@@ -24,40 +24,40 @@
     "semantic_hash": "5d2af30fe7db7855da63e7c4b45890c1"
   },
   "chat.html": {
-    "mtime": 1788544763.6102443,
-    "seen": 1788545003.1168983,
-    "ast_hash": "1d042ec448dddfff72d948efc7bdbe62",
-    "semantic_hash": ""
+    "mtime": 1788540128.1828637,
+    "seen": 1788543221.932248,
+    "ast_hash": "56c711bb3ed49efa15d7930b26dcefca",
+    "semantic_hash": "56c711bb3ed49efa15d7930b26dcefca"
   },
   "decrypt.html": {
-    "mtime": 1788544763.610004,
-    "seen": 1788545003.1168993,
-    "ast_hash": "28fcdf3e141771ec3b806ca6b394578d",
-    "semantic_hash": ""
+    "mtime": 1788540128.1807916,
+    "seen": 1788543221.9322488,
+    "ast_hash": "2e62576d41547c20cd4a4ab24db54e90",
+    "semantic_hash": "2e62576d41547c20cd4a4ab24db54e90"
   },
   "encrypt.html": {
-    "mtime": 1788544763.6097856,
-    "seen": 1788545003.1169002,
-    "ast_hash": "da6c1f2369ee855ba5bb17880e80b934",
-    "semantic_hash": ""
+    "mtime": 1788540128.1796873,
+    "seen": 1788543221.9322498,
+    "ast_hash": "c13327d4c5adaf1528041c1f6be28be5",
+    "semantic_hash": "c13327d4c5adaf1528041c1f6be28be5"
   },
   "index.html": {
-    "mtime": 1788544763.609254,
-    "seen": 1788545003.1169019,
-    "ast_hash": "91c6ef2e07cd93579047ca68ea447dbc",
-    "semantic_hash": ""
+    "mtime": 1788541169.4363327,
+    "seen": 1788543221.9322507,
+    "ast_hash": "fb883f17c1a5476de4bf47267e81bbc7",
+    "semantic_hash": "fb883f17c1a5476de4bf47267e81bbc7"
   },
   "keys.html": {
-    "mtime": 1788544763.6095428,
-    "seen": 1788545003.1169026,
-    "ast_hash": "ff44f74bbd4ff2a7a1b9b9372c5f7717",
-    "semantic_hash": ""
+    "mtime": 1788541630.8204472,
+    "seen": 1788543221.9322512,
+    "ast_hash": "73918e94e0fe8903a460b2ad76df9fd1",
+    "semantic_hash": "73918e94e0fe8903a460b2ad76df9fd1"
   },
   "lib/ophanim_prd_report.md": {
-    "mtime": 1788543608.4382699,
-    "seen": 1788545003.1169033,
-    "ast_hash": "839fe20e3ae2edb719571c5613bb6a48",
-    "semantic_hash": ""
+    "mtime": 1788534961.3953598,
+    "seen": 1788543221.9322522,
+    "ast_hash": "92f3699c88a7afeac8df1afbab5cbc1b",
+    "semantic_hash": "92f3699c88a7afeac8df1afbab5cbc1b"
   },
   "test.html": {
     "mtime": 1788537651.5466454,
@@ -66,8 +66,7 @@
     "semantic_hash": "f0d2893d8e8834eed6852a5dd3c96d8e"
   },
   "lib/ophanim-logo.png": {
-    "mtime": 1788534961.3952904,
-    "seen": 1788545003.1169066,
+    "mtime": 1780670244.603536,
     "ast_hash": "a2d8cfaecb2d2649736a8f8770d0f072",
     "semantic_hash": "a2d8cfaecb2d2649736a8f8770d0f072"
   },
@@ -160,17 +159,5 @@
     "seen": 1788543221.9322312,
     "ast_hash": "4abc84e13a029ae814ec83b3f16e3105",
     "semantic_hash": "4abc84e13a029ae814ec83b3f16e3105"
-  },
-  "PROJECT_REPORT.md": {
-    "mtime": 1788543532.585867,
-    "seen": 1788545003.1168966,
-    "ast_hash": "3f5669274e6f5254e83de83691ab938a",
-    "semantic_hash": ""
-  },
-  "guide.md": {
-    "mtime": 1788544960.9966378,
-    "seen": 1788545003.1169012,
-    "ast_hash": "af57c3e450368a10728cf47cd6c79f6e",
-    "semantic_hash": ""
   }
 }

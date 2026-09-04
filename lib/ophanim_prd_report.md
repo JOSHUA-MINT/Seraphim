@@ -14,12 +14,12 @@ The platform operates as a **static web client** + **Node.js relay server**. The
 
 ## 2. Product Vision & Goals
 
-| Dimension | Description |
-|-----------|-------------|
-| **Mission** | Make end-to-end encrypted communication accessible to anyone with a browser |
-| **Target Users** | Privacy-conscious individuals, journalists, activists, security researchers |
-| **Core Value Prop** | Zero-knowledge architecture — the server cannot read your messages, ever |
-| **Differentiator** | Browser-native PGP with no installs, no accounts, no tracking |
+| Dimension                 | Description                                                                 |
+| ------------------------- | --------------------------------------------------------------------------- |
+| **Mission**         | Make end-to-end encrypted communication accessible to anyone with a browser |
+| **Target Users**    | Privacy-conscious individuals, journalists, activists, security researchers |
+| **Core Value Prop** | Zero-knowledge architecture — the server cannot read your messages, ever   |
+| **Differentiator**  | Browser-native PGP with no installs, no accounts, no tracking               |
 
 ---
 
@@ -67,22 +67,22 @@ graph TB
 
 ### 4.1 Feature Matrix
 
-| Feature | Page | Status | Priority |
-|---------|------|--------|----------|
-| Landing / Navigation Hub | `index.html` | ✅ Complete | P0 |
-| PGP Message Encryption | `encrypt.html` | ✅ Complete | P0 |
-| PGP Message Decryption | `decrypt.html` | ✅ Complete | P0 |
-| ECC Key Generation (Curve25519) | `keys.html` | ✅ Complete | P0 |
-| Key Storage (localStorage) | `keys.html` | ✅ Complete | P0 |
-| Contact Management | `keys.html` | ✅ Complete | P1 |
-| Real-time E2EE Chat | `chat.html` | ✅ Complete | P0 |
-| Room-based Chat System | `chat.html` + server | ✅ Complete | P0 |
-| Kill Switch (wipe all messages) | `chat.html` + server | ✅ Complete | P0 |
-| Typing Indicators | `chat.html` + server | ✅ Complete | P2 |
-| Message Signing | `crypto.js` | ✅ Complete | P1 |
-| Signature Verification | `crypto.js` | ✅ Complete | P1 |
-| Crypto Test Suite | `test.html` | ✅ Complete | P1 |
-| .pgp File Download | `encrypt.html` | ✅ Complete | P2 |
+| Feature                         | Page                   | Status      | Priority |
+| ------------------------------- | ---------------------- | ----------- | -------- |
+| Landing / Navigation Hub        | `index.html`         | ✅ Complete | P0       |
+| PGP Message Encryption          | `encrypt.html`       | ✅ Complete | P0       |
+| PGP Message Decryption          | `decrypt.html`       | ✅ Complete | P0       |
+| ECC Key Generation (Curve25519) | `keys.html`          | ✅ Complete | P0       |
+| Key Storage (localStorage)      | `keys.html`          | ✅ Complete | P0       |
+| Contact Management              | `keys.html`          | ✅ Complete | P1       |
+| Real-time E2EE Chat             | `chat.html`          | ✅ Complete | P0       |
+| Room-based Chat System          | `chat.html` + server | ✅ Complete | P0       |
+| Kill Switch (wipe all messages) | `chat.html` + server | ✅ Complete | P0       |
+| Typing Indicators               | `chat.html` + server | ✅ Complete | P2       |
+| Message Signing                 | `crypto.js`          | ✅ Complete | P1       |
+| Signature Verification          | `crypto.js`          | ✅ Complete | P1       |
+| Crypto Test Suite               | `test.html`          | ✅ Complete | P1       |
+| .pgp File Download              | `encrypt.html`       | ✅ Complete | P2       |
 
 ### 4.2 Feature Priority Distribution
 
@@ -126,7 +126,7 @@ sequenceDiagram
     A->>S: join-room (roomCode, name, publicKey)
     S-->>A: room-joined (user list)
     S-->>B: user-joined (Alice info)
-    
+  
     Note over A,B: Public keys exchanged ✅
 
     A->>A: encryptMessage(text, bobPubKey)
@@ -150,7 +150,7 @@ sequenceDiagram
     S->>A: kill-switch event
     S->>B: kill-switch event
     S->>C: kill-switch event
-    
+  
     Note over A,C: All clients wipe chat history instantly ☠️
 ```
 
@@ -191,13 +191,13 @@ graph LR
 
 ### Dependency Breakdown
 
-| Package | Version | Size | Purpose |
-|---------|---------|------|---------|
-| `express` | ^4.18.2 | ~200KB | HTTP server & static file serving |
-| `socket.io` | ^4.7.4 | ~300KB | Real-time WebSocket communication |
-| `cors` | ^2.8.5 | ~10KB | Cross-Origin Resource Sharing |
-| `uuid` | ^9.0.0 | ~15KB | Unique identifier generation |
-| `openpgp.min.js` | v5 | 552KB | Client-side PGP cryptography |
+| Package            | Version | Size   | Purpose                           |
+| ------------------ | ------- | ------ | --------------------------------- |
+| `express`        | ^4.18.2 | ~200KB | HTTP server & static file serving |
+| `socket.io`      | ^4.7.4  | ~300KB | Real-time WebSocket communication |
+| `cors`           | ^2.8.5  | ~10KB  | Cross-Origin Resource Sharing     |
+| `uuid`           | ^9.0.0  | ~15KB  | Unique identifier generation      |
+| `openpgp.min.js` | v5      | 552KB  | Client-side PGP cryptography      |
 
 ---
 
@@ -233,13 +233,13 @@ graph TD
 
 ### 7.2 Encryption Flow
 
-| Step | Operation | Algorithm |
-|------|-----------|-----------|
-| 1 | Key Generation | ECC Curve25519 |
-| 2 | Private Key Protection | AES-256 with passphrase |
-| 3 | Message Encryption | PGP (AES-256 session key + ECC) |
-| 4 | Message Signing | EdDSA (Ed25519) |
-| 5 | Transport | Socket.IO (WSS recommended) |
+| Step | Operation              | Algorithm                       |
+| ---- | ---------------------- | ------------------------------- |
+| 1    | Key Generation         | ECC Curve25519                  |
+| 2    | Private Key Protection | AES-256 with passphrase         |
+| 3    | Message Encryption     | PGP (AES-256 session key + ECC) |
+| 4    | Message Signing        | EdDSA (Ed25519)                 |
+| 5    | Transport              | Socket.IO (WSS recommended)     |
 
 ---
 
@@ -284,16 +284,16 @@ pie title Codebase Size Distribution (excluding node_modules)
 
 ## 9. Design System Summary
 
-| Token | Value | Usage |
-|-------|-------|-------|
-| `--bg-primary` | `#07070d` | Main background (near-black) |
-| `--accent-purple` | `#a855f7` | Primary brand color |
-| `--accent-cyan` | `#06b6d4` | Secondary accent |
-| `--accent-pink` | `#ec4899` | Tertiary accent |
-| `--font-sans` | Inter | Body typography |
-| `--font-mono` | JetBrains Mono | Code / keys / ciphertext |
-| `--radius-lg` | 16px | Card border radius |
-| `--gradient-primary` | purple → cyan | Buttons, headings, logo |
+| Token                  | Value          | Usage                        |
+| ---------------------- | -------------- | ---------------------------- |
+| `--bg-primary`       | `#07070d`    | Main background (near-black) |
+| `--accent-purple`    | `#a855f7`    | Primary brand color          |
+| `--accent-cyan`      | `#06b6d4`    | Secondary accent             |
+| `--accent-pink`      | `#ec4899`    | Tertiary accent              |
+| `--font-sans`        | Inter          | Body typography              |
+| `--font-mono`        | JetBrains Mono | Code / keys / ciphertext     |
+| `--radius-lg`        | 16px           | Card border radius           |
+| `--gradient-primary` | purple → cyan | Buttons, headings, logo      |
 
 **Design Language:** Dark cyberpunk with glassmorphism, neon accents, and smooth micro-animations.
 
@@ -301,58 +301,58 @@ pie title Codebase Size Distribution (excluding node_modules)
 
 ## 10. API Reference — OphanimCrypto
 
-| Method | Parameters | Returns | Description |
-|--------|-----------|---------|-------------|
-| `generateKeyPair` | name, email, passphrase | `{publicKey, privateKey}` | Generate ECC Curve25519 keypair |
-| `encryptMessage` | plaintext, publicKey(s) | ciphertext string | PGP encrypt for recipient(s) |
-| `decryptMessage` | ciphertext, privateKey, passphrase | plaintext string | PGP decrypt with private key |
-| `signMessage` | plaintext, privateKey, passphrase | signed message | Cleartext PGP signature |
-| `verifySignature` | signedMessage, publicKey | `{verified, data}` | Verify cleartext signature |
-| `getFingerprint` | publicKey | hex string | Extract key fingerprint |
-| `generateRoomCode` | length (default 6) | string | Cryptographic random room code |
+| Method               | Parameters                         | Returns                     | Description                     |
+| -------------------- | ---------------------------------- | --------------------------- | ------------------------------- |
+| `generateKeyPair`  | name, email, passphrase            | `{publicKey, privateKey}` | Generate ECC Curve25519 keypair |
+| `encryptMessage`   | plaintext, publicKey(s)            | ciphertext string           | PGP encrypt for recipient(s)    |
+| `decryptMessage`   | ciphertext, privateKey, passphrase | plaintext string            | PGP decrypt with private key    |
+| `signMessage`      | plaintext, privateKey, passphrase  | signed message              | Cleartext PGP signature         |
+| `verifySignature`  | signedMessage, publicKey           | `{verified, data}`        | Verify cleartext signature      |
+| `getFingerprint`   | publicKey                          | hex string                  | Extract key fingerprint         |
+| `generateRoomCode` | length (default 6)                 | string                      | Cryptographic random room code  |
 
 ---
 
 ## 11. Server Events (Socket.IO)
 
-| Event | Direction | Payload | Description |
-|-------|-----------|---------|-------------|
-| `join-room` | Client → Server | `{roomCode, name, publicKey}` | Join/create a chat room |
-| `room-joined` | Server → Client | `{roomCode, users[]}` | Confirm join + user list |
-| `user-joined` | Server → Others | `{id, name, publicKey}` | New user notification |
-| `user-left` | Server → Others | `{id, name}` | User departure notification |
-| `message` | Client → Server | `{roomCode, encryptedMessages[]}` | Send per-recipient ciphertext |
-| `message` | Server → Client | `{senderId, senderName, ciphertext, timestamp}` | Relay encrypted message |
-| `kill-switch` | Bidirectional | `{roomCode}` / `{triggeredBy, timestamp}` | Wipe all messages |
-| `typing` | Bidirectional | `{roomCode}` / `{name}` | Typing indicator |
+| Event           | Direction        | Payload                                           | Description                   |
+| --------------- | ---------------- | ------------------------------------------------- | ----------------------------- |
+| `join-room`   | Client → Server | `{roomCode, name, publicKey}`                   | Join/create a chat room       |
+| `room-joined` | Server → Client | `{roomCode, users[]}`                           | Confirm join + user list      |
+| `user-joined` | Server → Others | `{id, name, publicKey}`                         | New user notification         |
+| `user-left`   | Server → Others | `{id, name}`                                    | User departure notification   |
+| `message`     | Client → Server | `{roomCode, encryptedMessages[]}`               | Send per-recipient ciphertext |
+| `message`     | Server → Client | `{senderId, senderName, ciphertext, timestamp}` | Relay encrypted message       |
+| `kill-switch` | Bidirectional    | `{roomCode}` / `{triggeredBy, timestamp}`     | Wipe all messages             |
+| `typing`      | Bidirectional    | `{roomCode}` / `{name}`                       | Typing indicator              |
 
 ---
 
 ## 12. Performance Metrics (Estimated)
 
-| Operation | Estimated Time | Notes |
-|-----------|---------------|-------|
-| Key Generation (Curve25519) | ~200-500ms | First-time only |
-| Message Encryption | ~50-150ms | Depends on message size |
-| Message Decryption | ~50-150ms | Includes passphrase unlock |
-| Message Signing | ~50-100ms | Ed25519 |
-| Signature Verification | ~30-80ms | Ed25519 |
-| Room Join (WebSocket) | ~50-200ms | Network dependent |
+| Operation                   | Estimated Time | Notes                      |
+| --------------------------- | -------------- | -------------------------- |
+| Key Generation (Curve25519) | ~200-500ms     | First-time only            |
+| Message Encryption          | ~50-150ms      | Depends on message size    |
+| Message Decryption          | ~50-150ms      | Includes passphrase unlock |
+| Message Signing             | ~50-100ms      | Ed25519                    |
+| Signature Verification      | ~30-80ms       | Ed25519                    |
+| Room Join (WebSocket)       | ~50-200ms      | Network dependent          |
 
 ---
 
 ## 13. Future Roadmap
 
-| Feature | Priority | Complexity | Status |
-|---------|----------|------------|--------|
-| File/Image Encryption | P1 | Medium | 🔲 Planned |
-| Group Key Rotation | P1 | High | 🔲 Planned |
-| QR Code Key Exchange | P2 | Low | 🔲 Planned |
-| Voice Messages (encrypted) | P2 | High | 🔲 Planned |
-| PWA / Offline Support | P2 | Medium | 🔲 Planned |
-| Tor/I2P Integration | P3 | High | 🔲 Research |
-| Self-destructing Messages (timer) | P2 | Low | 🔲 Planned |
-| Multi-device Key Sync | P3 | High | 🔲 Research |
+| Feature                           | Priority | Complexity | Status      |
+| --------------------------------- | -------- | ---------- | ----------- |
+| File/Image Encryption             | P1       | Medium     | 🔲 Planned  |
+| Group Key Rotation                | P1       | High       | 🔲 Planned  |
+| QR Code Key Exchange              | P2       | Low        | 🔲 Planned  |
+| Voice Messages (encrypted)        | P2       | High       | 🔲 Planned  |
+| PWA / Offline Support             | P2       | Medium     | 🔲 Planned  |
+| Tor/I2P Integration               | P3       | High       | 🔲 Research |
+| Self-destructing Messages (timer) | P2       | Low        | 🔲 Planned  |
+| Multi-device Key Sync             | P3       | High       | 🔲 Research |
 
 ---
 

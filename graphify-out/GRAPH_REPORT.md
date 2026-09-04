@@ -1,333 +1,453 @@
-# Graph Report - Seraphim  (2026-06-26)
+# Graph Report - Seraphim  (2026-09-04)
 
 ## Corpus Check
-- 16 files · ~167,368 words
+- 19 files · ~254,586 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1797 nodes · 4515 edges · 76 communities (52 shown, 24 thin omitted)
-- Extraction: 95% EXTRACTED · 5% INFERRED · 0% AMBIGUOUS · INFERRED: 245 edges (avg confidence: 0.8)
+- 2118 nodes · 5931 edges · 114 communities (68 shown, 46 thin omitted)
+- Extraction: 90% EXTRACTED · 10% INFERRED · 0% AMBIGUOUS · INFERRED: 582 edges (avg confidence: 0.85)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `ff90cf27`
+- Built from commit: `63054843`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
 ## Community Hubs (Navigation)
-- [[_COMMUNITY_Community 0|Community 0]]
-- [[_COMMUNITY_Community 1|Community 1]]
-- [[_COMMUNITY_Community 2|Community 2]]
-- [[_COMMUNITY_Community 3|Community 3]]
-- [[_COMMUNITY_Community 4|Community 4]]
-- [[_COMMUNITY_Community 5|Community 5]]
-- [[_COMMUNITY_Community 6|Community 6]]
-- [[_COMMUNITY_Community 7|Community 7]]
-- [[_COMMUNITY_Community 8|Community 8]]
-- [[_COMMUNITY_Community 9|Community 9]]
-- [[_COMMUNITY_Community 10|Community 10]]
-- [[_COMMUNITY_Community 11|Community 11]]
-- [[_COMMUNITY_Community 12|Community 12]]
-- [[_COMMUNITY_Community 13|Community 13]]
-- [[_COMMUNITY_Community 14|Community 14]]
-- [[_COMMUNITY_Community 15|Community 15]]
-- [[_COMMUNITY_Community 16|Community 16]]
-- [[_COMMUNITY_Community 17|Community 17]]
-- [[_COMMUNITY_Community 18|Community 18]]
-- [[_COMMUNITY_Community 19|Community 19]]
-- [[_COMMUNITY_Community 20|Community 20]]
-- [[_COMMUNITY_Community 21|Community 21]]
-- [[_COMMUNITY_Community 22|Community 22]]
-- [[_COMMUNITY_Community 23|Community 23]]
-- [[_COMMUNITY_Community 24|Community 24]]
-- [[_COMMUNITY_Community 25|Community 25]]
-- [[_COMMUNITY_Community 26|Community 26]]
-- [[_COMMUNITY_Community 27|Community 27]]
-- [[_COMMUNITY_Community 28|Community 28]]
-- [[_COMMUNITY_Community 29|Community 29]]
-- [[_COMMUNITY_Community 30|Community 30]]
-- [[_COMMUNITY_Community 31|Community 31]]
-- [[_COMMUNITY_Community 32|Community 32]]
-- [[_COMMUNITY_Community 33|Community 33]]
-- [[_COMMUNITY_Community 34|Community 34]]
-- [[_COMMUNITY_Community 35|Community 35]]
-- [[_COMMUNITY_Community 36|Community 36]]
-- [[_COMMUNITY_Community 37|Community 37]]
-- [[_COMMUNITY_Community 38|Community 38]]
-- [[_COMMUNITY_Community 39|Community 39]]
-- [[_COMMUNITY_Community 40|Community 40]]
-- [[_COMMUNITY_Community 42|Community 42]]
-- [[_COMMUNITY_Community 43|Community 43]]
-- [[_COMMUNITY_Community 44|Community 44]]
-- [[_COMMUNITY_Community 45|Community 45]]
-- [[_COMMUNITY_Community 46|Community 46]]
-- [[_COMMUNITY_Community 47|Community 47]]
-- [[_COMMUNITY_Community 48|Community 48]]
-- [[_COMMUNITY_Community 49|Community 49]]
-- [[_COMMUNITY_Community 50|Community 50]]
-- [[_COMMUNITY_Community 51|Community 51]]
-- [[_COMMUNITY_Community 53|Community 53]]
-- [[_COMMUNITY_Community 54|Community 54]]
-- [[_COMMUNITY_Community 55|Community 55]]
-- [[_COMMUNITY_Community 56|Community 56]]
-- [[_COMMUNITY_Community 57|Community 57]]
-- [[_COMMUNITY_Community 58|Community 58]]
-- [[_COMMUNITY_Community 59|Community 59]]
-- [[_COMMUNITY_Community 60|Community 60]]
-- [[_COMMUNITY_Community 61|Community 61]]
-- [[_COMMUNITY_Community 62|Community 62]]
-- [[_COMMUNITY_Community 63|Community 63]]
-- [[_COMMUNITY_Community 64|Community 64]]
-- [[_COMMUNITY_Community 65|Community 65]]
-- [[_COMMUNITY_Community 66|Community 66]]
-- [[_COMMUNITY_Community 68|Community 68]]
-- [[_COMMUNITY_Community 69|Community 69]]
-- [[_COMMUNITY_Community 71|Community 71]]
-- [[_COMMUNITY_Community 72|Community 72]]
-- [[_COMMUNITY_Community 73|Community 73]]
-- [[_COMMUNITY_Community 74|Community 74]]
-- [[_COMMUNITY_Community 75|Community 75]]
+- lib/openpgp.min.js
+- assets/openpgp.min.js
+- t
+- gd
+- gd
+- r
+- Wh
+- write
+- hu
+- .acquire_asm
+- e
+- Ophanim — Product Requirements Document & Technical Report
+- Ophanim — Product Requirements Document & Technical Report
+- Wh
+- Nc
+- .verify
+- lib/socket.io.min.js
+- t
+- hf
+- dh
+- R
+- Ro
+- zh
+- sp
+- bu
+- assets/socket.io.min.js
+- The Manual
+- R
+- G
+- fe
+- .push
+- Ro
+- Ophanim — Project Report
+- dependencies
+- .update
+- fp
+- dh
+- pe
+- .constructor
+- .push
+- test.html Crypto Test Page
+- o
+- un
+- G
+- .write
+- .update
+- sp
+- zu
+- index.js
+- fp
+- .clone
+- ou
+- animations.js
+- zu
+- ye
+- write
+- handleDecrypt
+- Local Key Store (ophanim_keys)
+- graphify Knowledge Graph Consultation Rule
+- hu
+- Uu
+- Uu
+- sendMessage
+- dn
+- jd
+- Ni
+- Red Pill / Blue Pill Comparison
+- fe
+- Vs
+- oh
+- ou
+- Out-of-Band Fingerprint Verification
+- joinRoom
+- sidebar.js
+- ye
+- .constructor
+- mu
+- showContactPicker
+- mu
+- Morpheus Red/Blue Pill Illustration
+- ba
+- Hi
+- pa
+- ya
+- lu
+- GEMINI.md
+- Di
+- rules/graphify.md
+- workflows/graphify.md
+- renderUsers
+- wi
+- OpenPGP.js v5
+- Ophanim Logo
+- Tu
+- bu
+- Cu
+- Eu
+- Iu
+- Cu
+- Iu
+- xu
+- fh
+- ba
+- .sub
+- pa
+- ya
+- test-runner.js
+- mn
+- lu
+- mn
+- crypto.js
 
 ## God Nodes (most connected - your core abstractions)
-1. `_()` - 349 edges
-2. `_()` - 348 edges
-3. `write()` - 44 edges
-4. `write()` - 44 edges
-5. `G` - 41 edges
-6. `G` - 40 edges
-7. `fp()` - 39 edges
-8. `fp()` - 38 edges
-9. `read()` - 32 edges
-10. `read()` - 32 edges
+1. `R()` - 77 edges
+2. `R()` - 77 edges
+3. `o()` - 70 edges
+4. `o()` - 70 edges
+5. `t()` - 67 edges
+6. `t()` - 67 edges
+7. `r()` - 56 edges
+8. `r()` - 56 edges
+9. `e` - 53 edges
+10. `e` - 53 edges
 
 ## Surprising Connections (you probably didn't know these)
-- `Ophanim Home` --references--> `Ophanim Logo`  [EXTRACTED]
-  index.html → lib/ophanim-logo.png
-- `Ophanim Home` --references--> `Morpheus Matrix`  [EXTRACTED]
-  index.html → public/assets/matrix.png
-- `Ophanim PRD & Technical Report` --references--> `OpenPGP.js v5`  [EXTRACTED]
-  lib/ophanim_prd_report.md → lib/openpgp.min.js
-- `q()` --calls--> `_()`  [INFERRED]
-  public/assets/socket.io.min.js → public/assets/openpgp.min.js
-- `ar()` --calls--> `Ot()`  [INFERRED]
-  public/assets/openpgp.min.js → public/assets/socket.io.min.js
+- `handleDecrypt` --semantically_similar_to--> `addMessage`  [INFERRED] [semantically similar]
+  decrypt.html → chat.html
+- `Ophanim CSS Token Theme (ophanim.css / fonts.css)` --semantically_similar_to--> `Ophanim Dark Cyberpunk Design System`  [INFERRED] [semantically similar]
+  test.html → lib/ophanim_prd_report.md
+- `Ophanim PRD (public/assets copy)` --semantically_similar_to--> `Ophanim E2EE Messaging Platform`  [INFERRED] [semantically similar]
+  public/assets/ophanim_prd_report.md → lib/ophanim_prd_report.md
+- `Kill Switch (room-wide wipe)` --semantically_similar_to--> `Ephemeral Plaintext Auto-Wipe`  [INFERRED] [semantically similar]
+  chat.html → decrypt.html
+- `GEMINI.md graphify Project Rules` --semantically_similar_to--> `graphify Knowledge Graph Consultation Rule`  [INFERRED] [semantically similar]
+  GEMINI.md → .agents/rules/graphify.md
 
 ## Import Cycles
 - None detected.
 
-## Communities (76 total, 24 thin omitted)
+## Hyperedges (group relationships)
+- **Secure chat session flow** — chat_joinroom, chat_loadkeys, chat_showfingerprintoverlay, chat_confirmfingerprint, chat_sendmessage [EXTRACTED 1.00]
+- **Everything that reads the local key store** — keys_generatekey, decrypt_selectkey, chat_loadkeys, encrypt_showcontactpicker, keys_local_key_store [EXTRACTED 1.00]
+- **Ophanim Zero-Knowledge E2EE Stack** — lib_ophanim_prd_report_zero_knowledge_architecture, lib_ophanim_prd_report_ophanimcrypto, lib_ophanim_prd_report_openpgp_js_v5, lib_ophanim_prd_report_curve25519_ecc, lib_ophanim_prd_report_relay_server, lib_ophanim_prd_report_socketio_event_protocol [EXTRACTED 1.00]
+- **Data destruction mechanisms** — chat_executekillwipe, decrypt_clearoutput, decrypt_clearloadedkey, keys_deletekey [INFERRED 0.85]
+- **Graph-First Codebase Navigation Policy** — _agents_rules_graphify_graphify_rule, gemini_graphify_project_rules, _agents_workflows_graphify_graphify_workflow, _agents_rules_graphify_graphify_cli, _agents_rules_graphify_graph_json [INFERRED 0.85]
+- **Ophanim Security Posture Controls** — lib_ophanim_prd_report_threat_model, lib_ophanim_prd_report_kill_switch, lib_ophanim_prd_report_curve25519_ecc, test_content_security_policy [INFERRED 0.85]
+- **Landing page pill narrative** — public_assets_matrix_morpheus_pill_illustration, public_assets_matrix_red_pill_branch, public_assets_matrix_blue_pill_branch, index_red_blue_pill_choice [INFERRED 0.95]
 
-### Community 0 - "Community 0"
-Cohesion: 0.05
-Nodes (6): fp(), G, Hi(), Ni(), ty(), wi()
+## Communities (114 total, 46 thin omitted)
 
-### Community 1 - "Community 1"
-Cohesion: 0.06
-Nodes (11): Di, et, ge(), me(), ri, ti, Ue(), ve() (+3 more)
+### Community 0 - "lib/openpgp.min.js"
+Cohesion: 0.02
+Nodes (34): Ae, ar(), Br(), Bs(), ci(), cr(), de(), fn() (+26 more)
 
-### Community 2 - "Community 2"
-Cohesion: 0.07
-Nodes (42): A(), B(), Be(), c(), ce(), d(), de(), Eu (+34 more)
+### Community 1 - "assets/openpgp.min.js"
+Cohesion: 0.02
+Nodes (31): Ae, ar(), Br(), Bs(), cr(), de(), Ei(), Gh() (+23 more)
 
-### Community 3 - "Community 3"
-Cohesion: 0.03
-Nodes (36): _(), Ae, ar(), Bc(), Br(), ci(), cr(), Cy() (+28 more)
-
-### Community 4 - "Community 4"
-Cohesion: 0.05
-Nodes (37): 10. API Reference — OphanimCrypto, 11. Server Events (Socket.IO), 12. Performance Metrics (Estimated), 13. Future Roadmap, 1. Executive Summary, 2. Product Vision & Goals, 3. System Architecture, 4.1 Feature Matrix (+29 more)
-
-### Community 5 - "Community 5"
-Cohesion: 0.18
-Nodes (17): cn(), En, ie(), Kn(), Li(), ln(), mn, ne() (+9 more)
-
-### Community 6 - "Community 6"
-Cohesion: 0.14
-Nodes (23): bd(), Bl(), cl(), dl(), ed(), fl(), Gh(), gl() (+15 more)
-
-### Community 7 - "Community 7"
-Cohesion: 0.12
-Nodes (26): bt(), a(), at(), c(), Ct(), d(), e(), Et() (+18 more)
-
-### Community 8 - "Community 8"
-Cohesion: 0.12
-Nodes (25): a(), c(), Ct(), d(), e(), Et(), f(), G() (+17 more)
-
-### Community 9 - "Community 9"
-Cohesion: 0.16
-Nodes (3): ju, oh, qu()
-
-### Community 10 - "Community 10"
-Cohesion: 0.15
-Nodes (4): dh, eh(), Gu(), vu()
-
-### Community 11 - "Community 11"
-Cohesion: 0.14
-Nodes (17): af(), cf(), ef(), ep(), ff(), gd(), jd(), Ld() (+9 more)
-
-### Community 13 - "Community 13"
-Cohesion: 0.19
-Nodes (11): ad(), cd(), Dd(), jl(), nd(), od(), ql(), rd() (+3 more)
-
-### Community 14 - "Community 14"
-Cohesion: 0.14
-Nodes (5): bh(), bn(), bu, pu, yn()
-
-### Community 15 - "Community 15"
-Cohesion: 0.15
-Nodes (16): bf, gf(), kd(), md(), mf(), next(), qd(), return() (+8 more)
-
-### Community 16 - "Community 16"
-Cohesion: 0.12
-Nodes (7): ah(), fh, pe(), rh(), sn, th(), write()
-
-### Community 17 - "Community 17"
-Cohesion: 0.12
-Nodes (3): Ku(), mu(), Uu
-
-### Community 18 - "Community 18"
-Cohesion: 0.16
-Nodes (15): ap(), cp, el(), hp(), ip, kp(), lp(), mp() (+7 more)
-
-### Community 19 - "Community 19"
-Cohesion: 0.13
-Nodes (3): lh, Yu(), zu
-
-### Community 20 - "Community 20"
-Cohesion: 0.20
-Nodes (4): H(), kh(), le(), vh
-
-### Community 21 - "Community 21"
-Cohesion: 0.19
-Nodes (9): dp(), kl(), ml, op(), sl(), vl(), wl(), xl() (+1 more)
-
-### Community 22 - "Community 22"
+### Community 2 - "t"
 Cohesion: 0.08
-Nodes (7): Cu, du(), e, Iu, lu(), read(), zi()
+Nodes (28): B(), bh(), ci(), n(), r(), I(), i(), j() (+20 more)
 
-### Community 23 - "Community 23"
-Cohesion: 0.03
-Nodes (43): _(), Ae, Br(), Bs(), ce(), ci(), cr(), Cs() (+35 more)
+### Community 3 - "gd"
+Cohesion: 0.08
+Nodes (25): af(), cf(), df(), ed(), ef(), ff(), gd(), jf() (+17 more)
 
-### Community 24 - "Community 24"
-Cohesion: 0.29
-Nodes (10): al(), If(), jf(), lf(), nf(), nh(), nl(), qf() (+2 more)
-
-### Community 25 - "Community 25"
-Cohesion: 0.06
-Nodes (36): af(), cf(), cl(), df(), ef(), el(), ff(), gd() (+28 more)
-
-### Community 26 - "Community 26"
-Cohesion: 0.07
-Nodes (41): Ao(), Bo(), Bs(), Cs(), Do, Ds(), Eo(), Fs() (+33 more)
-
-### Community 28 - "Community 28"
-Cohesion: 0.14
-Nodes (13): dependencies, cors, dotenv, express, socket.io, uuid, description, main (+5 more)
-
-### Community 29 - "Community 29"
-Cohesion: 0.15
-Nodes (10): app, cors, express, fs, http, io, path, PERSISTENT_ROOMS_FILE (+2 more)
-
-### Community 30 - "Community 30"
+### Community 4 - "gd"
 Cohesion: 0.09
-Nodes (10): Di, et, ge(), me(), ri, ti, Ue(), ve() (+2 more)
+Nodes (33): af(), cf(), cl(), dl(), ef(), ff(), fl(), gd() (+25 more)
 
-### Community 31 - "Community 31"
-Cohesion: 0.10
-Nodes (33): A(), B(), Be(), c(), d(), eb(), Eu, f() (+25 more)
+### Community 5 - "r"
+Cohesion: 0.09
+Nodes (20): B(), Ei(), n(), r(), i(), Ki(), s(), me() (+12 more)
 
-### Community 32 - "Community 32"
-Cohesion: 0.10
-Nodes (8): dh, eh(), Gu(), ih(), nh(), oh, vu(), zi()
+### Community 6 - "Wh"
+Cohesion: 0.11
+Nodes (20): ad(), al(), bf, cd(), Dd(), gf(), If(), il() (+12 more)
 
-### Community 33 - "Community 33"
-Cohesion: 0.50
-Nodes (9): Secure Chat, PGP Decrypt, PGP Encrypt, Ophanim Home, Key Manager, Morpheus Matrix, OpenPGP.js v5, Ophanim Logo (+1 more)
+### Community 7 - "write"
+Cohesion: 0.39
+Nodes (3): pe(), rh(), write()
 
-### Community 34 - "Community 34"
-Cohesion: 0.18
-Nodes (6): dn(), gn, hn(), jn(), Tu, Wn()
+### Community 9 - ".acquire_asm"
+Cohesion: 0.12
+Nodes (22): bn(), c(), B(), C(), F(), L(), O(), R() (+14 more)
 
-### Community 35 - "Community 35"
-Cohesion: 0.10
-Nodes (20): ad(), al(), bf, bn(), cd(), Dd(), gf(), il() (+12 more)
+### Community 10 - "e"
+Cohesion: 0.21
+Nodes (40): e, gl(), b(), g(), l(), p(), y(), c() (+32 more)
 
-### Community 39 - "Community 39"
-Cohesion: 0.67
-Nodes (3): log(), out, runTests()
-
-### Community 40 - "Community 40"
+### Community 11 - "Ophanim — Product Requirements Document & Technical Report"
 Cohesion: 0.05
 Nodes (37): 10. API Reference — OphanimCrypto, 11. Server Events (Socket.IO), 12. Performance Metrics (Estimated), 13. Future Roadmap, 1. Executive Summary, 2. Product Vision & Goals, 3. System Architecture, 4.1 Feature Matrix (+29 more)
 
-### Community 42 - "Community 42"
-Cohesion: 0.09
-Nodes (24): bd(), Bl(), dl(), ed(), ep(), fl(), gl(), Hd() (+16 more)
+### Community 12 - "Ophanim — Product Requirements Document & Technical Report"
+Cohesion: 0.05
+Nodes (37): 10. API Reference — OphanimCrypto, 11. Server Events (Socket.IO), 12. Performance Metrics (Estimated), 13. Future Roadmap, 1. Executive Summary, 2. Product Vision & Goals, 3. System Architecture, 4.1 Feature Matrix (+29 more)
 
-### Community 43 - "Community 43"
+### Community 13 - "Wh"
+Cohesion: 0.11
+Nodes (19): ad(), al(), bf, cd(), Dd(), gf(), il(), jh() (+11 more)
+
+### Community 14 - "Nc"
+Cohesion: 0.15
+Nodes (12): Bc(), Bo(), jc(), Lc(), Nc(), Oc(), Oo(), Rc() (+4 more)
+
+### Community 15 - ".verify"
+Cohesion: 0.13
+Nodes (19): bn(), et, B(), C(), D(), L(), O(), R() (+11 more)
+
+### Community 16 - "lib/socket.io.min.js"
+Cohesion: 0.14
+Nodes (26): a(), c(), Ct(), d(), e(), Et(), f(), G() (+18 more)
+
+### Community 17 - "t"
+Cohesion: 0.15
+Nodes (35): A(), d(), e, P(), gl(), g(), l(), y() (+27 more)
+
+### Community 18 - "hf"
+Cohesion: 0.11
+Nodes (21): bd(), Bl(), cl(), dl(), fl(), hf(), Hh(), hl() (+13 more)
+
+### Community 19 - "dh"
+Cohesion: 0.15
+Nodes (5): dh, eh(), Gu(), ih(), nh()
+
+### Community 20 - "R"
+Cohesion: 0.26
+Nodes (36): D(), b(), p(), H(), hr(), c(), d(), h() (+28 more)
+
+### Community 21 - "Ro"
 Cohesion: 0.08
 Nodes (26): Ao(), Bc(), Bo(), Do, Eo(), go(), jc(), ko() (+18 more)
 
-### Community 44 - "Community 44"
-Cohesion: 0.08
-Nodes (11): ah(), En, fh, ga(), ju, oe(), pe(), rh() (+3 more)
-
-### Community 45 - "Community 45"
-Cohesion: 0.14
-Nodes (7): H(), kh(), le(), pu, qy(), vh, yn()
-
-### Community 46 - "Community 46"
+### Community 22 - "zh"
 Cohesion: 0.07
-Nodes (8): Cu, dn(), du(), hn(), Iu, jn(), Tu, Wn()
+Nodes (15): df(), el(), kl(), Ld(), ml, Pd(), rl(), tf() (+7 more)
 
-### Community 48 - "Community 48"
+### Community 23 - "sp"
+Cohesion: 0.15
+Nodes (16): ap(), cp, dp(), hp(), ip, kp(), lp(), mp() (+8 more)
+
+### Community 25 - "assets/socket.io.min.js"
+Cohesion: 0.14
+Nodes (26): a(), c(), Ct(), d(), e(), Et(), f(), G() (+18 more)
+
+### Community 26 - "The Manual"
+Cohesion: 0.06
+Nodes (30): 01. What Ophanim is, 02. Why this is different from WhatsApp, Instagram and the rest, 03. What PGP actually is, 04. Public key, private key, passphrase, fingerprint, 05. Using Ophanim, step by step, 06. The maths behind it — why this cannot be cracked, 07. Why no shortcut exists, 08. What can actually go wrong (+22 more)
+
+### Community 27 - "R"
 Cohesion: 0.12
-Nodes (17): ap(), cp, dp(), e, hp(), ip, kp(), lp() (+9 more)
+Nodes (14): ce(), Di, R(), a(), be(), ee(), ge(), me() (+6 more)
 
-### Community 53 - "Community 53"
-Cohesion: 0.25
-Nodes (4): df(), il(), kf(), wd()
+### Community 29 - "fe"
+Cohesion: 0.14
+Nodes (25): A(), Be(), a(), c(), d(), fe(), a(), c() (+17 more)
 
-### Community 54 - "Community 54"
+### Community 30 - ".push"
+Cohesion: 0.11
+Nodes (5): du(), pu, qy(), te(), vh
+
+### Community 31 - "Ro"
+Cohesion: 0.12
+Nodes (25): Ao(), Cs(), Do, Ds(), Eo(), Fs(), go(), Gs() (+17 more)
+
+### Community 32 - "Ophanim — Project Report"
+Cohesion: 0.07
+Nodes (26): 10. Knowledge graph analysis, 11. Frontend architecture, 12. Recommendations, 13. Appendix — file reference, 1. Executive summary, 2. How it works — the whole system in one picture, 3. The trust boundary — what the server can and cannot see, 4. Message lifecycle — encrypt → relay → decrypt (+18 more)
+
+### Community 33 - "dependencies"
+Cohesion: 0.10
+Nodes (20): cors, dotenv, express, i, dependencies, cors, dotenv, express (+12 more)
+
+### Community 34 - ".update"
 Cohesion: 0.09
-Nodes (4): Ku(), mu(), Uu, wu()
+Nodes (7): jr(), lh, oa(), oh, sh, Yu(), zi()
 
-### Community 56 - "Community 56"
-Cohesion: 0.16
-Nodes (4): bh(), lh, Yu(), zu
+### Community 35 - "fp"
+Cohesion: 0.13
+Nodes (3): eb(), fp(), wi()
 
-### Community 59 - "Community 59"
+### Community 36 - "dh"
+Cohesion: 0.19
+Nodes (4): dh, Gu(), ih(), nh()
+
+### Community 37 - "pe"
 Cohesion: 0.12
-Nodes (7): bu, fu, Ki(), oa(), read(), s, Zr()
+Nodes (10): ce(), et, pe(), be(), ge(), me(), te(), we() (+2 more)
 
-### Community 61 - "Community 61"
-Cohesion: 0.27
-Nodes (13): cn(), ie(), Kn(), Li(), ln(), on(), pn(), ra() (+5 more)
+### Community 38 - ".constructor"
+Cohesion: 0.14
+Nodes (14): bd(), Bl(), ed(), ep(), hf(), Hh(), md(), pull() (+6 more)
 
-### Community 63 - "Community 63"
-Cohesion: 0.17
-Nodes (7): ml, sl(), vl(), wl(), xd(), xl(), Yd()
+### Community 39 - ".push"
+Cohesion: 0.07
+Nodes (11): bh(), du(), jl(), ju, kh(), l(), pu, read() (+3 more)
+
+### Community 40 - "test.html Crypto Test Page"
+Cohesion: 0.15
+Nodes (18): Crypto Test Suite (test.html), ECC Curve25519 Key Generation, Ophanim Dark Cyberpunk Design System, Ophanim Future Roadmap, Google Stitch Layout Prompts, Kill Switch, OpenPGP.js v5, Ophanim E2EE Messaging Platform (+10 more)
+
+### Community 41 - "o"
+Cohesion: 0.14
+Nodes (13): F(), Eu, f(), hr(), o(), N(), o(), fe() (+5 more)
+
+### Community 42 - "un"
+Cohesion: 0.15
+Nodes (15): cn(), En, ga(), Kn(), Li(), ln(), Ni(), on() (+7 more)
+
+### Community 44 - ".write"
+Cohesion: 0.14
+Nodes (16): cn(), dn(), En, fn(), ga(), Kn(), Li(), ln() (+8 more)
+
+### Community 45 - ".update"
+Cohesion: 0.11
+Nodes (6): jr(), lh, oa(), sh, Yu(), zi()
+
+### Community 46 - "sp"
+Cohesion: 0.15
+Nodes (16): ap(), cp, dp(), hp(), ip, kp(), lp(), mp() (+8 more)
+
+### Community 48 - "index.js"
+Cohesion: 0.15
+Nodes (10): app, cors, express, fs, http, io, path, PERSISTENT_ROOMS_FILE (+2 more)
+
+### Community 54 - "zu"
+Cohesion: 0.15
+Nodes (4): ah(), qu(), th(), zu
+
+### Community 56 - "write"
+Cohesion: 0.14
+Nodes (5): fh, ju, pe(), rh(), write()
+
+### Community 57 - "handleDecrypt"
+Cohesion: 0.20
+Nodes (10): executeKillWipe, Kill Switch (room-wide wipe), triggerKillSwitch, clearLoadedKey, clearOutput (wipe plaintext), Ephemeral Plaintext Auto-Wipe, handleDecrypt, loadPastedKey (+2 more)
+
+### Community 58 - "Local Key Store (ophanim_keys)"
+Cohesion: 0.22
+Nodes (10): selectKey, calculateEntropy (passphrase meter), copyPrivateKey, copyPublicKey, deleteKey, Device-Bound Identity (no account, no sync), generateKey, Local Key Store (ophanim_keys) (+2 more)
+
+### Community 59 - "graphify Knowledge Graph Consultation Rule"
+Cohesion: 0.28
+Nodes (9): graphify-out/graph.json, graphify-out/GRAPH_REPORT.md, graphify CLI (query / path / explain / update), graphify Knowledge Graph Consultation Rule, graphify-out/wiki/index.md, graphify SKILL.md (Gemini skills install), graphify Workflow, God Nodes and Community Structure (+1 more)
+
+### Community 61 - "Uu"
+Cohesion: 0.16
+Nodes (3): ah(), th(), Uu
+
+### Community 63 - "sendMessage"
+Cohesion: 0.25
+Nodes (8): addMessage, Per-Recipient Fan-Out Encryption, sendMessage, Armored PGP Ciphertext Output, downloadOutput, esc (HTML escaping), handleEncrypt, Encrypt Page
+
+### Community 64 - "dn"
+Cohesion: 0.22
+Nodes (4): dn(), hn(), Tu, Wn()
+
+### Community 66 - "jd"
+Cohesion: 0.11
+Nodes (11): el(), jd(), kl(), Ld(), ml, Pd(), rl(), tf() (+3 more)
+
+### Community 68 - "Red Pill / Blue Pill Comparison"
+Cohesion: 0.33
+Nodes (7): Landing Page (index.html), Particle Canvas Backdrop, Red Pill / Blue Pill Comparison, togglePill, Blue Pill Branch (the story ends, believe what you want), Pill Choice Metaphor (comfortable illusion vs uncomfortable truth), Red Pill Branch (stay in wonderland, see how deep it goes)
+
+### Community 69 - "fe"
+Cohesion: 0.29
+Nodes (9): Be(), a(), fe(), a(), c(), K(), o(), s() (+1 more)
+
+### Community 70 - "Vs"
+Cohesion: 0.36
+Nodes (11): Cs(), Ds(), Fs(), Gs(), Ks(), Ls(), Ns(), Ts() (+3 more)
+
+### Community 71 - "oh"
+Cohesion: 0.22
+Nodes (3): eh(), oh, vu()
+
+### Community 73 - "Out-of-Band Fingerprint Verification"
+Cohesion: 0.40
+Nodes (5): confirmFingerprint, Out-of-Band Fingerprint Verification, formatFingerprint, showFingerprintOverlay, updateStats (key validation)
+
+### Community 74 - "joinRoom"
+Cohesion: 0.40
+Nodes (5): joinRoom, loadKeys, Chat Page, Room Code as Shared Secret, startExpirationTimer
+
+### Community 75 - "sidebar.js"
+Cohesion: 0.80
+Nodes (4): initSidebar(), railIsMobile(), syncRailToggle(), toggleSidebar()
+
+### Community 77 - ".constructor"
+Cohesion: 0.24
+Nodes (4): ep(), jh(), op(), v()
+
+### Community 79 - "showContactPicker"
+Cohesion: 0.50
+Nodes (4): selectContact, showContactPicker, Contact Store (ophanim_contacts), importContact
+
+### Community 81 - "Morpheus Red/Blue Pill Illustration"
+Cohesion: 0.50
+Nodes (4): Duplicated Asset Between lib/ and public/assets/, Morpheus Pill Illustration (duplicate copy in lib/), Morpheus Red/Blue Pill Illustration, Third-Party Film Artwork Used As Hero Asset
+
+### Community 96 - "Tu"
+Cohesion: 0.25
+Nodes (3): hn(), Tu, Wn()
+
+### Community 109 - "test-runner.js"
+Cohesion: 0.67
+Nodes (3): log(), out, runTests()
+
+## Ambiguous Edges - Review These
+- `ECC Curve25519 Key Generation` → `runTests (invoked from test.html)`  [AMBIGUOUS]
+  test.html · relation: references
 
 ## Knowledge Gaps
-- **90 isolated node(s):** `express`, `http`, `{ Server }`, `cors`, `path` (+85 more)
+- **155 isolated node(s):** `express`, `http`, `{ Server }`, `cors`, `path` (+150 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **24 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **46 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `_()` connect `Community 23` to `Community 25`, `Community 30`, `Community 31`, `Community 32`, `Community 35`, `Community 42`, `Community 43`, `Community 44`, `Community 45`, `Community 46`, `Community 48`, `Community 54`, `Community 55`, `Community 56`, `Community 58`, `Community 59`, `Community 60`, `Community 61`, `Community 62`, `Community 63`, `Community 64`, `Community 65`, `Community 66`, `Community 68`, `Community 69`, `Community 71`, `Community 72`?**
-  _High betweenness centrality (0.195) - this node is a cross-community bridge._
-- **Why does `_()` connect `Community 3` to `Community 0`, `Community 1`, `Community 2`, `Community 5`, `Community 6`, `Community 7`, `Community 9`, `Community 10`, `Community 11`, `Community 12`, `Community 13`, `Community 14`, `Community 15`, `Community 16`, `Community 17`, `Community 18`, `Community 19`, `Community 20`, `Community 21`, `Community 22`, `Community 24`, `Community 26`, `Community 34`, `Community 36`, `Community 37`, `Community 38`, `Community 53`, `Community 57`?**
-  _High betweenness centrality (0.164) - this node is a cross-community bridge._
-- **Why does `G` connect `Community 55` to `Community 64`, `Community 66`, `Community 67`, `Community 70`, `Community 23`, `Community 62`, `Community 31`?**
-  _High betweenness centrality (0.027) - this node is a cross-community bridge._
-- **What connects `express`, `http`, `{ Server }` to the rest of the system?**
-  _90 weakly-connected nodes found - possible documentation gaps or missing edges._
-- **Should `Community 0` be split into smaller, more focused modules?**
-  _Cohesion score 0.05128205128205128 - nodes in this community are weakly interconnected._
-- **Should `Community 1` be split into smaller, more focused modules?**
-  _Cohesion score 0.06370543541788427 - nodes in this community are weakly interconnected._
-- **Should `Community 2` be split into smaller, more focused modules?**
-  _Cohesion score 0.07117255504352278 - nodes in this community are weakly interconnected._
+- **What is the exact relationship between `ECC Curve25519 Key Generation` and `runTests (invoked from test.html)`?**
+  _Edge tagged AMBIGUOUS (relation: references) - confidence is low._
+- **Why does `j()` connect `R` to `Eu`, `r`, `pe`, `.push`, `hu`, `.acquire_asm`, `lib/socket.io.min.js`, `t`, `dh`?**
+  _High betweenness centrality (0.028) - this node is a cross-community bridge._
+- **Why does `Z()` connect `lib/socket.io.min.js` to `R`?**
+  _High betweenness centrality (0.028) - this node is a cross-community bridge._
+- **Why does `R()` connect `R` to `lib/openpgp.min.js`, `r`, `fe`, `pe`, `write`, `.acquire_asm`, `.push`, `.constructor`, `t`, `hf`?**
+  _High betweenness centrality (0.016) - this node is a cross-community bridge._
+- **Are the 12 inferred relationships involving `R()` (e.g. with `A()` and `L()`) actually correct?**
+  _`R()` has 12 INFERRED edges - model-reasoned connections that need verification._
+- **Are the 12 inferred relationships involving `R()` (e.g. with `A()` and `L()`) actually correct?**
+  _`R()` has 12 INFERRED edges - model-reasoned connections that need verification._
+- **Are the 5 inferred relationships involving `o()` (e.g. with `B()` and `g()`) actually correct?**
+  _`o()` has 5 INFERRED edges - model-reasoned connections that need verification._

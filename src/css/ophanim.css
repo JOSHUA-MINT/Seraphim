@@ -1,0 +1,1305 @@
+/**
+ * Ophanim — the engraver's plate
+ *
+ * The mark is a pen-and-ink engraving: interlocking wheels covered in eyes.
+ * Engraving is the old visual language of authenticity — banknotes, seals,
+ * certificates, scientific plates — which is exactly what PGP does: it proves
+ * a thing is genuine and unaltered. So the interface is built as an engraved
+ * plate. Fine rules, disciplined monochrome, precise type, and one signal
+ * colour (verdigris, the green copper plates oxidise to) reserved for
+ * cryptographic state.
+ *
+ * Two surfaces carry meaning and are never used decoratively:
+ *   .armor — ink. Ciphertext. Opaque, dense, unreadable.
+ *   .plain — paper. Plaintext. The impression pulled off the plate.
+ */
+
+/* ══ Tokens ══════════════════════════════════════════════════════ */
+
+:root {
+  /* Ink — blue-black, the colour of printer's ink, not neutral grey */
+  --ink: #0a0d13;
+  --ink-deep: #070a0f;
+  --plate: #0e121a;
+  --plate-hi: #141924;
+  --plate-lo: #0b0e15;
+
+  /* Rules */
+  --rule: #212836;
+  --rule-soft: #171d28;
+  --rule-strong: #303a4c;
+
+  /* Bone — warm paper white against cool ink. The tension is the concept. */
+  --bone: #e7e3d9;
+  --bone-2: #a5abb6;
+  --bone-3: #6c7381;
+  --bone-4: #4a515e;
+
+  /* Signal — oxidised copper. Cryptographic state only, never decoration. */
+  --verdigris: #55a08c;
+  --verdigris-hi: #6dbaa4;
+  --verdigris-lo: rgba(85, 160, 140, 0.12);
+  --verdigris-rule: rgba(85, 160, 140, 0.32);
+
+  /* Destructive */
+  --oxide: #c4614a;
+  --oxide-hi: #d97a63;
+  --oxide-lo: rgba(196, 97, 74, 0.1);
+  --oxide-rule: rgba(196, 97, 74, 0.3);
+
+  /* Caution */
+  --amber: #c2924a;
+  --amber-lo: rgba(194, 146, 74, 0.1);
+  --amber-rule: rgba(194, 146, 74, 0.28);
+
+  /* Paper — the impression. Plaintext lives here. */
+  --paper: #ece6d9;
+  --paper-2: #ded7c7;
+  --paper-ink: #14171c;
+  --paper-ink-2: #4d515a;
+
+  /* Type */
+  --serif: 'Spectral', Georgia, 'Times New Roman', serif;
+  --sans: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+
+  /* Space */
+  --s1: 4px;
+  --s2: 8px;
+  --s3: 12px;
+  --s4: 16px;
+  --s5: 24px;
+  --s6: 32px;
+  --s7: 48px;
+  --s8: 64px;
+
+  /* Plate corner — not a pill, not brutalist zero */
+  --r: 2px;
+  --r-lg: 3px;
+
+  --ease: cubic-bezier(0.2, 0.6, 0.35, 1);
+}
+
+/* ══ Base ════════════════════════════════════════════════════════ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+  scrollbar-color: var(--rule-strong) var(--ink);
+}
+
+body {
+  background: var(--ink);
+  color: var(--bone);
+  font-family: var(--sans);
+  font-size: 0.875rem;
+  line-height: 1.55;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: 'kern' 1;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--serif);
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: var(--bone);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+::selection {
+  background: var(--verdigris);
+  color: var(--ink);
+}
+
+:focus-visible {
+  outline: 2px solid var(--verdigris);
+  outline-offset: 2px;
+  border-radius: 1px;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--rule);
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--rule-strong);
+}
+
+/* JS toggles this class on panels, modals and banners. */
+.hidden {
+  display: none !important;
+}
+
+/* ══ The engraved mark ═══════════════════════════════════════════ */
+
+/* The artwork is black line-work on transparency; inverting prints it in
+   bone on the plate. Used large once, small everywhere else. */
+.engraving {
+  filter: invert(1);
+}
+
+/* ══ Main ════════════════════════════════════════════════════════
+   The sidebar itself (#sidebar.rail, .rail-link, .icon-btn, and the
+   margin-right push on #main-content) lives in rail.css — one definition
+   shared by every page, loaded alongside this stylesheet. */
+
+.main {
+  min-height: 100vh;
+  padding: var(--s7) clamp(var(--s5), 4vw, var(--s8)) var(--s8);
+}
+
+.wrap {
+  max-width: 1080px;
+}
+
+.page-head {
+  padding-bottom: var(--s5);
+  margin-bottom: var(--s6);
+  border-bottom: 1px solid var(--rule);
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--s5);
+  flex-wrap: wrap;
+}
+
+.page-title {
+  font-size: 1.875rem;
+  line-height: 1.1;
+}
+
+.page-lede {
+  color: var(--bone-3);
+  font-size: 0.875rem;
+  margin-top: 6px;
+  max-width: 56ch;
+}
+
+/* ══ Work surfaces ═══════════════════════════════════════════════
+   Boxes are for work. Metadata lives in the margin as ruled lists,
+   so the page never becomes nine identical cards. */
+
+.panel {
+  background: var(--plate);
+  border: 1px solid var(--rule);
+  border-radius: var(--r-lg);
+  padding: var(--s5);
+}
+
+.panel + .panel {
+  margin-top: var(--s5);
+}
+
+/* Side by side, panels sit level with each other. */
+.duo > .panel + .panel {
+  margin-top: 0;
+}
+
+.panel-head {
+  padding-bottom: var(--s4);
+  margin-bottom: var(--s5);
+  border-bottom: 1px solid var(--rule-soft);
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--s4);
+}
+
+.panel-title {
+  font-size: 1.125rem;
+}
+
+.panel-note {
+  color: var(--bone-3);
+  font-size: 0.8125rem;
+  margin-top: 2px;
+  max-width: 58ch;
+}
+
+/* Ruled list in the margin — the counterweight to the panel */
+.aside-block + .aside-block {
+  margin-top: var(--s6);
+}
+
+.aside-title {
+  font-family: var(--sans);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--bone);
+  padding-bottom: var(--s2);
+  border-bottom: 1px solid var(--rule);
+}
+
+/* ══ Fields ══════════════════════════════════════════════════════ */
+
+.field + .field,
+.field + .stack,
+.stack + .field {
+  margin-top: var(--s5);
+}
+
+.field-label {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s3);
+  margin-bottom: 6px;
+}
+
+.field-label label,
+.field-label > span:first-child {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--bone);
+}
+
+.field-hint {
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  color: var(--bone-4);
+}
+
+.input,
+.textarea,
+.select {
+  width: 100%;
+  background: var(--plate-lo);
+  border: 1px solid var(--rule);
+  border-radius: var(--r);
+  padding: 9px 11px;
+  color: var(--bone);
+  font-family: var(--sans);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  transition: border-color 0.15s, background-color 0.15s;
+}
+
+.input::placeholder,
+.textarea::placeholder {
+  color: var(--bone-4);
+}
+
+.input:focus,
+.textarea:focus,
+.select:focus {
+  outline: none;
+  border-color: var(--verdigris);
+  background: var(--plate);
+}
+
+.textarea {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  line-height: 1.65;
+  resize: vertical;
+  min-height: 120px;
+}
+
+.textarea.is-tall {
+  min-height: 168px;
+}
+
+.select {
+  cursor: pointer;
+  appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, var(--bone-3) 50%),
+    linear-gradient(135deg, var(--bone-3) 50%, transparent 50%);
+  background-position: calc(100% - 15px) 50%, calc(100% - 10px) 50%;
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+  padding-right: var(--s6);
+}
+
+.select option {
+  background: var(--plate);
+  color: var(--bone);
+}
+
+/* Drop target */
+.drop {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 13px;
+  margin-bottom: var(--s3);
+  background: var(--plate-lo);
+  border: 1px dashed var(--rule-strong);
+  border-radius: var(--r);
+  color: var(--bone-3);
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s, background-color 0.15s;
+}
+
+.drop:hover {
+  color: var(--bone-2);
+  border-color: var(--bone-4);
+}
+
+.drop.is-over {
+  border-color: var(--verdigris);
+  background: var(--verdigris-lo);
+  color: var(--verdigris);
+}
+
+.drop svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+/* ══ Buttons ═════════════════════════════════════════════════════ */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 9px 16px;
+  background: var(--plate-hi);
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--r);
+  color: var(--bone);
+  font-family: var(--sans);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  line-height: 1.3;
+  cursor: pointer;
+  transition: background-color 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.btn:hover {
+  background: #1a2130;
+  border-color: var(--bone-4);
+}
+
+.btn:active {
+  background: var(--plate-hi);
+}
+
+.btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.btn svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+.btn-primary {
+  background: var(--verdigris);
+  border-color: var(--verdigris);
+  color: #06120e;
+  font-weight: 600;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--verdigris-hi);
+  border-color: var(--verdigris-hi);
+}
+
+.btn-primary:disabled {
+  background: var(--plate-hi);
+  border-color: var(--rule);
+  color: var(--bone-3);
+}
+
+.btn-danger {
+  background: transparent;
+  border-color: var(--oxide-rule);
+  color: var(--oxide);
+}
+
+.btn-danger:hover {
+  background: var(--oxide-lo);
+  border-color: var(--oxide);
+  color: var(--oxide-hi);
+}
+
+.btn-quiet {
+  background: transparent;
+  border-color: var(--rule);
+  color: var(--bone-2);
+}
+
+.btn-quiet:hover {
+  background: var(--plate-hi);
+  color: var(--bone);
+}
+
+.btn-sm {
+  padding: 6px 11px;
+  font-size: 0.75rem;
+}
+
+.btn-block {
+  width: 100%;
+}
+
+.btn-row {
+  display: flex;
+  gap: var(--s3);
+  flex-wrap: wrap;
+}
+
+.btn-row .btn {
+  flex: 1;
+  min-width: 140px;
+}
+
+/* ══ Status ══════════════════════════════════════════════════════ */
+
+.status {
+  margin-top: var(--s4);
+  padding: 10px 13px;
+  border: 1px solid var(--rule);
+  border-radius: var(--r);
+  background: var(--plate-lo);
+  color: var(--bone-2);
+  font-size: 0.8125rem;
+}
+
+.status strong {
+  font-weight: 600;
+  color: var(--bone);
+}
+
+.status.is-ok {
+  border-color: var(--verdigris-rule);
+  background: var(--verdigris-lo);
+  color: var(--verdigris);
+}
+
+.status.is-ok strong {
+  color: var(--verdigris-hi);
+}
+
+.status.is-error {
+  border-color: var(--oxide-rule);
+  background: var(--oxide-lo);
+  color: var(--oxide-hi);
+}
+
+.status.is-error strong {
+  color: var(--oxide-hi);
+}
+
+/* Caution banner — unverified fingerprint */
+.banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s4);
+  flex-wrap: wrap;
+  padding: 11px 15px;
+  margin-bottom: var(--s5);
+  border: 1px solid var(--amber-rule);
+  border-left: 2px solid var(--amber);
+  border-radius: var(--r);
+  background: var(--amber-lo);
+  color: var(--amber);
+  font-size: 0.8125rem;
+}
+
+.banner .btn {
+  background: transparent;
+  border-color: var(--amber-rule);
+  color: var(--amber);
+}
+
+.banner .btn:hover {
+  background: rgba(194, 146, 74, 0.16);
+  border-color: var(--amber);
+}
+
+/* ══ Meta rows — key/value, hairline separated ═══════════════════ */
+
+.meta {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s4);
+  padding: 9px 0;
+  border-bottom: 1px solid var(--rule-soft);
+  font-size: 0.8125rem;
+}
+
+.meta:last-child {
+  border-bottom: 0;
+}
+
+.meta-k {
+  color: var(--bone-3);
+  flex-shrink: 0;
+}
+
+.meta-v {
+  color: var(--bone);
+  text-align: right;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.meta-v.is-live {
+  color: var(--verdigris);
+}
+
+/* Every value a person might read aloud or compare across devices is mono. */
+.mono {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  letter-spacing: -0.01em;
+}
+
+/* Status dot */
+.mark {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--bone-4);
+  flex-shrink: 0;
+}
+
+.mark.is-on {
+  background: var(--verdigris);
+}
+
+.mark.is-bad {
+  background: var(--oxide);
+}
+
+.mark-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+/* Mono chip — a value, not a label */
+.tag {
+  display: inline-block;
+  padding: 2px 7px;
+  border: 1px solid var(--rule);
+  border-radius: var(--r);
+  background: var(--plate-lo);
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  color: var(--bone-2);
+}
+
+.tag.is-live {
+  border-color: var(--verdigris-rule);
+  background: var(--verdigris-lo);
+  color: var(--verdigris);
+}
+
+.tag.is-bad {
+  border-color: var(--oxide-rule);
+  background: var(--oxide-lo);
+  color: var(--oxide);
+}
+
+/* Meter — entropy, posture, the decrypt countdown */
+.meter {
+  height: 2px;
+  background: var(--rule);
+  border-radius: 1px;
+  overflow: hidden;
+}
+
+.meter > div {
+  height: 100%;
+  background: var(--verdigris);
+  transition: width 0.4s var(--ease);
+}
+
+.meter.is-timer > div {
+  transition: width 1s linear;
+}
+
+/* ══ The two meaningful surfaces ═════════════════════════════════ */
+
+/* Ink. Ciphertext: dense, opaque, deliberately unreadable. */
+.armor {
+  background: var(--ink-deep);
+  border: 1px solid var(--rule);
+  border-radius: var(--r);
+  padding: var(--s4);
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  line-height: 1.7;
+  color: var(--bone-3);
+  white-space: pre-wrap;
+  word-break: break-all;
+  overflow-y: auto;
+  max-height: 240px;
+  user-select: all;
+}
+
+/* Paper. Plaintext: the impression pulled off the plate. */
+.plain {
+  background: var(--paper);
+  border: 1px solid var(--paper-2);
+  border-radius: var(--r);
+  padding: var(--s4) var(--s5);
+  font-family: var(--mono);
+  font-size: 0.8125rem;
+  line-height: 1.7;
+  color: var(--paper-ink);
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-y: auto;
+  max-height: 320px;
+}
+
+/* ══ List rows — saved keys, contacts, peers ═════════════════════ */
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--s4);
+  padding: 13px 0;
+  border-bottom: 1px solid var(--rule-soft);
+}
+
+.row:last-child {
+  border-bottom: 0;
+}
+
+.row-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.row-name {
+  font-size: 0.875rem;
+  color: var(--bone);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.row-sub {
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  color: var(--bone-4);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: 2px;
+}
+
+.row-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  flex-shrink: 0;
+}
+
+.row.is-active .row-name {
+  color: var(--verdigris);
+}
+
+/* Selectable row — key picker, contact picker */
+.pick {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 11px 13px;
+  background: var(--plate-lo);
+  border: 1px solid var(--rule);
+  border-radius: var(--r);
+  color: var(--bone);
+  font-family: var(--sans);
+  cursor: pointer;
+  transition: border-color 0.15s, background-color 0.15s;
+}
+
+.pick:hover {
+  border-color: var(--verdigris-rule);
+  background: var(--plate-hi);
+}
+
+.pick + .pick {
+  margin-top: var(--s2);
+}
+
+.pick-name {
+  font-size: 0.8125rem;
+}
+
+.pick-sub {
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  color: var(--bone-4);
+  margin-top: 2px;
+  overflow-wrap: anywhere;
+}
+
+/* Empty states are an invitation, not a shrug. */
+.empty {
+  padding: var(--s5) 0;
+  color: var(--bone-4);
+  font-size: 0.8125rem;
+}
+
+/* ══ Log ═════════════════════════════════════════════════════════ */
+
+.log-row {
+  display: flex;
+  gap: var(--s3);
+  padding: 8px 0;
+  border-bottom: 1px solid var(--rule-soft);
+  font-size: 0.75rem;
+}
+
+.log-row:last-child {
+  border-bottom: 0;
+}
+
+.log-time {
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  color: var(--bone-4);
+  flex-shrink: 0;
+  padding-top: 1px;
+}
+
+.log-text {
+  color: var(--bone-2);
+  line-height: 1.5;
+}
+
+/* ══ Segmented control ═══════════════════════════════════════════ */
+
+.seg {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--s2);
+}
+
+.room-type-btn {
+  padding: 9px 12px;
+  text-align: left;
+  background: var(--plate-lo);
+  border: 1px solid var(--rule);
+  border-radius: var(--r);
+  color: var(--bone-2);
+  font-family: var(--sans);
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s, background-color 0.15s;
+}
+
+.room-type-btn:hover {
+  border-color: var(--bone-4);
+  color: var(--bone);
+}
+
+.room-type-btn strong {
+  display: block;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: inherit;
+}
+
+.room-type-btn small {
+  display: block;
+  font-size: 0.6875rem;
+  color: var(--bone-4);
+  margin-top: 1px;
+}
+
+.room-type-btn.active {
+  border-color: var(--verdigris);
+  background: var(--verdigris-lo);
+  color: var(--verdigris);
+}
+
+.room-type-btn.active small {
+  color: var(--verdigris);
+  opacity: 0.75;
+}
+
+/* ══ Modal ═══════════════════════════════════════════════════════ */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(5, 7, 11, 0.82);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--s5);
+  z-index: 2000;
+}
+
+.modal-card {
+  width: 100%;
+  max-width: 440px;
+  background: var(--plate);
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--r-lg);
+  padding: var(--s5);
+  max-height: 85vh;
+  overflow-y: auto;
+}
+
+.modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s4);
+  padding-bottom: var(--s3);
+  margin-bottom: var(--s4);
+  border-bottom: 1px solid var(--rule-soft);
+}
+
+.modal-title {
+  font-size: 1.0625rem;
+}
+
+.modal-scroll {
+  max-height: 260px;
+  overflow-y: auto;
+  margin-bottom: var(--s4);
+}
+
+.modal-note {
+  color: var(--bone-3);
+  font-size: 0.8125rem;
+  margin-bottom: var(--s4);
+}
+
+/* ══ Chat ════════════════════════════════════════════════════════ */
+
+.chat-panel {
+  display: flex;
+  flex-direction: column;
+  height: 560px;
+}
+
+#chat-messages {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s3);
+  overflow-y: auto;
+  padding-right: var(--s3);
+}
+
+.message-bubble {
+  max-width: 74%;
+  padding: 9px 13px;
+  border-radius: var(--r);
+  font-size: 0.8125rem;
+  line-height: 1.55;
+}
+
+/* Received: paper. What arrived, decrypted — an impression you can read. */
+.message-bubble.received {
+  align-self: flex-start;
+  background: var(--paper);
+  color: var(--paper-ink);
+  border: 1px solid var(--paper-2);
+}
+
+/* Sent: plate. Yours, already known. */
+.message-bubble.sent {
+  align-self: flex-end;
+  background: var(--plate-hi);
+  color: var(--bone);
+  border: 1px solid var(--rule-strong);
+  border-right: 2px solid var(--verdigris);
+}
+
+.message-bubble.system {
+  align-self: center;
+  max-width: 90%;
+  background: transparent;
+  border: 0;
+  padding: 3px 0;
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  color: var(--bone-4);
+  text-align: center;
+}
+
+.message-bubble.system.kill {
+  color: var(--oxide);
+}
+
+.msg-sender {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--paper-ink-2);
+  margin-bottom: 2px;
+}
+
+.msg-time {
+  font-family: var(--mono);
+  font-size: 0.625rem;
+  color: var(--paper-ink-2);
+  text-align: right;
+  margin-top: 3px;
+}
+
+.message-bubble.sent .msg-time {
+  color: var(--bone-4);
+}
+
+.chat-compose {
+  display: flex;
+  gap: var(--s3);
+  padding-top: var(--s4);
+  margin-top: var(--s4);
+  border-top: 1px solid var(--rule-soft);
+}
+
+.chat-compose .input {
+  flex: 1;
+}
+
+#typing-indicator {
+  height: 16px;
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  color: var(--bone-4);
+  padding-top: var(--s2);
+}
+
+.peer {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--rule-soft);
+  font-size: 0.8125rem;
+  color: var(--bone-2);
+}
+
+.peer:last-child {
+  border-bottom: 0;
+}
+
+.peer-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Room code — the one value people read aloud to each other */
+.room-code {
+  font-family: var(--mono);
+  font-size: 1.75rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  color: var(--bone);
+  padding: var(--s3) 0;
+}
+
+/* Fingerprint — read this over the phone */
+.fingerprint {
+  font-family: var(--mono);
+  font-size: 0.9375rem;
+  line-height: 1.9;
+  letter-spacing: 0.08em;
+  color: var(--verdigris);
+  background: var(--ink-deep);
+  border: 1px solid var(--rule);
+  border-radius: var(--r);
+  padding: var(--s4);
+  word-break: break-word;
+  user-select: all;
+  text-align: center;
+}
+
+/* ══ Grids ═══════════════════════════════════════════════════════ */
+
+.split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 264px;
+  gap: var(--s7);
+  align-items: start;
+}
+
+.duo {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--s5);
+}
+
+.stack > * + * {
+  margin-top: var(--s4);
+}
+
+.stack-lg > * + * {
+  margin-top: var(--s5);
+}
+
+/* Key figures — a ruled strip, not four identical cards */
+.figures {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  margin-bottom: var(--s6);
+}
+
+/* The page head already draws a rule; don't stack a second one on it. */
+.page-head + .figures {
+  border-top: 0;
+  margin-top: calc(var(--s5) * -1);
+}
+
+.figure {
+  padding: var(--s4) var(--s5);
+  border-right: 1px solid var(--rule-soft);
+}
+
+.figure:last-child {
+  border-right: 0;
+}
+
+.figure-k {
+  font-size: 0.75rem;
+  color: var(--bone-3);
+}
+
+.figure-v {
+  font-family: var(--mono);
+  font-size: 1.5rem;
+  font-weight: 400;
+  color: var(--bone);
+  line-height: 1.3;
+  margin-top: 2px;
+}
+
+/* A fingerprint is long; it sits smaller than a counted figure. */
+.figure-v.is-code {
+  font-size: 0.9375rem;
+  padding-top: 7px;
+  padding-bottom: 2px;
+}
+
+.figure-sub {
+  font-size: 0.6875rem;
+  color: var(--bone-4);
+  margin-top: 3px;
+}
+
+/* ══ Home ════════════════════════════════════════════════════════ */
+
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.8fr);
+  gap: clamp(var(--s6), 5vw, var(--s7));
+  align-items: center;
+  min-height: min(620px, calc(100vh - 190px));
+  padding: var(--s6) 0 var(--s7);
+}
+
+.hero-display {
+  font-family: var(--serif);
+  font-size: clamp(2.125rem, 3.9vw, 3.375rem);
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: -0.022em;
+  color: var(--bone);
+}
+
+.hero-lede {
+  font-size: 1.0625rem;
+  line-height: 1.7;
+  color: var(--bone-2);
+  max-width: 46ch;
+  margin-top: var(--s5);
+}
+
+.hero-actions {
+  display: flex;
+  gap: var(--s3);
+  flex-wrap: wrap;
+  margin-top: var(--s6);
+}
+
+.hero-actions .btn {
+  padding: 11px 20px;
+  font-size: 0.875rem;
+}
+
+.hero-art {
+  justify-self: center;
+  width: 100%;
+  max-width: 440px;
+}
+
+.hero-art img {
+  width: 100%;
+  opacity: 0.95;
+}
+
+.hero-art figcaption {
+  margin-top: var(--s4);
+  font-size: 0.75rem;
+  line-height: 1.6;
+  color: var(--bone-4);
+  text-align: center;
+  max-width: 34ch;
+  margin-inline: auto;
+}
+
+.hero-art a:hover img {
+  opacity: 1;
+}
+
+/* Ruled facts strip under the hero */
+.facts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border-top: 1px solid var(--rule);
+  margin-bottom: var(--s8);
+}
+
+.fact {
+  padding: var(--s5) var(--s5) var(--s5) 0;
+  border-right: 1px solid var(--rule-soft);
+  padding-right: var(--s5);
+}
+
+.fact:last-child {
+  border-right: 0;
+}
+
+.fact dt {
+  font-size: 0.8125rem;
+  color: var(--bone);
+  font-weight: 500;
+}
+
+.fact dd {
+  font-size: 0.8125rem;
+  color: var(--bone-3);
+  line-height: 1.6;
+  margin-top: 4px;
+}
+
+/* ══ Responsive ══════════════════════════════════════════════════ */
+
+@media (max-width: 1180px) {
+  .split {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--s6);
+  }
+}
+
+@media (max-width: 900px) {
+  .main {
+    padding: var(--s6) var(--s5) var(--s7);
+  }
+
+  .hero {
+    grid-template-columns: minmax(0, 1fr);
+    min-height: 0;
+    gap: var(--s6);
+  }
+
+  .hero-art {
+    order: -1;
+    max-width: 260px;
+  }
+
+  .facts,
+  .figures {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .fact,
+  .figure {
+    border-right: 0;
+    border-bottom: 1px solid var(--rule-soft);
+  }
+
+  .row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--s3);
+  }
+
+  .row-actions {
+    flex-wrap: wrap;
+    width: 100%;
+  }
+
+  .fact:last-child,
+  .figure:last-child {
+    border-bottom: 0;
+  }
+
+  .duo {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .chat-panel {
+    height: 70vh;
+  }
+}
+
+@media (max-width: 560px) {
+  .page-title {
+    font-size: 1.5rem;
+  }
+
+  .message-bubble {
+    max-width: 88%;
+  }
+
+  .btn-row .btn {
+    min-width: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

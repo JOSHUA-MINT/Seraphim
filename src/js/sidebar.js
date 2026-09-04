@@ -1,48 +1,44 @@
 /**
  * Ophanim — sidebar.js
- * Shared sidebar toggle & init logic used across all pages.
- * Depends on: Tailwind CSS (loaded in HTML)
+ * The navigation rail: open/close state and the identity block at its foot.
+ * Shared by every page. No framework, no build step.
  */
 
+const RAIL_MOBILE = '(max-width: 900px)';
+
+function railIsMobile() {
+  return window.matchMedia(RAIL_MOBILE).matches;
+}
+
+/** Show the re-open button only when the rail is actually off screen. */
+function syncRailToggle() {
+  const btn = document.getElementById('sidebar-toggle');
+  if (!btn) return;
+  const hidden = railIsMobile()
+    ? !document.body.classList.contains('rail-open-mobile')
+    : document.body.classList.contains('rail-closed');
+  btn.classList.toggle('hidden', !hidden);
+}
+
 function toggleSidebar() {
-  const sidebar = document.getElementById('sidebar');
-  const mainContent = document.getElementById('main-content');
-  const toggleBtn = document.getElementById('sidebar-toggle');
-
-  const isCollapsed = sidebar.classList.contains('translate-x-[calc(100%+24px)]');
-
-  if (isCollapsed) {
-    sidebar.classList.remove('translate-x-[calc(100%+24px)]', 'opacity-0', 'pointer-events-none');
-    mainContent.classList.add('lg:pr-[304px]');
-    toggleBtn.classList.add('hidden');
-    localStorage.setItem('sidebar-collapsed', 'false');
+  if (railIsMobile()) {
+    document.body.classList.toggle('rail-open-mobile');
   } else {
-    sidebar.classList.add('translate-x-[calc(100%+24px)]', 'opacity-0', 'pointer-events-none');
-    mainContent.classList.remove('lg:pr-[304px]');
-    toggleBtn.classList.remove('hidden');
-    localStorage.setItem('sidebar-collapsed', 'true');
+    const closed = document.body.classList.toggle('rail-closed');
+    localStorage.setItem('sidebar-collapsed', closed ? 'true' : 'false');
   }
+  syncRailToggle();
 }
 
 function initSidebar() {
-  const sidebar = document.getElementById('sidebar');
-  const mainContent = document.getElementById('main-content');
-  const toggleBtn = document.getElementById('sidebar-toggle');
+  if (!document.getElementById('sidebar')) return;
 
-  if (!sidebar || !mainContent || !toggleBtn) return;
-
-  const isCollapsed = localStorage.getItem('sidebar-collapsed') === 'true';
-  if (isCollapsed) {
-    sidebar.classList.add('translate-x-[calc(100%+24px)]', 'opacity-0', 'pointer-events-none');
-    mainContent.classList.remove('lg:pr-[304px]');
-    toggleBtn.classList.remove('hidden');
-  } else {
-    sidebar.classList.remove('translate-x-[calc(100%+24px)]', 'opacity-0', 'pointer-events-none');
-    mainContent.classList.add('lg:pr-[304px]');
-    toggleBtn.classList.add('hidden');
+  if (localStorage.getItem('sidebar-collapsed') === 'true') {
+    document.body.classList.add('rail-closed');
   }
+  syncRailToggle();
 
-  // Populate sidebar user account info from localStorage key store
+  // Identity block — reads the local key store, same as every other page.
   try {
     const keys = JSON.parse(localStorage.getItem('ophanim_keys') || '[]');
     const activeIdx = localStorage.getItem('ophanim_active_key_index');
@@ -53,16 +49,21 @@ function initSidebar() {
     if (keys.length > 0) {
       const idx = activeIdx !== null ? parseInt(activeIdx) : 0;
       const primary = keys[idx] || keys[0];
-      if (nameEl) nameEl.textContent = primary.name || 'Unknown Key';
+      if (nameEl) nameEl.textContent = primary.name || 'Unnamed key';
       if (avatarEl) avatarEl.textContent = (primary.name || 'OP').slice(0, 2).toUpperCase();
       if (idEl) {
-        const displayId = primary.fingerprint
-          ? '#' + primary.fingerprint.slice(-8).toUpperCase()
-          : '#OPH-KEY-' + idx;
-        idEl.textContent = displayId;
+        idEl.textContent = primary.fingerprint
+          ? primary.fingerprint.slice(-8).toUpperCase()
+          : 'KEY ' + (idx + 1);
       }
+    } else {
+      if (nameEl) nameEl.textContent = 'No key yet';
+      if (idEl) idEl.textContent = 'Generate one';
     }
-  } catch (e) { /* graceful degradation */ }
+  } catch (e) {
+    /* a corrupt store should not take the page down */
+  }
 }
 
+window.addEventListener('resize', syncRailToggle);
 document.addEventListener('DOMContentLoaded', initSidebar);

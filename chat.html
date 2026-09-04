@@ -5,493 +5,309 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Content-Security-Policy"
-    content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; connect-src 'self' ws://localhost:3000 wss://localhost:3000; img-src 'self' data:; font-src 'self' https://fonts.gstatic.com;">
-  <title>Ophanim — Secure Chat</title>
-  <meta name="description" content="End-to-end encrypted real-time chat with kill switch.">
+    content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self' ws://localhost:3000 wss://localhost:3000 http://localhost:3000; img-src 'self' data:; font-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'">
+  <title>Chat — Ophanim</title>
+  <meta name="description"
+    content="Talk in a room where every message is encrypted to each recipient's key before it leaves your device.">
 
-  <!-- Tailwind CSS Play CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="icon"
+    href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='none' stroke='%2355a08c' stroke-width='2'/%3E%3Ccircle cx='16' cy='16' r='8' fill='none' stroke='%23e7e3d9' stroke-width='1.5'/%3E%3Ccircle cx='16' cy='16' r='3' fill='%23e7e3d9'/%3E%3C/svg%3E">
 
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            charcoal: {
-              950: '#070709',
-              900: '#0d0f12',
-              850: '#121217',
-              800: '#16161b',
-              700: '#22222b',
-              600: '#2d2d39'
-            },
-            accent: {
-              lime: '#a3e635',
-              limeHover: '#bef264',
-              limeSoft: 'rgba(163, 230, 53, 0.1)'
-            }
-          },
-          fontFamily: {
-            sans: ['Outfit', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
-            mono: ['Fira Code', 'Consolas', 'monospace']
-          }
-        }
-      }
-    }
-  </script>
-
-  <!-- Google Fonts -->
-  <link
-    href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap"
-    rel="stylesheet">
-  <link rel="stylesheet" href="src/css/chat.css">
+  <link rel="stylesheet" href="src/css/fonts.css">
+  <link rel="stylesheet" href="src/css/ophanim.css?v=2">
+  <link rel="stylesheet" href="src/css/rail.css?v=2">
 </head>
 
-<body class="bg-transparent text-white font-sans min-h-screen overflow-x-hidden relative">
+<body>
 
-  <!-- Sidebar Toggle Trigger Button (when collapsed) -->
-  <button id="sidebar-toggle" onclick="toggleSidebar()"
-    class="fixed top-5 right-5 z-[1200] p-2 bg-charcoal-850 hover:bg-charcoal-800 text-zinc-400 hover:text-white rounded-md border border-zinc-800 shadow-lg hidden transition duration-150">
-    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path>
+  <button id="sidebar-toggle" class="icon-btn rail-open hidden" onclick="toggleSidebar()"
+    aria-label="Show navigation">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+      <path d="M4 7h16M4 12h16M4 17h16" />
     </svg>
   </button>
 
-  <!-- Sidebar Component (Right Side Navigation) -->
-  <aside id="sidebar"
-    class="fixed top-4 bottom-4 right-4 w-72 bg-[#121315] border border-zinc-800/60 rounded-2xl flex flex-col z-[1100] transition-all duration-300 ease-in-out shadow-2xl shadow-black/80">
-    <div class="p-5 pb-2 flex items-center justify-between">
-      <div class="flex items-center gap-2.5">
-        <div
-          class="w-6 h-6 rounded-full bg-gradient-to-tr from-orange-400 via-rose-500 to-amber-350 shadow-sm shrink-0">
-        </div>
-        <span class="font-bold text-sm tracking-wide text-white">Ophanim</span>
+  <aside id="sidebar" class="rail">
+    <div class="rail-head">
+      <div class="rail-brand">
+        <span class="rail-brand-mark"></span>
+        <span>Ophanim</span>
       </div>
-      <!-- Collapse Button -->
-      <button onclick="toggleSidebar()"
-        class="w-7 h-7 flex items-center justify-center bg-zinc-900 border border-zinc-850 hover:border-zinc-700 text-zinc-400 hover:text-white rounded-md transition duration-150"
-        title="Collapse Sidebar">
-        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round"
-            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h2m10-9H9m0 0l4-4m-4 4l4 4"></path>
+      <button class="icon-btn" onclick="toggleSidebar()" aria-label="Hide navigation" title="Hide navigation">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+          stroke-linejoin="round">
+          <path d="M9 6l6 6-6 6" />
         </svg>
       </button>
     </div>
 
-    <!-- Navigation List -->
-    <div class="flex-1 px-4 py-4 flex flex-col gap-5 overflow-y-auto">
-      <div>
-        <div class="text-[10px] font-bold uppercase tracking-widest text-zinc-500 px-3 mb-2">Main</div>
-        <nav class="flex flex-col gap-1">
-          <a href="index.html" id="nav-home"
-            class="flex items-center w-full px-3 py-2 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/20 rounded-xl text-xs font-medium transition duration-150">
-            <span class="w-7 h-7 rounded-lg flex items-center justify-center mr-3 shrink-0 text-zinc-400">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round"
-                  d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6">
-                </path>
-              </svg>
-            </span>
+    <nav class="rail-nav">
+      <div class="rail-group">
+        <div class="rail-group-label">Main</div>
+        <div class="rail-links">
+          <a href="index.html" id="nav-home" class="rail-link">
+            <span class="rail-link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg></span>
             <span>Home</span>
           </a>
-          <a href="encrypt.html" id="nav-encrypt"
-            class="flex items-center w-full px-3 py-2 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/20 rounded-xl text-xs font-medium transition duration-150">
-            <span class="w-7 h-7 rounded-lg flex items-center justify-center mr-3 shrink-0 text-zinc-400">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round"
-                  d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z">
-                </path>
-              </svg>
-            </span>
-            <span>PGP Encrypt</span>
+          <a href="encrypt.html" id="nav-encrypt" class="rail-link">
+            <span class="rail-link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg></span>
+            <span>Encrypt</span>
           </a>
-          <a href="decrypt.html" id="nav-decrypt"
-            class="flex items-center w-full px-3 py-2 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/20 rounded-xl text-xs font-medium transition duration-150">
-            <span class="w-7 h-7 rounded-lg flex items-center justify-center mr-3 shrink-0 text-zinc-400">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round"
-                  d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z">
-                </path>
-              </svg>
-            </span>
-            <span>PGP Decrypt</span>
+          <a href="decrypt.html" id="nav-decrypt" class="rail-link">
+            <span class="rail-link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"></path></svg></span>
+            <span>Decrypt</span>
           </a>
-          <a href="keys.html" id="nav-keys"
-            class="flex items-center w-full px-3 py-2 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/20 rounded-xl text-xs font-medium transition duration-150">
-            <span class="w-7 h-7 rounded-lg flex items-center justify-center mr-3 shrink-0 text-zinc-400">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round"
-                  d="M15 7a2 2 0 012 2m-3.418-4.018A15.05 15.05 0 0119 5v14a1.5 1.5 0 01-2 1.482M7 19.5a2.5 2.5 0 005 0V5a2.5 2.5 0 00-5 0v14.5z">
-                </path>
-              </svg>
-            </span>
-            <span>Key Manager</span>
+          <a href="keys.html" id="nav-keys" class="rail-link">
+            <span class="rail-link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 7a2 2 0 012 2m-3.418-4.018A15.05 15.05 0 0119 5v14a1.5 1.5 0 01-2 1.482M7 19.5a2.5 2.5 0 005 0V5a2.5 2.5 0 00-5 0v14.5z"></path></svg></span>
+            <span>Keys</span>
           </a>
-        </nav>
+        </div>
       </div>
-
-      <div>
-        <div class="text-[10px] font-bold uppercase tracking-widest text-zinc-500 px-3 mb-2">Performance</div>
-        <nav class="flex flex-col gap-1">
-          <!-- Active Link (Secure Chat) -->
-          <a href="chat.html" id="nav-chat"
-            class="flex items-center w-full px-3 py-2 bg-white text-zinc-950 rounded-xl text-xs font-semibold shadow-md shadow-black/10">
-            <span class="w-7 h-7 rounded-lg bg-[#a3e635] flex items-center justify-center mr-3 shrink-0 text-zinc-950">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round"
-                  d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z">
-                </path>
-              </svg>
-            </span>
-            <span>Secure Chat</span>
+      <div class="rail-group">
+        <div class="rail-group-label">Performance</div>
+        <div class="rail-links">
+          <a href="chat.html" id="nav-chat" class="rail-link is-active">
+            <span class="rail-link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg></span>
+            <span>Chat</span>
           </a>
-        </nav>
+        </div>
       </div>
-
-      <div class="mt-auto pt-4">
-        <div class="text-[10px] font-bold uppercase tracking-widest text-zinc-500 px-3 mb-2">System</div>
-        <nav class="flex flex-col gap-1">
-          <a href="#"
-            class="flex items-center w-full px-3 py-2 text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800/10 rounded-xl text-[11px] transition duration-150">
-            <span class="w-7 h-7 rounded-lg flex items-center justify-center mr-3 shrink-0 text-zinc-500">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round"
-                  d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z">
-                </path>
-                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-              </svg>
-            </span>
+      <div class="rail-group" style="margin-top:auto">
+        <div class="rail-group-label">System</div>
+        <div class="rail-links">
+          <a href="#" class="rail-link">
+            <span class="rail-link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg></span>
             <span>Settings</span>
           </a>
-        </nav>
+        </div>
       </div>
-    </div>
+    </nav>
 
-    <!-- User Account Section (Bottom of right sidebar) -->
-    <div class="p-4 border-t border-zinc-800/40 bg-zinc-950/20">
-      <div class="text-[10px] font-bold uppercase tracking-widest text-zinc-500 px-1 mb-2">User Account</div>
-      <div class="flex items-center gap-3">
-        <div
-          class="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center text-[10px] font-bold text-white font-mono shrink-0 shadow-sm shadow-black/20"
-          id="sidebar-avatar">
-          OP
+    <div class="rail-foot">
+      <div class="rail-foot-label">User Account</div>
+      <div class="rail-id-row">
+        <div class="rail-avatar" id="sidebar-avatar">OP</div>
+        <div class="rail-id-text">
+          <div class="rail-id-name" id="sidebar-key-name">No key yet</div>
+          <div class="rail-id-key" id="sidebar-key-id">Generate one</div>
         </div>
-        <div class="overflow-hidden flex-1">
-          <div class="text-xs font-semibold text-zinc-200 truncate leading-tight" id="sidebar-key-name">Checking keys...
-          </div>
-          <div class="text-[9px] text-zinc-500 truncate mt-0.5" id="sidebar-key-id">#OPH-GUEST</div>
-        </div>
-        <button
-          class="p-1 hover:bg-zinc-800/40 text-zinc-500 hover:text-zinc-300 rounded transition duration-150 shrink-0">
-          <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
-            <path
-              d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" />
-          </svg>
-        </button>
       </div>
     </div>
   </aside>
 
-  <!-- Left Main Content Area -->
-  <div id="main-content"
-    class="min-h-screen flex flex-col p-6 lg:p-8 transition-all duration-300 ease-in-out lg:pr-[304px] relative z-10 bg-transparent">
+  <main class="main" id="main-content">
+    <div class="wrap">
 
-    <!-- Topbar Header -->
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-zinc-800/80 pb-5 mb-8">
-      <div>
-        <div class="flex items-center gap-2 text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-1">
-          <span>Performance</span>
-          <span class="text-zinc-700">/</span>
-          <span class="text-accent-lime">Secure Chat</span>
+      <div class="page-head">
+        <div>
+          <h1 class="page-title">Chat</h1>
+          <p class="page-lede">
+            A room is just a code you share with someone. Each message is encrypted separately
+            to every person in the room before it is sent.
+          </p>
         </div>
-        <h1 class="text-2xl font-bold tracking-tight text-white">Cryptographic Channels</h1>
-      </div>
-    </div>
-
-    <!-- 1. Join Panel (Before Room Connection) -->
-    <div id="join-panel" class="space-y-6">
-
-      <!-- Grid System -->
-      <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
-
-        <!-- Main Form Cards (2 columns) -->
-        <div class="xl:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
-
-          <!-- Column 1: Join Existing Room -->
-          <div
-            class="bg-charcoal-850/80 border border-zinc-800/60 rounded-lg p-6 shadow-sm flex flex-col justify-between">
-            <div>
-              <div class="border-b border-zinc-800/50 pb-3 mb-4">
-                <h2 class="text-sm font-semibold text-white">Join Existing Room</h2>
-                <p class="text-[11px] text-zinc-400 font-medium">Connect to an active zero-knowledge room.</p>
-              </div>
-
-              <div class="space-y-3.5">
-                <div>
-                  <label class="block text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-1"
-                    for="join-name-existing">Screen Name</label>
-                  <input
-                    class="w-full bg-charcoal-900/60 border border-zinc-800 focus:border-accent-lime rounded-md px-3 py-1.5 text-xs text-zinc-200 focus:outline-none"
-                    id="join-name-existing" placeholder="Enter screen name">
-                </div>
-                <div>
-                  <label class="block text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-1"
-                    for="join-key-existing">Select Keypair</label>
-                  <select
-                    class="w-full bg-charcoal-900 border border-zinc-800 focus:border-accent-lime rounded-md px-3 py-1.5 text-xs text-zinc-200 focus:outline-none cursor-pointer"
-                    id="join-key-existing">
-                    <option value="">-- Select your key --</option>
-                  </select>
-                </div>
-                <div>
-                  <label class="block text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-1"
-                    for="join-pass-existing">Key Passphrase</label>
-                  <input
-                    class="w-full bg-charcoal-900/60 border border-zinc-800 focus:border-accent-lime rounded-md px-3 py-1.5 text-xs text-zinc-200 focus:outline-none"
-                    type="password" id="join-pass-existing" placeholder="Passphrase for selected key">
-                </div>
-                <div>
-                  <label class="block text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-1"
-                    for="join-room-existing">Room Code</label>
-                  <input
-                    class="w-full bg-charcoal-900/60 border border-zinc-800 focus:border-accent-lime rounded-md px-3 py-1.5 text-xs text-zinc-200 focus:outline-none"
-                    id="join-room-existing" placeholder="e.g. ABC123">
-                </div>
-              </div>
-            </div>
-
-            <div class="mt-6">
-              <button
-                class="w-full bg-accent-lime hover:bg-accent-limeHover text-charcoal-950 font-bold text-xs py-2 px-4 rounded-md transition duration-150 flex items-center justify-center gap-1.5 shadow-sm"
-                onclick="joinRoom(false)">
-                Join Room
-              </button>
-              <div class="status mt-2 hidden text-xs p-2 rounded border" id="join-status"></div>
-            </div>
-          </div>
-
-          <!-- Column 2: Create New Room -->
-          <div
-            class="bg-charcoal-850/80 border border-zinc-800/60 rounded-lg p-6 shadow-sm flex flex-col justify-between">
-            <div>
-              <div class="border-b border-zinc-800/50 pb-3 mb-4">
-                <h2 class="text-sm font-semibold text-white">Create New Room</h2>
-                <p class="text-[11px] text-zinc-400 font-medium">Initialize a temporary or persistent channel.</p>
-              </div>
-
-              <div class="space-y-3.5">
-                <div>
-                  <label class="block text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-1"
-                    for="join-name-create">Screen Name</label>
-                  <input
-                    class="w-full bg-charcoal-900/60 border border-zinc-800 focus:border-accent-lime rounded-md px-3 py-1.5 text-xs text-zinc-200 focus:outline-none"
-                    id="join-name-create" placeholder="Enter screen name">
-                </div>
-                <div>
-                  <label class="block text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-1"
-                    for="join-key-create">Select Keypair</label>
-                  <select
-                    class="w-full bg-charcoal-900 border border-zinc-800 focus:border-accent-lime rounded-md px-3 py-1.5 text-xs text-zinc-200 focus:outline-none cursor-pointer"
-                    id="join-key-create">
-                    <option value="">-- Select your key --</option>
-                  </select>
-                </div>
-                <div>
-                  <label class="block text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-1"
-                    for="join-pass-create">Key Passphrase</label>
-                  <input
-                    class="w-full bg-charcoal-900/60 border border-zinc-800 focus:border-accent-lime rounded-md px-3 py-1.5 text-xs text-zinc-200 focus:outline-none"
-                    type="password" id="join-pass-create" placeholder="Passphrase for selected key">
-                </div>
-                <div>
-                  <label class="block text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-1">Room
-                    Duration</label>
-                  <div class="grid grid-cols-2 gap-2 mt-1">
-                    <button type="button"
-                      class="room-type-btn active px-3 py-2 bg-charcoal-900 border border-zinc-800 hover:border-zinc-700 text-left rounded-lg transition"
-                      id="btn-type-temp" onclick="setRoomType('temporary')">
-                      <span class="block text-xs font-bold text-white leading-tight">Temporary</span>
-                      <span class="block text-[9px] text-zinc-500 mt-0.5">Expires in 24h</span>
-                    </button>
-                    <button type="button"
-                      class="room-type-btn px-3 py-2 bg-charcoal-900 border border-zinc-800 hover:border-zinc-700 text-left rounded-lg transition"
-                      id="btn-type-persist" onclick="setRoomType('temporary')">
-                      <span class="block text-xs font-bold text-white leading-tight">Persistent</span>
-                      <span class="block text-[9px] text-zinc-500 mt-0.5">Always active</span>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="mt-6">
-              <button
-                class="w-full bg-accent-lime hover:bg-accent-limeHover text-charcoal-950 font-bold text-xs py-2 px-4 rounded-md transition duration-150 flex items-center justify-center gap-1.5 shadow-sm"
-                onclick="joinRoom(true)">
-                Create &amp; Join Room
-              </button>
-              <div class="status mt-2 hidden text-xs p-2 rounded border" id="create-status"></div>
-            </div>
-          </div>
-
-        </div>
-
-        <!-- Right side columns: Info/status modules -->
-        <div class="space-y-6">
-          <div class="bg-charcoal-850/80 border border-zinc-800/60 rounded-lg p-5 shadow-sm">
-            <h3 class="text-xs font-bold uppercase tracking-wider text-zinc-500 mb-3">Server Metrics</h3>
-            <div class="space-y-3 text-xs">
-              <div class="flex justify-between items-center">
-                <span class="text-zinc-500">Node Server</span>
-                <span class="text-accent-lime font-mono">http://localhost:3000</span>
-              </div>
-              <div class="flex justify-between items-center">
-                <span class="text-zinc-500">Handshake</span>
-                <span class="text-zinc-300">Curve25519 ECC</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="bg-charcoal-850/80 border border-zinc-800/60 rounded-lg p-5 shadow-sm">
-            <h3 class="text-xs font-bold uppercase tracking-wider text-zinc-500 mb-3.5">Security Parameters</h3>
-            <div class="space-y-2 text-[11px] text-zinc-400">
-              <p>✔ Real-time WebSockets</p>
-              <p>✔ Armored Message Envelopes</p>
-              <p>✔ Sandboxed Browser Engine</p>
-            </div>
-          </div>
-        </div>
-
       </div>
 
-    </div>
+      <!-- Before joining -->
+      <div id="join-panel">
+        <div class="split">
 
-    <!-- 2. Chat Panel (After Room Connection) -->
-    <div id="chat-panel" class="hidden space-y-6">
+          <div class="duo">
+            <section class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2 class="panel-title">Join a room</h2>
+                  <p class="panel-note">Use a code someone gave you.</p>
+                </div>
+              </div>
 
-      <!-- Fingerprint Warning Banner -->
-      <div id="fp-warning-banner"
-        class="bg-amber-950/20 border border-amber-900/50 text-amber-400 text-xs px-4 py-3 rounded-lg flex items-center justify-between">
-        <span class="font-medium">⚠ WARNING: Fingerprint not verified — messages may be intercepted.</span>
-        <button
-          class="bg-amber-800/20 hover:bg-amber-800/40 text-amber-300 px-3 py-1 rounded text-[10px] font-semibold border border-amber-800/40 transition"
-          onclick="showFingerprintOverlay()">
-          Verify Now
-        </button>
+              <div class="field">
+                <div class="field-label"><label for="join-name-existing">Your name in the room</label></div>
+                <input class="input" id="join-name-existing" placeholder="How others will see you">
+              </div>
+
+              <div class="field">
+                <div class="field-label"><label for="join-key-existing">Your keypair</label></div>
+                <select class="select" id="join-key-existing">
+                  <option value="">Choose a key</option>
+                </select>
+              </div>
+
+              <div class="field">
+                <div class="field-label"><label for="join-pass-existing">Passphrase</label></div>
+                <input class="input" type="password" id="join-pass-existing" placeholder="Unlocks that key">
+              </div>
+
+              <div class="field">
+                <div class="field-label"><label for="join-room-existing">Room code</label></div>
+                <input class="input mono" id="join-room-existing" placeholder="ABC123">
+              </div>
+
+              <div class="field">
+                <button class="btn btn-primary btn-block" onclick="joinRoom(false)">Join room</button>
+                <div class="status hidden" id="join-status"></div>
+              </div>
+            </section>
+
+            <section class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2 class="panel-title">Start a room</h2>
+                  <p class="panel-note">Ophanim makes the code; you pass it on.</p>
+                </div>
+              </div>
+
+              <div class="field">
+                <div class="field-label"><label for="join-name-create">Your name in the room</label></div>
+                <input class="input" id="join-name-create" placeholder="How others will see you">
+              </div>
+
+              <div class="field">
+                <div class="field-label"><label for="join-key-create">Your keypair</label></div>
+                <select class="select" id="join-key-create">
+                  <option value="">Choose a key</option>
+                </select>
+              </div>
+
+              <div class="field">
+                <div class="field-label"><label for="join-pass-create">Passphrase</label></div>
+                <input class="input" type="password" id="join-pass-create" placeholder="Unlocks that key">
+              </div>
+
+              <div class="field">
+                <div class="field-label"><span>How long it lasts</span></div>
+                <div class="seg">
+                  <button type="button" class="room-type-btn active" id="btn-type-temp"
+                    onclick="setRoomType('temporary')">
+                    <strong>Temporary</strong>
+                    <small>Gone after 24 hours</small>
+                  </button>
+                  <button type="button" class="room-type-btn" id="btn-type-persist"
+                    onclick="setRoomType('persistent')">
+                    <strong>Persistent</strong>
+                    <small>Stays until you kill it</small>
+                  </button>
+                </div>
+              </div>
+
+              <div class="field">
+                <button class="btn btn-primary btn-block" onclick="joinRoom(true)">Create the room</button>
+                <div class="status hidden" id="create-status"></div>
+              </div>
+            </section>
+          </div>
+
+          <div>
+            <section class="aside-block">
+              <h2 class="aside-title">Connection</h2>
+              <div class="meta">
+                <span class="meta-k">Relay</span>
+                <span class="meta-v mono" id="relay-address">localhost:3000</span>
+              </div>
+              <div class="meta">
+                <span class="meta-k">Key exchange</span>
+                <span class="meta-v mono">Curve25519</span>
+              </div>
+              <div class="meta">
+                <span class="meta-k">Kept on the relay</span>
+                <span class="meta-v">Nothing</span>
+              </div>
+            </section>
+
+            <section class="aside-block">
+              <h2 class="aside-title">Before you talk</h2>
+              <p class="panel-note" style="margin-top:var(--s3)">
+                When someone joins, Ophanim shows you their key fingerprint. Read it aloud to
+                them on a call you trust. If it matches what they see, nobody is sitting in
+                the middle. Until you confirm it, the message box stays locked.
+              </p>
+            </section>
+          </div>
+
+        </div>
       </div>
 
-      <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+      <!-- In the room -->
+      <div id="chat-panel" class="hidden">
 
-        <!-- Left: Chat Messages scroller & inputs (2 columns) -->
-        <div
-          class="xl:col-span-2 bg-charcoal-850/80 border border-zinc-800/60 rounded-lg p-5 flex flex-col h-[520px] shadow-sm relative">
-
-          <!-- Messages viewport -->
-          <div id="chat-messages" class="flex-1 overflow-y-auto mb-4 pr-2 select-text">
-            <!-- Messages appends here -->
-          </div>
-
-          <!-- Typing indicator -->
-          <div id="typing-indicator" class="text-[10px] text-zinc-500 italic h-4 mb-1 pl-2 font-mono"></div>
-
-          <!-- Input bar -->
-          <div class="flex gap-2.5 border-t border-zinc-800/60 pt-3.5">
-            <input
-              class="flex-1 bg-charcoal-900 border border-zinc-800 focus:border-accent-lime rounded-lg px-4 py-2 text-xs text-zinc-200 focus:outline-none focus:ring-1 focus:ring-accent-lime transition"
-              id="msg-input" placeholder="Verify fingerprint to unlock chat" disabled
-              onkeydown="if(event.key==='Enter')sendMessage()" oninput="emitTyping()">
-            <button
-              class="bg-accent-lime hover:bg-accent-limeHover disabled:opacity-40 text-charcoal-950 font-bold text-xs py-2 px-5 rounded-lg transition"
-              id="send-btn" onclick="sendMessage()" disabled>
-              Send
-            </button>
-          </div>
+        <div class="banner" id="fp-warning-banner">
+          <span>You have not checked the other person's fingerprint yet.</span>
+          <button class="btn btn-sm" onclick="showFingerprintOverlay()">Check it now</button>
         </div>
 
-        <!-- Right: Room Controls / Online Users (1 column) -->
-        <div class="space-y-6">
+        <div class="split">
 
-          <!-- Room info card -->
-          <div class="bg-charcoal-850/80 border border-zinc-800/60 rounded-lg p-5 shadow-sm text-center">
-            <div class="text-[10px] font-bold uppercase tracking-wider text-zinc-500 mb-1">Room Code</div>
-            <div id="room-code-display" class="font-mono text-xl text-white tracking-widest font-extrabold mb-1.5">-
+          <section class="panel chat-panel">
+            <div id="chat-messages"></div>
+            <div id="typing-indicator"></div>
+            <div class="chat-compose">
+              <input class="input" id="msg-input" placeholder="Check the fingerprint to unlock this" disabled
+                onkeydown="if(event.key==='Enter')sendMessage()" oninput="emitTyping()">
+              <button class="btn btn-primary" id="send-btn" onclick="sendMessage()" disabled>Send</button>
             </div>
+          </section>
 
-            <div class="flex items-center justify-center gap-1.5 mb-5">
-              <span
-                class="text-[10px] uppercase font-bold tracking-wide px-2 py-0.5 rounded bg-accent-limeSoft text-accent-lime border border-accent-lime/20"
-                id="room-type-display">Standard</span>
-              <span id="room-timer-display"
-                class="text-[10px] font-mono text-red-400 bg-red-950/20 border border-red-900/30 px-2 py-0.5 rounded hidden"></span>
-            </div>
+          <div>
+            <section class="aside-block">
+              <h2 class="aside-title">Room</h2>
+              <div class="room-code" id="room-code-display">—</div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:var(--s4)">
+                <span class="tag" id="room-type-display">Standard</span>
+                <span class="tag" id="room-timer-display" style="display:none"></span>
+              </div>
+              <div class="stack">
+                <button class="btn btn-sm btn-block" onclick="copyRoomCode()">Copy code</button>
+                <button class="btn btn-sm btn-block" onclick="leaveRoom()">Leave room</button>
+                <button class="btn btn-sm btn-block btn-danger" onclick="triggerKillSwitch()">
+                  Kill switch
+                </button>
+              </div>
+              <p class="panel-note" style="margin-top:var(--s3)">
+                The kill switch wipes the room and every key stored in this browser, for everyone
+                in it. There is no undo.
+              </p>
+            </section>
 
-            <div class="flex flex-col gap-2.5">
-              <button
-                class="w-full py-2 px-4 text-xs font-semibold text-zinc-300 bg-charcoal-800 hover:bg-charcoal-700 border border-zinc-800 hover:border-zinc-700 rounded-md transition"
-                onclick="copyRoomCode()">
-                Copy Code
-              </button>
-              <button
-                class="w-full py-2 px-4 text-xs font-semibold text-zinc-300 bg-charcoal-800 hover:bg-charcoal-700 border border-zinc-800 hover:border-zinc-700 rounded-md transition"
-                onclick="leaveRoom()">
-                Leave Room
-              </button>
-              <button
-                class="w-full py-2 px-4 text-xs font-bold text-red-400 bg-red-950/20 hover:bg-red-950/40 border border-red-900/30 rounded-md transition mt-1"
-                onclick="triggerKillSwitch()">
-                Kill Switch
-              </button>
-            </div>
-          </div>
-
-          <!-- Online Users card -->
-          <div class="bg-charcoal-850/80 border border-zinc-800/60 rounded-lg p-5 shadow-sm">
-            <h3 class="text-xs font-bold uppercase tracking-wider text-zinc-500 mb-3">Online Users</h3>
-            <div id="user-list" class="space-y-2.5">
-              <!-- Render list of peers -->
-            </div>
+            <section class="aside-block">
+              <h2 class="aside-title">In the room</h2>
+              <div id="user-list"></div>
+            </section>
           </div>
 
         </div>
-
       </div>
 
     </div>
+  </main>
 
-  </div>
-
-  <!-- Fingerprint Verification Modal Overlay -->
+  <!-- Fingerprint check -->
   <div id="fp-overlay" class="hidden">
-    <div class="modal-overlay" onclick="if(event.target===this)confirmFingerprint()">
-      <div class="modal-content-card max-w-[420px] text-center">
-        <div class="border-b border-zinc-800/60 pb-3 mb-4">
-          <h3 class="text-sm font-semibold text-white">Verify Fingerprint</h3>
-        </div>
-
-        <p class="text-xs text-zinc-400 leading-relaxed mb-4">
-          Verify your contact's fingerprint before chatting.<br>
-          Read this fingerprint to your contact over a phone call.<br>
-          If it matches what they see on their screen, click <strong>Verified</strong>.
-        </p>
-
-        <div
-          class="bg-charcoal-900/80 border border-zinc-800 rounded-lg p-4 font-mono text-sm tracking-wider text-accent-lime mb-5 break-words select-all"
-          id="fp-display-value">
-          Waiting for another user to join...
-        </div>
-
-        <div class="flex gap-2">
-          <button
-            class="flex-1 py-2 px-4 text-xs font-bold text-charcoal-950 bg-accent-lime hover:bg-accent-limeHover disabled:opacity-40 disabled:pointer-events-none rounded transition"
-            id="fp-verify-btn" onclick="confirmFingerprint()" disabled>
-            Fingerprint Verified
+    <div class="modal-overlay" onclick="if(event.target===this)dismissFingerprint()">
+      <div class="modal-card">
+        <div class="modal-head">
+          <h2 class="modal-title">Check the fingerprint</h2>
+          <button class="icon-btn" onclick="dismissFingerprint()" aria-label="Close">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+              <path d="M6 6l12 12M18 6L6 18" />
+            </svg>
           </button>
         </div>
+
+        <p class="modal-note">
+          Read this out to the other person on a call you trust. If they see the same characters
+          on their screen, your messages are going to them and to nobody else.
+        </p>
+
+        <div class="fingerprint" id="fp-display-value">Waiting for someone else to join…</div>
+
+        <button class="btn btn-primary btn-block" id="fp-verify-btn" onclick="confirmFingerprint()" disabled
+          style="margin-top:var(--s5)">
+          It matches
+        </button>
       </div>
     </div>
   </div>
 
-  <!-- Scripts -->
   <script src="public/assets/openpgp.min.js"></script>
   <script src="src/js/crypto.js"></script>
   <script src="public/assets/socket.io.min.js"></script>
@@ -509,7 +325,11 @@
     let selectedRoomType = 'temporary';
     let expirationInterval = null;
 
-    // ── Init: populate key selectors ───────────────────
+    const SERVER_URL = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+      ? 'http://localhost:3000'
+      : window.location.origin;
+
+    // ── Init ───────────────────────────────────────────
     (function loadKeys() {
       const keys = JSON.parse(localStorage.getItem('ophanim_keys') || '[]');
       const sel1 = document.getElementById('join-key-existing');
@@ -524,6 +344,14 @@
         const opt2 = opt1.cloneNode(true);
         sel2.appendChild(opt2);
       });
+
+      if (keys.length === 0) {
+        sel1.options[0].textContent = 'No keys yet — create one in Keys';
+        sel2.options[0].textContent = 'No keys yet — create one in Keys';
+      }
+
+      const relayEl = document.getElementById('relay-address');
+      if (relayEl) relayEl.textContent = SERVER_URL.replace(/^https?:\/\//, '');
     })();
 
     function setRoomType(type) {
@@ -534,17 +362,12 @@
 
     function showStatus(id, type, msg) {
       const el = document.getElementById(id);
-      el.className = `status show ${type} mt-2 text-xs p-2 rounded border`;
-      if (type === 'error') {
-        el.className += ' bg-red-950/20 border-red-900/50 text-red-400';
-      } else {
-        el.className += ' bg-accent-limeSoft border-accent-lime/20 text-accent-lime';
-      }
+      el.classList.remove('hidden', 'is-error', 'is-ok');
+      el.classList.add(type === 'error' ? 'is-error' : 'is-ok');
       el.textContent = msg;
-      el.classList.remove('hidden');
     }
 
-    // ── Fingerprint Verification ───────────────
+    // ── Fingerprint check ──────────────────────────────
     function formatFingerprint(fp) {
       return fp.replace(/(.{4})/g, '$1 ').trim();
     }
@@ -558,7 +381,7 @@
         }
       }
       if (!otherUser || !otherUser.publicKey) {
-        document.getElementById('fp-display-value').textContent = 'Waiting for another user to join...';
+        document.getElementById('fp-display-value').textContent = 'Waiting for someone else to join…';
         document.getElementById('fp-verify-btn').disabled = true;
         document.getElementById('fp-overlay').classList.remove('hidden');
         return;
@@ -566,15 +389,19 @@
 
       try {
         const fp = await OphanimCrypto.getFingerprint(otherUser.publicKey);
-        const formatted = formatFingerprint(fp);
-        document.getElementById('fp-display-value').textContent = formatted;
+        document.getElementById('fp-display-value').textContent = formatFingerprint(fp);
         document.getElementById('fp-verify-btn').disabled = false;
       } catch (e) {
-        document.getElementById('fp-display-value').textContent = 'Error reading fingerprint: ' + e.message;
+        document.getElementById('fp-display-value').textContent = 'Could not read the fingerprint: ' + e.message;
         document.getElementById('fp-verify-btn').disabled = true;
       }
 
       document.getElementById('fp-overlay').classList.remove('hidden');
+    }
+
+    /* Closing the panel must never count as confirming. Only the button does. */
+    function dismissFingerprint() {
+      document.getElementById('fp-overlay').classList.add('hidden');
     }
 
     function confirmFingerprint() {
@@ -583,12 +410,12 @@
       document.getElementById('fp-warning-banner').style.display = 'none';
       const msgInput = document.getElementById('msg-input');
       msgInput.disabled = false;
-      msgInput.placeholder = 'Type a message...';
+      msgInput.placeholder = 'Write a message';
       document.getElementById('send-btn').disabled = false;
-      addSystemMessage('✓ Fingerprint verified. Chat unlocked.');
+      addSystemMessage('Fingerprint confirmed. You can write now.');
     }
 
-    // ── Kill Switch — total wipe ───────────────
+    // ── Kill switch ────────────────────────────────────
     function executeKillWipe() {
       localStorage.removeItem('ophanim_keys');
       localStorage.removeItem('ophanim_contacts');
@@ -607,7 +434,7 @@
       setTimeout(() => { window.location.href = 'index.html'; }, 1000);
     }
 
-    // ── Expiration countdown timer ─────────────
+    // ── Room expiry ────────────────────────────────────
     function startExpirationTimer(createdAt) {
       clearInterval(expirationInterval);
       const timerEl = document.getElementById('room-timer-display');
@@ -617,14 +444,14 @@
       function updateTimer() {
         const remaining = (24 * 60 * 60 * 1000) - (Date.now() - createdAt);
         if (remaining <= 0) {
-          timerEl.textContent = 'Room Expired';
+          timerEl.textContent = 'Expired';
           clearInterval(expirationInterval);
           return;
         }
         const hours = Math.floor(remaining / (1000 * 60 * 60));
         const minutes = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
         const seconds = Math.floor((remaining % (1000 * 60)) / 1000);
-        timerEl.textContent = `Expires in: ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        timerEl.textContent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')} left`;
       }
 
       updateTimer();
@@ -634,12 +461,10 @@
     function stopExpirationTimer() {
       clearInterval(expirationInterval);
       const timerEl = document.getElementById('room-timer-display');
-      if (timerEl) {
-        timerEl.style.display = 'none';
-      }
+      if (timerEl) timerEl.style.display = 'none';
     }
 
-    // ── Join/Create Room ───────────────────────
+    // ── Join or create ─────────────────────────────────
     function joinRoom(isCreate) {
       const fieldSuffix = isCreate ? 'create' : 'existing';
       myName = document.getElementById(`join-name-${fieldSuffix}`).value.trim();
@@ -656,21 +481,17 @@
 
       const statusId = isCreate ? 'create-status' : 'join-status';
 
-      if (!myName) return showStatus(statusId, 'error', '⚠ Enter your name.');
-      if (keyIdx === '') return showStatus(statusId, 'error', '⚠ Select a keypair.');
-      if (!myPassphrase) return showStatus(statusId, 'error', '⚠ Enter passphrase.');
-      if (!currentRoom) return showStatus(statusId, 'error', '⚠ Enter a room code.');
+      if (!myName) return showStatus(statusId, 'error', 'Enter the name others will see.');
+      if (keyIdx === '') return showStatus(statusId, 'error', 'Choose which keypair to use.');
+      if (!myPassphrase) return showStatus(statusId, 'error', 'Enter the passphrase for that key.');
+      if (!currentRoom) return showStatus(statusId, 'error', 'Enter the room code.');
 
       const keys = JSON.parse(localStorage.getItem('ophanim_keys') || '[]');
       const key = keys[parseInt(keyIdx)];
       myPublicKey = key.publicKey;
       myPrivateKey = key.privateKey;
 
-      const serverUrl = location.hostname === 'localhost' || location.hostname === '127.0.0.1'
-        ? 'http://localhost:3000'
-        : window.location.origin;
-
-      socket = io(serverUrl);
+      socket = io(SERVER_URL);
 
       socket.on('connect', () => {
         socket.emit('join-room', {
@@ -686,11 +507,10 @@
         users.forEach(u => roomUsers.set(u.id, { name: u.name, publicKey: u.publicKey }));
         document.getElementById('room-code-display').textContent = roomCode;
 
-        // Display room type
         const typeDisplay = document.getElementById('room-type-display');
         if (typeDisplay) {
           if (roomType === 'temporary') {
-            typeDisplay.textContent = 'Temporary (24h)';
+            typeDisplay.textContent = 'Temporary';
             startExpirationTimer(createdAt);
           } else if (roomType === 'persistent') {
             typeDisplay.textContent = 'Persistent';
@@ -706,17 +526,17 @@
         fingerprintVerified = false;
         document.getElementById('fp-warning-banner').style.display = 'flex';
         document.getElementById('msg-input').disabled = true;
-        document.getElementById('msg-input').placeholder = 'Verify fingerprint to unlock chat';
+        document.getElementById('msg-input').placeholder = 'Check the fingerprint to unlock this';
         document.getElementById('send-btn').disabled = true;
         renderUsers();
-        addSystemMessage('You joined the room. All messages are end-to-end encrypted.');
+        addSystemMessage('You joined. Messages are encrypted on this device before they are sent.');
         showFingerprintOverlay();
       });
 
       socket.on('user-joined', async ({ id, name, publicKey }) => {
         roomUsers.set(id, { name, publicKey });
         renderUsers();
-        addSystemMessage(`${name} joined the room.`);
+        addSystemMessage(`${name} joined.`);
         if (!fingerprintVerified) {
           showFingerprintOverlay();
         }
@@ -725,7 +545,7 @@
       socket.on('user-left', ({ id, name }) => {
         roomUsers.delete(id);
         renderUsers();
-        addSystemMessage(`${name} left the room.`);
+        addSystemMessage(`${name} left.`);
       });
 
       socket.on('message', async ({ senderId, senderName, ciphertext, timestamp }) => {
@@ -734,7 +554,7 @@
           const plaintext = await OphanimCrypto.decryptMessage(ciphertext, myPrivateKey, myPassphrase);
           addMessage(senderName, plaintext, timestamp, false);
         } catch (e) {
-          addMessage(senderName, '[Could not decrypt message]', timestamp, false);
+          addMessage(senderName, '[This message could not be opened with your key]', timestamp, false);
         }
       });
 
@@ -744,34 +564,34 @@
           chatEl.innerHTML = '';
           const div = document.createElement('div');
           div.className = 'message-bubble system kill';
-          div.textContent = `KILL SWITCH ACTIVATED BY ${triggeredBy.toUpperCase()}. ALL DATA DESTROYED.`;
+          div.textContent = `${triggeredBy} pulled the kill switch. Everything stored here has been wiped.`;
           chatEl.appendChild(div);
         }
         executeKillWipe();
       });
 
       socket.on('room-expired', ({ roomCode }) => {
-        alert('This temporary chat room has expired (24h limit) and has been deleted.');
+        addSystemMessage('This room reached its 24 hour limit and has been deleted.');
         leaveRoom();
       });
 
       socket.on('typing', ({ name }) => {
         const el = document.getElementById('typing-indicator');
-        el.textContent = `${name} is typing...`;
+        el.textContent = `${name} is typing`;
         clearTimeout(typingTimeout);
         typingTimeout = setTimeout(() => { el.textContent = ''; }, 2000);
       });
 
       socket.on('disconnect', () => {
-        if (myName) addSystemMessage('Disconnected from server.');
+        if (myName) addSystemMessage('Disconnected from the relay.');
       });
 
       socket.on('connect_error', () => {
-        showStatus(statusId, 'error', '✗ Cannot connect. Is the server running?');
+        showStatus(statusId, 'error', 'Cannot reach the relay. Is the server running?');
       });
     }
 
-    // ── Send Message ──────────────────────────────────
+    // ── Sending ────────────────────────────────────────
     async function sendMessage() {
       if (!fingerprintVerified) return;
       const input = document.getElementById('msg-input');
@@ -786,7 +606,7 @@
           const ciphertext = await OphanimCrypto.encryptMessage(text, user.publicKey);
           encryptedMessages.push({ recipientId: id, ciphertext });
         } catch (e) {
-          // Encryption failed for a recipient — skip silently
+          addSystemMessage(`Could not encrypt for ${user.name}; they will not see that message.`);
         }
       }
 
@@ -800,15 +620,14 @@
       }
     }
 
-    // ── Kill Switch ────────
     function triggerKillSwitch() {
+      if (!confirm('Pull the kill switch? This wipes the room for everyone in it and deletes every key stored in this browser. It cannot be undone.')) return;
       if (socket && currentRoom) {
         socket.emit('kill-switch', { roomCode: currentRoom });
       }
       executeKillWipe();
     }
 
-    // ── Leave Room ────────────────────────────────────
     function leaveRoom() {
       if (socket) { socket.disconnect(); socket = null; }
       roomUsers.clear();
@@ -820,7 +639,7 @@
       document.getElementById('fp-overlay').classList.add('hidden');
     }
 
-    // ── UI Helpers ────────────────────────────────────
+    // ── Rendering ──────────────────────────────────────
     function addMessage(sender, text, timestamp, isSent) {
       const el = document.getElementById('chat-messages');
       if (!el) return;
@@ -848,18 +667,18 @@
       roomUsers.forEach((u, id) => {
         const isMe = socket && id === socket.id;
         items.push(`
-          <div class="flex items-center gap-2 px-2.5 py-1.5 rounded bg-charcoal-900 border border-zinc-800 text-xs">
-            <span class="w-1.5 h-1.5 rounded-full bg-accent-lime animate-pulse"></span>
-            <span class="text-zinc-200 font-medium truncate">${esc(u.name)}${isMe ? ' (you)' : ''}</span>
+          <div class="peer">
+            <span class="mark is-on"></span>
+            <span class="peer-name">${esc(u.name)}${isMe ? ' (you)' : ''}</span>
           </div>
         `);
       });
-      el.innerHTML = items.join('') || '<p class="text-zinc-500 text-xs italic text-center py-2">No users online</p>';
+      el.innerHTML = items.join('') || '<div class="empty">Nobody else here yet.</div>';
     }
 
     function copyRoomCode() {
       navigator.clipboard.writeText(currentRoom).then(() => {
-        alert('Room code copied to clipboard!');
+        addSystemMessage('Room code copied. Send it to the person you want to talk to.');
       });
     }
 
@@ -870,10 +689,7 @@
     }
   </script>
 
-  <!-- Sidebar (shared) -->
   <script src="src/js/sidebar.js"></script>
-
-  <script src="src/js/animations.js"></script>
 </body>
 
 </html>

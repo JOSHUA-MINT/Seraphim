@@ -170,8 +170,10 @@ io.on('connection', (socket) => {
     if (!sender) return;
 
     // encryptedMessages is an array of { recipientId, ciphertext }
-    // We relay each encrypted message to its intended recipient
+    // We relay each encrypted message to its intended recipient — only if
+    // that recipient is actually in this room, not to an arbitrary socket id.
     encryptedMessages.forEach(({ recipientId, ciphertext }) => {
+      if (!room.users.has(recipientId)) return;
       io.to(recipientId).emit('message', {
         senderId: socket.id,
         senderName: sender.name,
