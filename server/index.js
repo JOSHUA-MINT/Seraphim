@@ -34,7 +34,16 @@ const io = new Server(server, {
 
 app.use(cors({ origin: ALLOWED_ORIGIN }));
 
-// Serve static files from the parent directory (the client HTML files)
+// Serve static files from the parent directory (the client HTML files).
+// Block anything under /server/ so server source, .env, and
+// persistent_rooms.json (a list of active room codes) are never
+// reachable over HTTP — only the client app (HTML/CSS/JS/lib) is public.
+app.use((req, res, next) => {
+  if (req.path === '/server' || req.path.startsWith('/server/')) {
+    return res.status(404).end();
+  }
+  next();
+});
 app.use(express.static(path.join(__dirname, '..')));
 
 // ── In-memory room state & Persistence ──────────────────────
