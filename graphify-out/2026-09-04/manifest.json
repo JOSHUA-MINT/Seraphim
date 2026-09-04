@@ -1,0 +1,163 @@
+{
+  "lib/openpgp.min.js": {
+    "mtime": 1788533631.4767873,
+    "seen": 1788543221.9322371,
+    "ast_hash": "8f5aad0ce17172d30beed2e85ecb8ac2",
+    "semantic_hash": "8f5aad0ce17172d30beed2e85ecb8ac2"
+  },
+  "lib/socket.io.min.js": {
+    "mtime": 1788534961.3954468,
+    "seen": 1788543221.9322383,
+    "ast_hash": "2b5a5f6f7e742b8f73fa48494ea78e09",
+    "semantic_hash": "2b5a5f6f7e742b8f73fa48494ea78e09"
+  },
+  "server/index.js": {
+    "mtime": 1788541198.8067932,
+    "seen": 1788543221.932241,
+    "ast_hash": "4403486704e3e76c2c9049bafbab781a",
+    "semantic_hash": "4403486704e3e76c2c9049bafbab781a"
+  },
+  "server/package.json": {
+    "mtime": 1788534978.8285754,
+    "seen": 1788543221.9322417,
+    "ast_hash": "5d2af30fe7db7855da63e7c4b45890c1",
+    "semantic_hash": "5d2af30fe7db7855da63e7c4b45890c1"
+  },
+  "chat.html": {
+    "mtime": 1788540128.1828637,
+    "seen": 1788543221.932248,
+    "ast_hash": "56c711bb3ed49efa15d7930b26dcefca",
+    "semantic_hash": "56c711bb3ed49efa15d7930b26dcefca"
+  },
+  "decrypt.html": {
+    "mtime": 1788540128.1807916,
+    "seen": 1788543221.9322488,
+    "ast_hash": "2e62576d41547c20cd4a4ab24db54e90",
+    "semantic_hash": "2e62576d41547c20cd4a4ab24db54e90"
+  },
+  "encrypt.html": {
+    "mtime": 1788540128.1796873,
+    "seen": 1788543221.9322498,
+    "ast_hash": "c13327d4c5adaf1528041c1f6be28be5",
+    "semantic_hash": "c13327d4c5adaf1528041c1f6be28be5"
+  },
+  "index.html": {
+    "mtime": 1788541169.4363327,
+    "seen": 1788543221.9322507,
+    "ast_hash": "fb883f17c1a5476de4bf47267e81bbc7",
+    "semantic_hash": "fb883f17c1a5476de4bf47267e81bbc7"
+  },
+  "keys.html": {
+    "mtime": 1788541630.8204472,
+    "seen": 1788543221.9322512,
+    "ast_hash": "73918e94e0fe8903a460b2ad76df9fd1",
+    "semantic_hash": "73918e94e0fe8903a460b2ad76df9fd1"
+  },
+  "lib/ophanim_prd_report.md": {
+    "mtime": 1788534961.3953598,
+    "seen": 1788543221.9322522,
+    "ast_hash": "92f3699c88a7afeac8df1afbab5cbc1b",
+    "semantic_hash": "92f3699c88a7afeac8df1afbab5cbc1b"
+  },
+  "test.html": {
+    "mtime": 1788537651.5466454,
+    "seen": 1788543221.9322536,
+    "ast_hash": "f0d2893d8e8834eed6852a5dd3c96d8e",
+    "semantic_hash": "f0d2893d8e8834eed6852a5dd3c96d8e"
+  },
+  "lib/ophanim-logo.png": {
+    "mtime": 1780670244.603536,
+    "ast_hash": "a2d8cfaecb2d2649736a8f8770d0f072",
+    "semantic_hash": "a2d8cfaecb2d2649736a8f8770d0f072"
+  },
+  "public/assets/openpgp.min.js": {
+    "mtime": 1788534961.3980227,
+    "seen": 1788543221.9322393,
+    "ast_hash": "8f5aad0ce17172d30beed2e85ecb8ac2",
+    "semantic_hash": "8f5aad0ce17172d30beed2e85ecb8ac2"
+  },
+  "public/assets/socket.io.min.js": {
+    "mtime": 1788534961.3992693,
+    "seen": 1788543221.93224,
+    "ast_hash": "2b5a5f6f7e742b8f73fa48494ea78e09",
+    "semantic_hash": "2b5a5f6f7e742b8f73fa48494ea78e09"
+  },
+  "src/js/animations.js": {
+    "mtime": 1788538359.3162377,
+    "seen": 1788543221.9322424,
+    "ast_hash": "6c24c920d1ab41d776776264cdd6a5dd",
+    "semantic_hash": "6c24c920d1ab41d776776264cdd6a5dd"
+  },
+  "src/js/crypto.js": {
+    "mtime": 1788534961.3999653,
+    "seen": 1788543221.932243,
+    "ast_hash": "aadafa0b00262507aca1eb3853228121",
+    "semantic_hash": "aadafa0b00262507aca1eb3853228121"
+  },
+  "src/js/sidebar.js": {
+    "mtime": 1788536965.6564317,
+    "seen": 1788543221.932244,
+    "ast_hash": "0274ccf23760076acf7ca35b503dd625",
+    "semantic_hash": "0274ccf23760076acf7ca35b503dd625"
+  },
+  "src/js/test-runner.js": {
+    "mtime": 1788534961.4000382,
+    "seen": 1788543221.932245,
+    "ast_hash": "68cf3a7dda783389b6f68ea560a06d9a",
+    "semantic_hash": "68cf3a7dda783389b6f68ea560a06d9a"
+  },
+  "public/assets/ophanim_prd_report.md": {
+    "mtime": 1788534961.3992147,
+    "seen": 1788543221.932253,
+    "ast_hash": "92f3699c88a7afeac8df1afbab5cbc1b",
+    "semantic_hash": "92f3699c88a7afeac8df1afbab5cbc1b"
+  },
+  "lib/matrix.png": {
+    "mtime": 1788534961.393848,
+    "seen": 1788543221.9322546,
+    "ast_hash": "24bf8abc3c30d2545c3ae6b5d0f019f0",
+    "semantic_hash": "24bf8abc3c30d2545c3ae6b5d0f019f0"
+  },
+  "public/assets/matrix.png": {
+    "mtime": 1788534961.3970392,
+    "seen": 1788543221.9322553,
+    "ast_hash": "f5db85ed2b67251b23cb189dd1b05a8d",
+    "semantic_hash": "f5db85ed2b67251b23cb189dd1b05a8d"
+  },
+  "public/assets/ophanim-logo.png": {
+    "mtime": 1788534961.3992147,
+    "seen": 1788543221.932256,
+    "ast_hash": "a2d8cfaecb2d2649736a8f8770d0f072",
+    "semantic_hash": "a2d8cfaecb2d2649736a8f8770d0f072"
+  },
+  ".gemini/settings.json": {
+    "mtime": 1788534961.3830307,
+    "seen": 1788543221.9322352,
+    "ast_hash": "f080aabf772e803c9e24b9ad0acbf2b6",
+    "semantic_hash": "f080aabf772e803c9e24b9ad0acbf2b6"
+  },
+  ".agents/rules/graphify.md": {
+    "mtime": 1788534961.3830307,
+    "seen": 1788543221.9322455,
+    "ast_hash": "f1e53ecc9194573d3c28fc116c743a2e",
+    "semantic_hash": "f1e53ecc9194573d3c28fc116c743a2e"
+  },
+  ".agents/workflows/graphify.md": {
+    "mtime": 1788534961.3830307,
+    "seen": 1788543221.9322462,
+    "ast_hash": "0bc020d491fca99550c1ea3de0a5f862",
+    "semantic_hash": "0bc020d491fca99550c1ea3de0a5f862"
+  },
+  "GEMINI.md": {
+    "mtime": 1788534961.3830307,
+    "seen": 1788543221.9322474,
+    "ast_hash": "82efb97a359f5c7290bf2513d14686be",
+    "semantic_hash": "82efb97a359f5c7290bf2513d14686be"
+  },
+  ".claude/settings.json": {
+    "mtime": 1788536035.6326272,
+    "seen": 1788543221.9322312,
+    "ast_hash": "4abc84e13a029ae814ec83b3f16e3105",
+    "semantic_hash": "4abc84e13a029ae814ec83b3f16e3105"
+  }
+}

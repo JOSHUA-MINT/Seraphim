@@ -24,3 +24,10 @@ desktop.ini
 # Logs
 *.log
 npm-debug.log*
+
+.GEMINI.md
+
+.agents
+.claude
+.gemini 
+.graphify-out
